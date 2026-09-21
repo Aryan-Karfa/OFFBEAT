@@ -42,7 +42,7 @@ OFFBEAT/
 ├── Backend/
 ├── packages/
 ├── prisma/
-├── docs/
+├── DOCS/
 ├── .env.example
 ├── .gitignore
 ├── package.json
@@ -472,22 +472,22 @@ Major entities include:
 
 ```text
 packages/
-├── shared/
-├── validation/
+├── types/
+├── utils/
 └── config/
 ```
 
-### `shared/`
+### `types/`
 
-Genuinely shared TypeScript types, constants, and utilities.
+Shared TypeScript types and baseline interface contracts.
 
-### `validation/`
+### `utils/`
 
-Shared request/response schemas where frontend and backend genuinely need the same validation contract.
+Shared pure utility functions and helpers.
 
 ### `config/`
 
-Shared configuration conventions that do not expose secrets.
+Shared configuration conventions and non-secret constants.
 
 Shared packages should remain intentionally small.
 
@@ -496,7 +496,7 @@ Shared packages should remain intentionally small.
 # 9. Documentation
 
 ```text
-docs/
+DOCS/
 ├── PRD.md
 ├── TRD.md
 ├── SSD.md

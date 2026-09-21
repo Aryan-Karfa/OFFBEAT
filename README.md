@@ -8,12 +8,12 @@ and build better travel experiences.
 
 ## Project Structure
 
-- `frontend/` — Frontend application
-- `backend/` — Backend API
+- `Frontend/` — Frontend application
+- `Backend/` — Backend API
 - `packages/types/` — Shared TypeScript types
-- `packages/config/` — Shared configuration
 - `packages/utils/` — Shared utilities
-- `docs/` — Project documentation
+- `packages/config/` — Shared configuration
+- `DOCS/` — Project documentation
 
 ## Requirements
 
