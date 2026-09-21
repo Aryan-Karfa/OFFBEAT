@@ -271,6 +271,225 @@ This allows both discovery-first and destination-known users to enter the produc
 
 ---
 
+### 8.1 — REGION POP / RISE INTERACTION
+
+The transition from **Country → State / Union Territory** should feel like a major discovery moment rather than a conventional map click.
+
+When a user clicks or selects a particular **State / Union Territory**, the selected region should visually **rise, pop, or emerge from the map surface**.
+
+The interaction should create the feeling that the user is physically exploring the geography of the country.
+
+#### Interaction Concept
+
+**COUNTRY MAP**
+
+↓ User selects a State / UT
+
+**SELECTED REGION RISES**
+
+↓ Camera subtly focuses on the region
+
+**REGION BECOMES THE PRIMARY VISUAL**
+
+↓ Information and discovery options appear
+
+**“LET'S DISCOVER [REGION].”**
+
+---
+
+### Visual Behaviour
+
+When a region is selected:
+
+1. **Region separates visually from surrounding geography**
+
+   * The selected State / UT should appear elevated above the map.
+   * Surrounding regions should become slightly subdued.
+   * The selected region should receive stronger visual emphasis.
+
+2. **Elevation / Pop Animation**
+
+   * The selected region should appear to lift from the map plane.
+   * Use a combination of:
+
+     * scale
+     * translation
+     * depth/elevation
+     * subtle perspective
+     * lighting/highlight treatment
+   * The effect should feel physical rather than like a simple CSS hover.
+
+3. **Camera Focus**
+
+   * The map should smoothly zoom toward the selected region.
+   * The transition should preserve geographic context rather than abruptly changing screens.
+
+4. **Boundary Emphasis**
+
+   * The selected region's boundary should become clearly visible.
+   * Internal geographic details may progressively appear as the region becomes active.
+
+5. **Neighbouring Regions**
+
+   * Adjacent States / UTs should remain visible but visually recede.
+   * They should not disappear completely because geographic context is important.
+
+6. **Information Reveal**
+
+   * Once the region reaches its active state, contextual information should appear.
+   * Example:
+
+   **WEST BENGAL**
+
+   `Eastern India`
+
+   `Mountains · Beaches · History · Culture · Food`
+
+   **EXPLORE WEST BENGAL →**
+
+---
+
+### “Marvel” Moment
+
+The interaction should deliberately create a **premium visual reveal**.
+
+The intended feeling is:
+
+> **“I didn't just click West Bengal. West Bengal came out of the map.”**
+
+The animation should feel like a combination of:
+
+**Interactive Geography + Editorial Motion + Premium Product Design**
+
+It should become one of OFFBEAT's signature visual moments.
+
+This interaction should communicate that **the map is not merely displaying geography — it is the gateway into discovery.**
+
+---
+
+### Motion Principles
+
+The animation should feel:
+
+* Smooth
+* Cinematic
+* Physical
+* Responsive
+* Premium
+* Fast enough to remain interactive
+* Dramatic enough to be memorable
+
+Avoid:
+
+* Generic map zoom
+* Simple fade-in
+* Basic hover effects
+* Excessive bouncing
+* Slow cinematic transitions that interrupt exploration
+* Overly flashy 3D effects that reduce usability
+
+The motion should have a clear sequence:
+
+**SELECT → RISE → FOCUS → REVEAL → EXPLORE**
+
+---
+
+### Interaction States
+
+The region should support the following states:
+
+| State         | Behaviour                                    |
+| ------------- | -------------------------------------------- |
+| **Idle**      | Country displayed normally                   |
+| **Hover**     | Region subtly highlights                     |
+| **Pressed**   | Immediate visual response                    |
+| **Rising**    | Region separates/elevates from map           |
+| **Focused**   | Camera centers and zooms toward region       |
+| **Active**    | Region remains visually elevated/highlighted |
+| **Exploring** | Discovery information and controls appear    |
+| **Back**      | Region smoothly returns to country context   |
+
+---
+
+### Example Experience
+
+User lands on OFFBEAT.
+
+**“LET'S DISCOVER WHERE YOU SHOULD GO.”**
+
+The country map appears.
+
+The user moves toward **West Bengal**.
+
+West Bengal subtly responds.
+
+The user clicks.
+
+**West Bengal rises from the map.**
+
+The camera gently moves closer.
+
+The surrounding Indian map recedes.
+
+A contextual panel appears:
+
+> **WEST BENGAL**
+> Mountains. History. Beaches. Culture. Food.
+> **What kind of West Bengal are you looking for?**
+
+The user then selects:
+
+**TRAVEL TASTE → MOUNTAINS**
+
+followed by:
+
+**EXPERIENCE TASTE → SUNRISE / PHOTOGRAPHY / PEACEFUL**
+
+OFFBEAT then begins discovering places.
+
+---
+
+### Technical UX Requirement
+
+The implementation should preferably use a map/rendering system capable of producing this depth and interaction rather than relying exclusively on a static SVG image.
+
+The architecture should allow:
+
+* Region-level selection
+* Region geometry
+* Hover detection
+* Click detection
+* Camera transitions
+* Region highlighting
+* Elevation/depth effects
+* Animated transitions
+* Responsive interaction
+* Reduced-motion fallback
+
+The exact rendering technology will be finalized during the frontend architecture and implementation phase.
+
+---
+
+### Accessibility / Reduced Motion
+
+For users who have enabled reduced motion:
+
+* Disable dramatic elevation animation.
+* Use a simpler highlight + focus transition.
+* Preserve all geographic and discovery functionality.
+* Never make the animation necessary to understand which region is selected.
+
+---
+
+### Design Principle
+
+> **THE MAP SHOULD FEEL ALIVE.**
+
+OFFBEAT's geographic exploration should be one of the application's defining experiences.
+
+The user should feel that they are **physically diving into a place**, rather than navigating a conventional travel website.
+
+
 # 9. LANDING PAGE STRUCTURE
 
 ```text
