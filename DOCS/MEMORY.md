@@ -271,10 +271,10 @@ User dislikes mountains.
 
 Memory should be based on:
 
-* Explicit input
-* Repeated behavior
-* Strong evidence
-* Clear context
+- Explicit input
+- Repeated behavior
+- Strong evidence
+- Clear context
 
 ---
 
@@ -459,13 +459,13 @@ Examples:
 
 The system should preserve:
 
-* Who submitted it
-* When it was submitted
-* Supporting evidence
-* Community agreement
-* Contradictions
-* Verification
-* Confidence
+- Who submitted it
+- When it was submitted
+- Supporting evidence
+- Community agreement
+- Contradictions
+- Verification
+- Confidence
 
 ---
 
@@ -713,19 +713,19 @@ This prevents unnecessary exposure of unrelated information.
 
 Gemini may:
 
-* Interpret memory
-* Identify patterns
-* Suggest potential memory updates
-* Explain relationships
-* Resolve contextual conflicts
+- Interpret memory
+- Identify patterns
+- Suggest potential memory updates
+- Explain relationships
+- Resolve contextual conflicts
 
 Gemini must not independently:
 
-* Create permanent memory
-* Delete permanent memory
-* Override explicit user preferences
-* Change confidence without backend validation
-* Invent user preferences
+- Create permanent memory
+- Delete permanent memory
+- Override explicit user preferences
+- Change confidence without backend validation
+- Invent user preferences
 
 The backend remains authoritative.
 
@@ -857,11 +857,11 @@ Users should have meaningful control over personalization.
 
 Where appropriate, the product should allow users to:
 
-* View important remembered preferences
-* Correct incorrect preferences
-* Remove saved places
-* Reset personalization
-* Understand why a recommendation was personalized
+- View important remembered preferences
+- Correct incorrect preferences
+- Remove saved places
+- Reset personalization
+- Understand why a recommendation was personalized
 
 The exact UI will be defined during implementation.
 

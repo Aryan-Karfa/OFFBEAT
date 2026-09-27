@@ -14,21 +14,21 @@ The OFFBEAT database is the persistent knowledge and application-data layer of t
 
 It stores:
 
-* Users
-* Travel preferences
-* Destinations and geographic regions
-* Places and categories
-* Community discoveries
-* Evidence and verification
-* Confidence signals
-* Crowd observations
-* Time observations
-* Itineraries
-* TAKE HOME discoveries
-* Saved places
-* Recommendations
-* External data references
-* Memory-related information
+- Users
+- Travel preferences
+- Destinations and geographic regions
+- Places and categories
+- Community discoveries
+- Evidence and verification
+- Confidence signals
+- Crowd observations
+- Time observations
+- Itineraries
+- TAKE HOME discoveries
+- Saved places
+- Recommendations
+- External data references
+- Memory-related information
 
 The database must support both:
 
@@ -78,11 +78,11 @@ These observations should remain independently traceable.
 
 The database should distinguish between:
 
-* External facts
-* Community observations
-* Verification results
-* Derived intelligence
-* AI interpretations
+- External facts
+- Community observations
+- Verification results
+- Derived intelligence
+- AI interpretations
 
 ---
 
@@ -167,51 +167,51 @@ The initial OFFBEAT database consists of the following major domains.
 
 ## User Domain
 
-* User
-* Profile
-* TravelTaste
-* ExperienceTaste
-* UserTravelTaste
-* UserExperienceTaste
-* SavedPlace
+- User
+- Profile
+- TravelTaste
+- ExperienceTaste
+- UserTravelTaste
+- UserExperienceTaste
+- SavedPlace
 
 ## Geography / Place Domain
 
-* Country
-* Region
-* Destination
-* Place
-* PlaceCategory
-* PlaceCategoryRelation
+- Country
+- Region
+- Destination
+- Place
+- PlaceCategory
+- PlaceCategoryRelation
 
 ## Community Domain
 
-* CommunitySubmission
-* SubmissionEvidence
-* SubmissionSupport
-* SubmissionReport
+- CommunitySubmission
+- SubmissionEvidence
+- SubmissionSupport
+- SubmissionReport
 
 ## Intelligence Domain
 
-* VerificationRecord
-* ConfidenceRecord
-* CrowdObservation
-* TimeObservation
-* Recommendation
+- VerificationRecord
+- ConfidenceRecord
+- CrowdObservation
+- TimeObservation
+- Recommendation
 
 ## Planning Domain
 
-* Itinerary
-* ItineraryItem
+- Itinerary
+- ItineraryItem
 
 ## TAKE HOME Domain
 
-* TakeHomeItem
+- TakeHomeItem
 
 ## External Intelligence Domain
 
-* ExternalPlaceReference
-* SearchCache
+- ExternalPlaceReference
+- SearchCache
 
 ---
 
@@ -234,12 +234,12 @@ User
 
 ### Responsibilities
 
-* Authentication identity
-* Ownership of user-created content
-* Community contribution attribution
-* Saved places
-* Itineraries
-* Preference association
+- Authentication identity
+- Ownership of user-created content
+- Community contribution attribution
+- Saved places
+- Itineraries
+- Preference association
 
 ---
 
@@ -388,10 +388,10 @@ Country
 
 A Region represents a selectable geographic administrative area such as:
 
-* State
-* Union Territory
-* Province
-* Equivalent administrative region
+- State
+- Union Territory
+- Province
+- Equivalent administrative region
 
 ```text
 Region
@@ -1159,13 +1159,13 @@ Where practical, the implementation should use:
 
 for:
 
-* Radius searches
-* Nearby places
-* Geographic boundaries
-* Region geometry
-* Distance calculations
-* Map discovery
-* Alternative discovery
+- Radius searches
+- Nearby places
+- Geographic boundaries
+- Region geometry
+- Distance calculations
+- Map discovery
+- Alternative discovery
 
 This is particularly important for:
 
@@ -1179,13 +1179,13 @@ Prisma should represent the relational domain model while PostgreSQL remains the
 
 The implementation should prioritize:
 
-* Strong typing
-* Foreign-key integrity
-* Unique constraints
-* Enum consistency
-* Transaction boundaries
-* Indexed query paths
-* Migration history
+- Strong typing
+- Foreign-key integrity
+- Unique constraints
+- Enum consistency
+- Transaction boundaries
+- Indexed query paths
+- Migration history
 
 The exact Prisma schema should be generated only after the final entity relationships and API contracts are locked.
 

@@ -4,14 +4,14 @@ The OFFBEAT backend is not designed as a simple CRUD server.
 
 It acts as the **intelligence and orchestration layer** between:
 
-* The traveler
-* External travel data
-* OFFBEAT's community knowledge
-* Evidence and verification systems
-* AI reasoning
-* Recommendation logic
-* Itinerary generation
-* TAKE HOME discovery
+- The traveler
+- External travel data
+- OFFBEAT's community knowledge
+- Evidence and verification systems
+- AI reasoning
+- Recommendation logic
+- Itinerary generation
+- TAKE HOME discovery
 
 The backend must transform fragmented travel information into **context-aware, evidence-backed discovery**.
 
@@ -150,13 +150,13 @@ VERIFY_DISCOVERY
 
 The Intent Engine combines:
 
-* Explicit user selections
-* Current screen
-* User action
-* Travel Taste
-* Experience Taste
-* Time context
-* Destination context
+- Explicit user selections
+- Current screen
+- User action
+- Travel Taste
+- Experience Taste
+- Time context
+- Destination context
 
 ### Example
 
@@ -300,13 +300,13 @@ Place
 
 Normalization should also support:
 
-* Duplicate detection
-* Entity matching
-* Geographic matching
-* Category normalization
-* Opening-hour normalization
-* Review normalization
-* Source attribution
+- Duplicate detection
+- Entity matching
+- Geographic matching
+- Category normalization
+- Opening-hour normalization
+- Review normalization
+- Source attribution
 
 ---
 
@@ -320,18 +320,18 @@ It is a **knowledge layer**.
 
 Community submissions can describe:
 
-* Hidden places
-* Local businesses
-* Restaurants
-* Best timings
-* Photography spots
-* Crowd patterns
-* Local specialties
-* Travel tips
-* Alternative experiences
-* TAKE HOME discoveries
-* Local experiences
-* Personal observations
+- Hidden places
+- Local businesses
+- Restaurants
+- Best timings
+- Photography spots
+- Crowd patterns
+- Local specialties
+- Travel tips
+- Alternative experiences
+- TAKE HOME discoveries
+- Local experiences
+- Personal observations
 
 ### Flow
 
@@ -389,14 +389,14 @@ CONFIDENCE UPDATE
 
 Gemini can help interpret:
 
-* Description
-* Supporting submissions
-* Photos
-* Reviews
-* External corroboration
-* Geographic relationships
-* Contradictions
-* Repeated observations
+- Description
+- Supporting submissions
+- Photos
+- Reviews
+- External corroboration
+- Geographic relationships
+- Contradictions
+- Repeated observations
 
 But Gemini does **not** become the unquestioned source of truth.
 
@@ -630,9 +630,9 @@ Result:
 
 The system must distinguish:
 
-* **Verified operating information**
-* **Community recommendation**
-* **AI interpretation**
+- **Verified operating information**
+- **Community recommendation**
+- **AI interpretation**
 
 ---
 
@@ -644,16 +644,16 @@ The **AI Orchestrator** controls when and how AI reasoning occurs.
 
 ### Responsibilities
 
-* Prepare structured context
-* Select relevant evidence
-* Remove irrelevant information
-* Resolve contextual interpretation
-* Interpret conflicts
-* Generate recommendation reasoning
-* Generate alternatives
-* Explain confidence
-* Produce structured output
-* Validate AI output
+- Prepare structured context
+- Select relevant evidence
+- Remove irrelevant information
+- Resolve contextual interpretation
+- Interpret conflicts
+- Generate recommendation reasoning
+- Generate alternatives
+- Explain confidence
+- Produce structured output
+- Validate AI output
 
 ### Flow
 
@@ -1008,11 +1008,11 @@ The backend should follow:
 
 No service should independently invent its own interpretation of:
 
-* Place
-* Crowd
-* Time
-* Confidence
-* Community evidence
+- Place
+- Crowd
+- Time
+- Confidence
+- Community evidence
 
 These should come from shared domain services.
 

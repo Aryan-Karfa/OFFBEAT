@@ -17,17 +17,17 @@
 
 OFFBEAT is a travel discovery system that combines:
 
-* User preferences
-* Travel Taste
-* Experience Taste
-* Geographic discovery
-* External travel/place data
-* Community-generated travel intelligence
-* Confidence and verification signals
-* AI reasoning
-* Context-aware recommendations
-* Itinerary construction
-* TAKE HOME discoveries
+- User preferences
+- Travel Taste
+- Experience Taste
+- Geographic discovery
+- External travel/place data
+- Community-generated travel intelligence
+- Confidence and verification signals
+- AI reasoning
+- Context-aware recommendations
+- Itinerary construction
+- TAKE HOME discoveries
 
 The system is designed around the principle:
 
@@ -83,17 +83,17 @@ The primary system actor.
 
 Can:
 
-* Discover destinations
-* Select Travel Taste
-* Select Experience Taste
-* Explore places
-* View recommendations
-* View community information
-* View confidence
-* Find alternatives
-* Build itineraries
-* View TAKE HOME
-* Submit discoveries
+- Discover destinations
+- Select Travel Taste
+- Select Experience Taste
+- Explore places
+- View recommendations
+- View community information
+- View confidence
+- Find alternatives
+- Build itineraries
+- View TAKE HOME
+- Submit discoveries
 
 ---
 
@@ -103,15 +103,15 @@ A traveler who contributes information to the community.
 
 Can submit:
 
-* Hidden places
-* Timing tips
-* Photography spots
-* Local businesses
-* Reviews
-* Local specialties
-* Experiences
-* Crowd tips
-* Travel tips
+- Hidden places
+- Timing tips
+- Photography spots
+- Local businesses
+- Reviews
+- Local specialties
+- Experiences
+- Crowd tips
+- Travel tips
 
 A contributor may also support or report community submissions.
 
@@ -123,12 +123,12 @@ Responsible for platform management.
 
 Can:
 
-* Moderate submissions
-* Review reported content
-* Manage categories
-* Manage verification
-* Manage system configuration
-* Review system activity
+- Moderate submissions
+- Review reported content
+- Manage categories
+- Manage verification
+- Manage system configuration
+- Review system activity
 
 ---
 
@@ -138,14 +138,14 @@ External data provider.
 
 Provides:
 
-* Places
-* Local businesses
-* Reviews
-* Ratings
-* Opening information
-* Geographic information
-* Search results
-* Related place information
+- Places
+- Local businesses
+- Reviews
+- Ratings
+- Opening information
+- Geographic information
+- Search results
+- Related place information
 
 ---
 
@@ -155,12 +155,12 @@ AI reasoning actor/service.
 
 Responsible for:
 
-* Intent interpretation
-* Recommendation synthesis
-* Community interpretation
-* Alternative generation
-* Itinerary reasoning
-* TAKE HOME reasoning
+- Intent interpretation
+- Recommendation synthesis
+- Community interpretation
+- Alternative generation
+- Itinerary reasoning
+- TAKE HOME reasoning
 
 ---
 
@@ -377,10 +377,10 @@ Available Experiences
 
 The system may also display:
 
-* Featured destinations
-* Popular places
-* Community discoveries
-* Regional highlights
+- Featured destinations
+- Popular places
+- Community discoveries
+- Regional highlights
 
 ---
 
@@ -455,11 +455,11 @@ This selection modifies discovery context.
 
 The system should consider:
 
-* Opening hours
-* Operating hours
-* Experience availability
-* Community recommendations
-* Night/day-specific experiences
+- Opening hours
+- Operating hours
+- Experience availability
+- Community recommendations
+- Night/day-specific experiences
 
 Day/Night must not be treated as a generic quality ranking.
 
@@ -475,14 +475,8 @@ Example:
 {
   "country": "India",
   "region": "West Bengal",
-  "travelTaste": [
-    "mountains"
-  ],
-  "experienceTaste": [
-    "photography",
-    "sunrise",
-    "less_crowded"
-  ],
+  "travelTaste": ["mountains"],
+  "experienceTaste": ["photography", "sunrise", "less_crowded"],
   "timeContext": "day"
 }
 ```
@@ -862,9 +856,9 @@ and has community-supported sunrise experiences.
 
 The explanation should distinguish:
 
-* External facts
-* Community observations
-* AI interpretation
+- External facts
+- Community observations
+- AI interpretation
 
 ---
 
@@ -919,13 +913,13 @@ Gemini responses must be validated before being used.
 
 Validation must check:
 
-* Required fields
-* Data types
-* Place identifiers
-* Time formats
-* Recommendation structure
-* Unsupported claims
-* Invalid references
+- Required fields
+- Data types
+- Place identifiers
+- Time formats
+- Recommendation structure
+- Unsupported claims
+- Invalid references
 
 Invalid AI output must not directly reach the frontend.
 
@@ -1026,13 +1020,13 @@ Ordered Itinerary
 
 Before saving an itinerary, the system should check:
 
-* Place availability
-* Opening hours
-* Time conflicts
-* Duplicate locations
-* Impossible travel transitions
-* Invalid dates
-* Invalid time windows
+- Place availability
+- Opening hours
+- Time conflicts
+- Duplicate locations
+- Impossible travel transitions
+- Invalid dates
+- Invalid time windows
 
 ---
 
@@ -1111,14 +1105,14 @@ COMMUNITY DISCOVERY
 
 The system should validate:
 
-* Submission type
-* Title
-* Description
-* Place association
-* Location if required
-* Media format
-* Content length
-* Required fields
+- Submission type
+- Title
+- Description
+- Place association
+- Location if required
+- Media format
+- Content length
+- Required fields
 
 The system should reject malformed submissions before database storage.
 
@@ -1194,20 +1188,20 @@ Owned and maintained by external providers.
 
 Examples:
 
-* Place metadata
-* External reviews
-* Opening information
+- Place metadata
+- External reviews
+- Opening information
 
 ## OFFBEAT Data
 
 Owned by OFFBEAT:
 
-* Community submissions
-* Confidence
-* Verification states
-* Itineraries
-* User preferences
-* Saved places
+- Community submissions
+- Confidence
+- Verification states
+- Itineraries
+- User preferences
+- Saved places
 
 ## AI Output
 
@@ -1391,10 +1385,10 @@ Backend
 
 The frontend must never receive:
 
-* SerpApi API key
-* Gemini API key
-* Database credentials
-* JWT signing secret
+- SerpApi API key
+- Gemini API key
+- Database credentials
+- JWT signing secret
 
 ---
 
@@ -1452,12 +1446,12 @@ Permissions must be enforced server-side.
 
 Rate limiting is required for:
 
-* Discovery endpoints
-* Community submissions
-* Support/upvote actions
-* Reports
-* AI endpoints
-* External API requests
+- Discovery endpoints
+- Community submissions
+- Support/upvote actions
+- Reports
+- AI endpoints
+- External API requests
 
 AI and external API endpoints should receive stricter controls.
 
@@ -1501,11 +1495,11 @@ Render map
 
 Frontend must not contain:
 
-* SerpApi secrets
-* Gemini secrets
-* Core recommendation logic
-* Confidence calculation logic
-* Verification logic
+- SerpApi secrets
+- Gemini secrets
+- Core recommendation logic
+- Confidence calculation logic
+- Verification logic
 
 ---
 
@@ -1664,25 +1658,25 @@ Target behavior:
 
 ### Frontend
 
-* Fast initial load
-* Lazy-load heavy components
-* Optimize map rendering
-* Optimize images
-* Avoid unnecessary re-renders
+- Fast initial load
+- Lazy-load heavy components
+- Optimize map rendering
+- Optimize images
+- Avoid unnecessary re-renders
 
 ### Backend
 
-* Cache external calls
-* Parallelize independent requests
-* Apply timeouts
-* Use database indexes
-* Avoid duplicate external calls
+- Cache external calls
+- Parallelize independent requests
+- Apply timeouts
+- Use database indexes
+- Avoid duplicate external calls
 
 ### AI
 
-* Call Gemini only when reasoning is required
-* Reuse valid cached results where appropriate
-* Limit context size to relevant information
+- Call Gemini only when reasoning is required
+- Reuse valid cached results where appropriate
+- Limit context size to relevant information
 
 ---
 
@@ -1904,23 +1898,23 @@ Advanced social functionality should not compromise the core discovery experienc
 
 The architecture should support future:
 
-* Mobile application
-* User profiles
-* Following
-* Social feeds
-* Traveler reputation
-* Contributor levels
-* Advanced crowd prediction
-* Real-time events
-* Weather integration
-* Transport intelligence
-* Flight intelligence
-* Hotel intelligence
-* Collaborative itineraries
-* Offline travel mode
-* Personalized long-term Travel Taste
-* Community moderation automation
-* Advanced recommendation models
+- Mobile application
+- User profiles
+- Following
+- Social feeds
+- Traveler reputation
+- Contributor levels
+- Advanced crowd prediction
+- Real-time events
+- Weather integration
+- Transport intelligence
+- Flight intelligence
+- Hotel intelligence
+- Collaborative itineraries
+- Offline travel mode
+- Personalized long-term Travel Taste
+- Community moderation automation
+- Advanced recommendation models
 
 These are outside the baseline MVP system.
 
@@ -1932,50 +1926,50 @@ The system will be considered functionally complete for the baseline when:
 
 ### Discovery
 
-* User can select a country.
-* User can explore a region.
-* User can select Travel Taste.
-* User can select Experience Taste where applicable.
-* User can select Day/Night.
+- User can select a country.
+- User can explore a region.
+- User can select Travel Taste.
+- User can select Experience Taste where applicable.
+- User can select Day/Night.
 
 ### Intelligence
 
-* System retrieves relevant external data.
-* System retrieves relevant community data.
-* System evaluates confidence.
-* System produces contextual recommendations.
-* System can explain recommendations.
+- System retrieves relevant external data.
+- System retrieves relevant community data.
+- System evaluates confidence.
+- System produces contextual recommendations.
+- System can explain recommendations.
 
 ### Time
 
-* System respects operating/opening information.
-* System can incorporate community timing recommendations.
+- System respects operating/opening information.
+- System can incorporate community timing recommendations.
 
 ### Alternatives
 
-* System supports Find an Alternative.
-* System distinguishes replacement from enhancement.
+- System supports Find an Alternative.
+- System distinguishes replacement from enhancement.
 
 ### Planning
 
-* User can add places to an itinerary.
-* System validates basic timing conflicts.
-* User can view itinerary structure.
+- User can add places to an itinerary.
+- System validates basic timing conflicts.
+- User can view itinerary structure.
 
 ### TAKE HOME
 
-* System can surface destination-specific local discoveries.
+- System can surface destination-specific local discoveries.
 
 ### Community
 
-* User can submit a travel discovery.
-* Submission enters the verification/moderation pipeline.
+- User can submit a travel discovery.
+- Submission enters the verification/moderation pipeline.
 
 ### Reliability
 
-* API failures are handled gracefully.
-* AI failures do not completely break discovery.
-* External API keys remain private.
+- API failures are handled gracefully.
+- AI failures do not completely break discovery.
+- External API keys remain private.
 
 ---
 

@@ -18,27 +18,27 @@ The OFFBEAT API is the communication contract between the frontend application a
 
 It exposes product-level capabilities for:
 
-* Geographic discovery
-* Travel Taste
-* Experience Taste
-* Place discovery
-* Community intelligence
-* Recommendations
-* Alternatives
-* Itinerary management
-* TAKE HOME
-* Saved places
-* User profile and preferences
+- Geographic discovery
+- Travel Taste
+- Experience Taste
+- Place discovery
+- Community intelligence
+- Recommendations
+- Alternatives
+- Itinerary management
+- TAKE HOME
+- Saved places
+- User profile and preferences
 
 The API hides internal implementation details such as:
 
-* SerpApi
-* Gemini
-* Confidence calculations
-* Community aggregation
-* Ranking logic
-* Caching
-* Internal intelligence services
+- SerpApi
+- Gemini
+- Confidence calculations
+- Community aggregation
+- Ranking logic
+- Caching
+- Internal intelligence services
 
 The frontend should never need to know how OFFBEAT generated a recommendation.
 
@@ -342,15 +342,8 @@ Stores or updates the user's preferences.
 
 ```json
 {
-  "travelTasteIds": [
-    "mountains",
-    "photography"
-  ],
-  "experienceTasteIds": [
-    "sunrise",
-    "peaceful",
-    "nature"
-  ]
+  "travelTasteIds": ["mountains", "photography"],
+  "experienceTasteIds": ["sunrise", "peaceful", "nature"]
 }
 ```
 
@@ -414,13 +407,7 @@ Returns region information.
     "name": "West Bengal",
     "type": "STATE",
     "description": "...",
-    "categories": [
-      "Mountains",
-      "Beaches",
-      "History",
-      "Culture",
-      "Food"
-    ]
+    "categories": ["Mountains", "Beaches", "History", "Culture", "Food"]
   }
 }
 ```
@@ -448,11 +435,7 @@ Returns detailed information about a place.
     "id": "place_tiger_hill",
     "name": "Tiger Hill",
     "destination": "Darjeeling",
-    "categories": [
-      "Mountain",
-      "Sunrise",
-      "Photography"
-    ],
+    "categories": ["Mountain", "Sunrise", "Photography"],
     "location": {
       "lat": 27.012,
       "lng": 88.261
@@ -481,14 +464,8 @@ It should be the main entry point for contextual discovery.
 ```json
 {
   "regionId": "reg_wb",
-  "travelTaste": [
-    "mountains"
-  ],
-  "experienceTaste": [
-    "sunrise",
-    "photography",
-    "peaceful"
-  ],
+  "travelTaste": ["mountains"],
+  "experienceTaste": ["sunrise", "photography", "peaceful"],
   "dayNight": "DAY",
   "preferredTime": "EARLY_MORNING",
   "intent": "DISCOVER_PLACES"
@@ -534,11 +511,7 @@ Response
     "context": {
       "region": "West Bengal",
       "travelTaste": ["Mountains"],
-      "experienceTaste": [
-        "Sunrise",
-        "Photography",
-        "Peaceful"
-      ]
+      "experienceTaste": ["Sunrise", "Photography", "Peaceful"]
     },
     "recommendations": [
       {
@@ -716,13 +689,13 @@ limit
 
 Returns a specific submission including:
 
-* Content
-* Author
-* Evidence
-* Support
-* Verification state
-* Confidence
-* Reports where appropriate
+- Content
+- Author
+- Evidence
+- Support
+- Verification state
+- Confidence
+- Reports where appropriate
 
 ---
 
@@ -800,10 +773,10 @@ However, a dedicated endpoint can be exposed where the frontend needs focused ti
 
 Returns:
 
-* Operating hours
-* Community-recommended times
-* Best experience windows
-* Relevant crowd timing
+- Operating hours
+- Community-recommended times
+- Best experience windows
+- Relevant crowd timing
 
 ### Example Response
 
@@ -1037,13 +1010,13 @@ Database directly
 
 This protects:
 
-* API keys
-* Business logic
-* Query construction
-* AI prompts
-* Ranking logic
-* Confidence logic
-* External API quotas
+- API keys
+- Business logic
+- Query construction
+- AI prompts
+- Ranking logic
+- Confidence logic
+- External API quotas
 
 ---
 
@@ -1061,10 +1034,7 @@ Conceptually:
       "placeId": "place_123",
       "reason": "...",
       "bestTime": "...",
-      "experienceMatch": [
-        "sunrise",
-        "photography"
-      ]
+      "experienceMatch": ["sunrise", "photography"]
     }
   ],
   "warnings": [],
@@ -1076,12 +1046,12 @@ The backend validates this output before using it.
 
 Gemini must never directly determine:
 
-* Database IDs
-* Authorization
-* User permissions
-* Final database state
-* Unvalidated external URLs
-* Security decisions
+- Database IDs
+- Authorization
+- User permissions
+- Final database state
+- Unvalidated external URLs
+- Security decisions
 
 ---
 
@@ -1162,9 +1132,9 @@ Use user-level rate limits.
 
 Use stricter limits for:
 
-* Submissions
-* Reports
-* Support actions
+- Submissions
+- Reports
+- Support actions
 
 ### AI / External APIs
 
@@ -1176,12 +1146,12 @@ Apply backend-level protection to prevent unnecessary Gemini and SerpApi consump
 
 The backend may cache:
 
-* Geographic data
-* Place information
-* External search results
-* Opening information
-* Frequently requested discovery context
-* TAKE HOME information
+- Geographic data
+- Place information
+- External search results
+- Opening information
+- Frequently requested discovery context
+- TAKE HOME information
 
 However:
 
@@ -1195,17 +1165,17 @@ Cache invalidation should consider data freshness.
 
 The API must enforce:
 
-* Authentication where required
-* Authorization
-* Input validation
-* Rate limiting
-* Request IDs
-* Server-side API keys
-* Safe error messages
-* Payload size limits
-* CORS restrictions
-* Secure password hashing
-* Token validation
+- Authentication where required
+- Authorization
+- Input validation
+- Rate limiting
+- Request IDs
+- Server-side API keys
+- Safe error messages
+- Payload size limits
+- CORS restrictions
+- Secure password hashing
+- Token validation
 
 ---
 

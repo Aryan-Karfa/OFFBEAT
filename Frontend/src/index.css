@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-dark: #0b0d0e;
+    --surface: #15191b;
+    --surface-elevated: #202528;
+    --border-color: #262c30;
+    --text-primary: #f5f2ea;
+    --text-secondary: #a9afb1;
+    --accent-gold: #e5a93c;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family:
+      "Plus Jakarta Sans",
+      system-ui,
+      -apple-system,
+      sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Accessibility focus visible rings */
+  :focus-visible {
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 2px;
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 20px rgba(229, 169, 60, 0.4);
+  }
+
+  .border-glass {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}

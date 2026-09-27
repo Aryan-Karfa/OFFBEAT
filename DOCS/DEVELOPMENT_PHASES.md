@@ -41,19 +41,19 @@ Establish the complete engineering foundation for OFFBEAT.
 
 ### Work
 
-* Monorepo setup
-* `Frontend/`
-* `Backend/`
-* `packages/`
-* `prisma/`
-* `docs/`
-* pnpm workspace
-* TypeScript configuration
-* Environment configuration
-* Git/GitHub setup
-* Development scripts
-* Linting and formatting
-* Base README
+- Monorepo setup
+- `Frontend/`
+- `Backend/`
+- `packages/`
+- `prisma/`
+- `docs/`
+- pnpm workspace
+- TypeScript configuration
+- Environment configuration
+- Git/GitHub setup
+- Development scripts
+- Linting and formatting
+- Base README
 
 ### Output
 
@@ -69,19 +69,19 @@ Establish the actual OFFBEAT visual and interaction foundation.
 
 ### Work
 
-* React + Vite
-* Tailwind CSS
-* React Router
-* Global design system
-* Typography
-* Colors
-* UI primitives
-* Layout system
-* Animation foundation
-* Responsive structure
-* Accessibility foundation
-* Landing page
-* Initial navigation
+- React + Vite
+- Tailwind CSS
+- React Router
+- Global design system
+- Typography
+- Colors
+- UI primitives
+- Layout system
+- Animation foundation
+- Responsive structure
+- Accessibility foundation
+- Landing page
+- Initial navigation
 
 ### Initial Journey
 
@@ -107,17 +107,17 @@ Build OFFBEAT's signature geographic interaction.
 
 ### Work
 
-* Country selection
-* Interactive map
-* State / UT selection
-* Hover states
-* Pressed states
-* Active states
-* Region rise/pop animation
-* Camera focus
-* Region information reveal
-* Region → Destination relationship
-* Reduced-motion behavior
+- Country selection
+- Interactive map
+- State / UT selection
+- Hover states
+- Pressed states
+- Active states
+- Region rise/pop animation
+- Camera focus
+- Region information reveal
+- Region → Destination relationship
+- Reduced-motion behavior
 
 ### Signature Interaction
 
@@ -151,14 +151,14 @@ Teach OFFBEAT what the traveler actually wants to experience.
 
 ### Work
 
-* Travel Taste
-* Experience Taste
-* Taste refinement
-* Preference state
-* Zustand stores
-* Preference persistence
-* Discovery context
-* Day / Night selection
+- Travel Taste
+- Experience Taste
+- Taste refinement
+- Preference state
+- Zustand stores
+- Preference persistence
+- Discovery context
+- Day / Night selection
 
 ### Example
 
@@ -186,21 +186,21 @@ Build the production-style backend foundation.
 
 ### Work
 
-* Node.js + Express
-* TypeScript
-* Environment validation
-* Request IDs
-* Structured logging
-* Error handling
-* Zod validation
-* API response envelope
-* Middleware
-* PostgreSQL
-* Prisma
-* Database connection
-* Initial migrations
-* Seed system
-* Base API architecture
+- Node.js + Express
+- TypeScript
+- Environment validation
+- Request IDs
+- Structured logging
+- Error handling
+- Zod validation
+- API response envelope
+- Middleware
+- PostgreSQL
+- Prisma
+- Database connection
+- Initial migrations
+- Seed system
+- Base API architecture
 
 ### Output
 
@@ -216,15 +216,15 @@ Create OFFBEAT's internal geographic and place knowledge model.
 
 ### Work
 
-* Country
-* Region
-* Destination
-* Place
-* Place Categories
-* Geographic relationships
-* Place APIs
-* Internal place contracts
-* Database relationships
+- Country
+- Region
+- Destination
+- Place
+- Place Categories
+- Geographic relationships
+- Place APIs
+- Internal place contracts
+- Database relationships
 
 ### Hierarchy
 
@@ -270,15 +270,15 @@ OFFBEAT Internal Data
 
 ### Work
 
-* SerpApi client
-* API adapters
-* Query generation
-* External place references
-* Response normalization
-* Caching
-* Rate-limit handling
-* Error handling
-* Graceful degradation
+- SerpApi client
+- API adapters
+- Query generation
+- External place references
+- Response normalization
+- Caching
+- Rate-limit handling
+- Error handling
+- Graceful degradation
 
 ### Output
 
@@ -326,15 +326,15 @@ Real Places
 
 ### Work
 
-* Discovery API
-* Intent Engine
-* Query generation
-* Place retrieval
-* Normalization
-* Discovery context
-* Recommendation foundation
-* Discovery cards
-* Place details
+- Discovery API
+- Intent Engine
+- Query generation
+- Place retrieval
+- Normalization
+- Discovery context
+- Recommendation foundation
+- Discovery cards
+- Place details
 
 ### Output
 
@@ -350,18 +350,18 @@ Allow OFFBEAT to learn things that conventional external APIs may not know.
 
 ### Work
 
-* Community submissions
-* Hidden places
-* Local tips
-* Best times
-* Photography spots
-* Local businesses
-* Food discoveries
-* Travel tips
-* Crowd observations
-* Community support
-* Community reports
-* Community discovery UI
+- Community submissions
+- Hidden places
+- Local tips
+- Best times
+- Photography spots
+- Local businesses
+- Food discoveries
+- Travel tips
+- Crowd observations
+- Community support
+- Community reports
+- Community discovery UI
 
 ### Flow
 
@@ -421,13 +421,13 @@ FLAGGED / REJECTED
 
 ### Work
 
-* Evidence collection
-* Community support
-* Reports
-* Verification records
-* Confidence calculation
-* Confidence history
-* Verification status
+- Evidence collection
+- Community support
+- Reports
+- Verification records
+- Confidence calculation
+- Confidence history
+- Verification status
 
 ### Core Principle
 
@@ -475,13 +475,13 @@ Crowd Context
 
 ### Work
 
-* Opening/operating information
-* Community timing observations
-* Best-time intelligence
-* Destination-level crowd signals
-* Place-level crowd signals
-* Time-level crowd signals
-* Crowd contextualization
+- Opening/operating information
+- Community timing observations
+- Best-time intelligence
+- Destination-level crowd signals
+- Place-level crowd signals
+- Time-level crowd signals
+- Crowd contextualization
 
 ### Output
 
@@ -519,16 +519,16 @@ OFFBEAT Recommendation
 
 ### Gemini Responsibilities
 
-* Intent interpretation
-* Recommendation reasoning
-* Travel Taste interpretation
-* Experience Taste interpretation
-* Community conflict interpretation
-* Contextual explanations
-* Taste matching
-* Alternative reasoning
-* Itinerary reasoning
-* Relationship discovery
+- Intent interpretation
+- Recommendation reasoning
+- Travel Taste interpretation
+- Experience Taste interpretation
+- Community conflict interpretation
+- Contextual explanations
+- Taste matching
+- Alternative reasoning
+- Itinerary reasoning
+- Relationship discovery
 
 ### Important Rule
 
@@ -536,12 +536,12 @@ OFFBEAT Recommendation
 
 Gemini must not directly control:
 
-* Database state
-* Authorization
-* User permissions
-* Internal IDs
-* Final database writes
-* Backend security decisions
+- Database state
+- Authorization
+- User permissions
+- Internal IDs
+- Final database writes
+- Backend security decisions
 
 ### Output
 
@@ -571,14 +571,14 @@ RESULTS
 
 ### Possible Alternative Contexts
 
-* Less crowded
-* Similar experience
-* Nearby
-* Better timing
-* Lower cost
-* Hidden discovery
-* Complementary experience
-* Must-visit enhancement
+- Less crowded
+- Similar experience
+- Nearby
+- Better timing
+- Lower cost
+- Hidden discovery
+- Complementary experience
+- Must-visit enhancement
 
 ### Important Behavior
 
@@ -632,16 +632,16 @@ Optimize
 
 ### Considerations
 
-* Opening hours
-* Time windows
-* Travel distance
-* Travel time
-* Crowd context
-* User preferences
-* Community timing
-* Day / Night
-* Conflicts
-* Ordering
+- Opening hours
+- Time windows
+- Travel distance
+- Travel time
+- Crowd context
+- User preferences
+- Community timing
+- Day / Night
+- Conflicts
+- Ordering
 
 ### Output
 
@@ -669,16 +669,16 @@ Where To Find Them
 
 ### Possible Categories
 
-* Food
-* Handicrafts
-* Clothing
-* Art
-* Local products
-* Cultural items
-* Regional specialties
-* Workshops
-* Experiences
-* Other meaningful local discoveries
+- Food
+- Handicrafts
+- Clothing
+- Art
+- Local products
+- Cultural items
+- Regional specialties
+- Workshops
+- Experiences
+- Other meaningful local discoveries
 
 ### Product Philosophy
 
@@ -716,15 +716,15 @@ Future Discovery
 
 ### Work
 
-* Explicit preferences
-* Discovery history
-* Saved places
-* Travel history
-* Preference memory
-* Relevant community interactions
-* Confidence and freshness
-* Memory decay
-* Personalization context
+- Explicit preferences
+- Discovery history
+- Saved places
+- Travel history
+- Preference memory
+- Relevant community interactions
+- Confidence and freshness
+- Memory decay
+- Personalization context
 
 ### Core Rule
 
@@ -744,25 +744,25 @@ Prepare OFFBEAT for reliable real-world use.
 
 ### Work
 
-* Unit testing
-* Integration testing
-* E2E testing
-* API validation
-* Security
-* Rate limiting
-* Caching
-* Error states
-* Loading states
-* Empty states
-* Failure states
-* Accessibility
-* Responsive testing
-* Performance optimization
-* Database optimization
-* AI failure handling
-* SerpApi failure handling
-* Observability
-* Production deployment
+- Unit testing
+- Integration testing
+- E2E testing
+- API validation
+- Security
+- Rate limiting
+- Caching
+- Error states
+- Loading states
+- Empty states
+- Failure states
+- Accessibility
+- Responsive testing
+- Performance optimization
+- Database optimization
+- AI failure handling
+- SerpApi failure handling
+- Observability
+- Production deployment
 
 ### Output
 

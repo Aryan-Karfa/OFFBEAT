@@ -1,0 +1,237 @@
+import type { Country, Region } from "../../types/geography";
+
+export const FEATURED_COUNTRIES: Country[] = [
+  {
+    id: "in",
+    name: "India",
+    code: "IND",
+    tagline: "28 States · 8 Union Territories · Countless Micro-cultures",
+    description:
+      "Explore beyond the golden triangle. Discover remote Himalayan villages, pristine coastal fishing towns, and ancient living traditions.",
+    regionsCount: 36,
+    communityDiscoveriesCount: 1420,
+    isAvailable: true,
+  },
+  {
+    id: "jp",
+    name: "Japan",
+    code: "JPN",
+    tagline: "47 Prefectures · Mountain Passes & Coastal Inlets",
+    description:
+      "From alpine craft hamlets in Gifu to secluded hot springs on the Shimokita peninsula.",
+    regionsCount: 47,
+    communityDiscoveriesCount: 890,
+    isAvailable: false,
+  },
+  {
+    id: "it",
+    name: "Italy",
+    code: "ITA",
+    tagline: "20 Distinct Regions · Regional Dialects & Culinary Roots",
+    description:
+      "Venture past Florence and Rome into the rugged interior of Basilicata and the quiet valleys of Friuli.",
+    regionsCount: 20,
+    communityDiscoveriesCount: 740,
+    isAvailable: false,
+  },
+  {
+    id: "pe",
+    name: "Peru",
+    code: "PER",
+    tagline: "25 Regions · Andean Cloud Forests & Coastal Valleys",
+    description:
+      "Discover pre-Inca ruins in Chachapoyas and highland community-led trails beyond Cusco.",
+    regionsCount: 25,
+    communityDiscoveriesCount: 410,
+    isAvailable: false,
+  },
+];
+
+export const INDIA_REGIONS: Region[] = [
+  {
+    id: "wb",
+    name: "West Bengal",
+    code: "WB",
+    zone: "East",
+    tagline: "Eastern India · Himalayas to the Bay of Bengal",
+    tags: ["Mountains", "Tea Estates", "Living Heritage", "Art & Literature", "Coastal Mangroves"],
+    discoveryCount: 148,
+    highlight:
+      "Darjeeling toy train morning curves, Bishnupur terracotta temples, and heritage tea bungalows.",
+    coordinates: { lat: 22.9868, lng: 87.855 },
+  },
+  {
+    id: "kl",
+    name: "Kerala",
+    code: "KL",
+    zone: "South",
+    tagline: "Malabar Coast · Western Ghats Biodiversity",
+    tags: ["Spice Routes", "Backwaters", "Monsoon Trails", "Forest Foraging", "Ayurvedic Heritage"],
+    discoveryCount: 182,
+    highlight:
+      "Wayanad mist trails, quiet canoe waterways off Kumarakom, and traditional Kalaripayattu kalari.",
+    coordinates: { lat: 10.8505, lng: 76.2711 },
+  },
+  {
+    id: "sk",
+    name: "Sikkim",
+    code: "SK",
+    zone: "Northeast",
+    tagline: "Himalayan Sanctuary · Sacred Glacial Lakes",
+    tags: ["Alpine Monasteries", "High Passes", "Organic Farming", "Trekking", "Orchids"],
+    discoveryCount: 94,
+    highlight:
+      "Dzongu Lepcha reserve, sunrise over Kangchenjunga from Pelling, and Yumthang valley wildflowers.",
+    coordinates: { lat: 27.533, lng: 88.5122 },
+  },
+  {
+    id: "rj",
+    name: "Rajasthan",
+    code: "RJ",
+    zone: "West",
+    tagline: "Thar Desert & Aravalli Ridges",
+    tags: ["Stepwells", "Starlit Dunes", "Desert Astronomy", "Folk Music", "Craft Guilds"],
+    discoveryCount: 165,
+    highlight:
+      "Chand Baori stepwell geometry, shepherd paths through Jawai granite hills, and Shekhawati painted havelis.",
+    coordinates: { lat: 27.0238, lng: 74.2179 },
+  },
+  {
+    id: "hp",
+    name: "Himachal Pradesh",
+    code: "HP",
+    zone: "North",
+    tagline: "Cedar Forests & Trans-Himalayan Valleys",
+    tags: [
+      "Apple Orchards",
+      "Spiti Silence",
+      "River Valleys",
+      "Wood Architecture",
+      "High Altitudes",
+    ],
+    discoveryCount: 139,
+    highlight:
+      "Tirthan valley trout streams, ancient kath-kuni wooden temples, and Pin Valley moonscapes.",
+    coordinates: { lat: 31.1048, lng: 77.1734 },
+  },
+  {
+    id: "ml",
+    name: "Meghalaya",
+    code: "ML",
+    zone: "Northeast",
+    tagline: "Abode of Clouds · Living Root Architecture",
+    tags: [
+      "Living Root Bridges",
+      "Limestone Caves",
+      "Sacred Groves",
+      "Rainforest Trekking",
+      "Cascades",
+    ],
+    discoveryCount: 88,
+    highlight:
+      "Nongriat bio-engineered bridges, Mawphlang ancient sacred forest, and crystal-clear Umngot waters.",
+    coordinates: { lat: 25.467, lng: 91.3662 },
+  },
+  {
+    id: "ga",
+    name: "Goa",
+    code: "GA",
+    zone: "West",
+    tagline: "Konkan Hinterland & Estuarine Islands",
+    tags: [
+      "Spice Plantations",
+      "Indo-Portuguese Architecture",
+      "Mangrove Kayaking",
+      "Feni Distilleries",
+      "Birding",
+    ],
+    discoveryCount: 112,
+    highlight:
+      "Divar and Chorão river islands, Netravali bubbling lake, and cashew-smoking wood stills.",
+    coordinates: { lat: 15.2993, lng: 74.124 },
+  },
+  {
+    id: "la",
+    name: "Ladakh",
+    code: "LA",
+    zone: "North",
+    tagline: "High-Altitude Plateau & Cold Desert",
+    tags: [
+      "Buddhist Monasteries",
+      "Dark Sky Reserves",
+      "Passes Above 5000m",
+      "Silk Route Heritage",
+      "Apricots",
+    ],
+    discoveryCount: 104,
+    highlight:
+      "Hanle dark sky stargazing, Hemis festival cham dances, and Turtuk Balti village stone alleys.",
+    coordinates: { lat: 34.1526, lng: 77.5771 },
+  },
+  {
+    id: "ka",
+    name: "Karnataka",
+    code: "KA",
+    zone: "South",
+    tagline: "Deccan Plateau to the Arabian Sea",
+    tags: [
+      "Hampi Boulders",
+      "Coffee Estates",
+      "Hoysala Temples",
+      "Western Ghats",
+      "Coastal Temples",
+    ],
+    discoveryCount: 141,
+    highlight:
+      "Belur & Halebidu intricate stone filigree, Chikmagalur misty estate mornings, and Anegundi coracle crossings.",
+    coordinates: { lat: 15.3173, lng: 75.7139 },
+  },
+  {
+    id: "mp",
+    name: "Madhya Pradesh",
+    code: "MP",
+    zone: "Central",
+    tagline: "Heart of India · Forest Corridors & Rock Art",
+    tags: ["Bhimbetka Petroglyphs", "Tiger Corridors", "Cenotaphs", "Sacred Rivers", "Gond Art"],
+    discoveryCount: 97,
+    highlight:
+      "Orchha Betwa riverbanks, Bhimbetka Paleolithic cave paintings, and Maheshwar handloom weavers.",
+    coordinates: { lat: 22.9734, lng: 78.6569 },
+  },
+  {
+    id: "od",
+    name: "Odisha",
+    code: "OD",
+    zone: "East",
+    tagline: "Bay of Bengal Shoreline & Tribal Highlands",
+    tags: [
+      "Pattachitra Art",
+      "Marine Sanctuaries",
+      "Kalinga Architecture",
+      "Chilika Flamingos",
+      "Handlooms",
+    ],
+    discoveryCount: 86,
+    highlight:
+      "Raghurajpur heritage crafts village, Chilika lagoon Irrawaddy dolphins, and Konark stone wheels.",
+    coordinates: { lat: 20.9517, lng: 85.0985 },
+  },
+  {
+    id: "ut",
+    name: "Uttarakhand",
+    code: "UT",
+    zone: "North",
+    tagline: "Land of Gods · Glacial Headwaters & Bugyals",
+    tags: [
+      "High Meadows",
+      "Alpine Lakes",
+      "Ganges Headwaters",
+      "Kumaon Hamlets",
+      "Forest Solitude",
+    ],
+    discoveryCount: 121,
+    highlight:
+      "Dayara Bugyal alpine meadows, quiet pine walks through Pangot, and Binsar wildlife sanctuary views.",
+    coordinates: { lat: 30.0668, lng: 79.0193 },
+  },
+];

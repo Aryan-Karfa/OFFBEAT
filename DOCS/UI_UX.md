@@ -20,24 +20,24 @@ The user should feel:
 
 The interface must therefore prioritize:
 
-* Discovery
-* Exploration
-* Visual geography
-* Travel Taste
-* Community knowledge
-* Context
-* Storytelling
-* Confidence
-* Personalization
-* Simplicity
+- Discovery
+- Exploration
+- Visual geography
+- Travel Taste
+- Community knowledge
+- Context
+- Storytelling
+- Confidence
+- Personalization
+- Simplicity
 
 The UI should avoid feeling like:
 
-* A generic AI chatbot
-* A hotel-booking platform
-* A conventional Google Maps clone
-* A social-media feed
-* A static travel directory
+- A generic AI chatbot
+- A hotel-booking platform
+- A conventional Google Maps clone
+- A social-media feed
+- A static travel directory
 
 ---
 
@@ -133,11 +133,11 @@ Users should be able to describe what they like before selecting a specific plac
 
 Every recommendation should be connected to:
 
-* Taste
-* Time
-* Location
-* Community
-* Experience
+- Taste
+- Time
+- Location
+- Community
+- Experience
 
 ## P5 — Human Knowledge Must Feel Human
 
@@ -303,41 +303,42 @@ When a region is selected:
 
 1. **Region separates visually from surrounding geography**
 
-   * The selected State / UT should appear elevated above the map.
-   * Surrounding regions should become slightly subdued.
-   * The selected region should receive stronger visual emphasis.
+   - The selected State / UT should appear elevated above the map.
+   - Surrounding regions should become slightly subdued.
+   - The selected region should receive stronger visual emphasis.
 
 2. **Elevation / Pop Animation**
 
-   * The selected region should appear to lift from the map plane.
-   * Use a combination of:
+   - The selected region should appear to lift from the map plane.
+   - Use a combination of:
 
-     * scale
-     * translation
-     * depth/elevation
-     * subtle perspective
-     * lighting/highlight treatment
-   * The effect should feel physical rather than like a simple CSS hover.
+     - scale
+     - translation
+     - depth/elevation
+     - subtle perspective
+     - lighting/highlight treatment
+
+   - The effect should feel physical rather than like a simple CSS hover.
 
 3. **Camera Focus**
 
-   * The map should smoothly zoom toward the selected region.
-   * The transition should preserve geographic context rather than abruptly changing screens.
+   - The map should smoothly zoom toward the selected region.
+   - The transition should preserve geographic context rather than abruptly changing screens.
 
 4. **Boundary Emphasis**
 
-   * The selected region's boundary should become clearly visible.
-   * Internal geographic details may progressively appear as the region becomes active.
+   - The selected region's boundary should become clearly visible.
+   - Internal geographic details may progressively appear as the region becomes active.
 
 5. **Neighbouring Regions**
 
-   * Adjacent States / UTs should remain visible but visually recede.
-   * They should not disappear completely because geographic context is important.
+   - Adjacent States / UTs should remain visible but visually recede.
+   - They should not disappear completely because geographic context is important.
 
 6. **Information Reveal**
 
-   * Once the region reaches its active state, contextual information should appear.
-   * Example:
+   - Once the region reaches its active state, contextual information should appear.
+   - Example:
 
    **WEST BENGAL**
 
@@ -371,22 +372,22 @@ This interaction should communicate that **the map is not merely displaying geog
 
 The animation should feel:
 
-* Smooth
-* Cinematic
-* Physical
-* Responsive
-* Premium
-* Fast enough to remain interactive
-* Dramatic enough to be memorable
+- Smooth
+- Cinematic
+- Physical
+- Responsive
+- Premium
+- Fast enough to remain interactive
+- Dramatic enough to be memorable
 
 Avoid:
 
-* Generic map zoom
-* Simple fade-in
-* Basic hover effects
-* Excessive bouncing
-* Slow cinematic transitions that interrupt exploration
-* Overly flashy 3D effects that reduce usability
+- Generic map zoom
+- Simple fade-in
+- Basic hover effects
+- Excessive bouncing
+- Slow cinematic transitions that interrupt exploration
+- Overly flashy 3D effects that reduce usability
 
 The motion should have a clear sequence:
 
@@ -455,16 +456,16 @@ The implementation should preferably use a map/rendering system capable of produ
 
 The architecture should allow:
 
-* Region-level selection
-* Region geometry
-* Hover detection
-* Click detection
-* Camera transitions
-* Region highlighting
-* Elevation/depth effects
-* Animated transitions
-* Responsive interaction
-* Reduced-motion fallback
+- Region-level selection
+- Region geometry
+- Hover detection
+- Click detection
+- Camera transitions
+- Region highlighting
+- Elevation/depth effects
+- Animated transitions
+- Responsive interaction
+- Reduced-motion fallback
 
 The exact rendering technology will be finalized during the frontend architecture and implementation phase.
 
@@ -474,10 +475,10 @@ The exact rendering technology will be finalized during the frontend architectur
 
 For users who have enabled reduced motion:
 
-* Disable dramatic elevation animation.
-* Use a simpler highlight + focus transition.
-* Preserve all geographic and discovery functionality.
-* Never make the animation necessary to understand which region is selected.
+- Disable dramatic elevation animation.
+- Use a simpler highlight + focus transition.
+- Preserve all geographic and discovery functionality.
+- Never make the animation necessary to understand which region is selected.
 
 ---
 
@@ -488,7 +489,6 @@ For users who have enabled reduced motion:
 OFFBEAT's geographic exploration should be one of the application's defining experiences.
 
 The user should feel that they are **physically diving into a place**, rather than navigating a conventional travel website.
-
 
 # 9. LANDING PAGE STRUCTURE
 
@@ -528,9 +528,9 @@ the system begins with:
 
 The user can:
 
-* Search a country
-* Browse countries
-* Select a suggested country
+- Search a country
+- Browse countries
+- Select a suggested country
 
 The system should make the interaction visually simple.
 
@@ -576,9 +576,9 @@ The map should support:
 
 Show:
 
-* Region name
-* Basic discovery indicator
-* Optional high-level category signals
+- Region name
+- Basic discovery indicator
+- Optional high-level category signals
 
 ### Click
 
@@ -624,10 +624,10 @@ Travel Taste categories should be visually recognizable.
 
 Each category should contain:
 
-* Icon/image
-* Name
-* Short descriptor
-* Optional example
+- Icon/image
+- Name
+- Short descriptor
+- Optional example
 
 Example:
 
@@ -886,13 +886,13 @@ ADD TO ITINERARY
 
 The hero section should contain:
 
-* Place image
-* Place name
-* Location
-* Category
-* Rating where available
-* Save button
-* Add to itinerary
+- Place image
+- Place name
+- Location
+- Category
+- Rating where available
+- Save button
+- Add to itinerary
 
 Avoid placing every piece of information above the fold.
 
@@ -1020,12 +1020,12 @@ DAY 2
 
 The user should be able to:
 
-* Add places
-* Remove places
-* Reorder places
-* Change day
-* Adjust time
-* View conflicts
+- Add places
+- Remove places
+- Reorder places
+- Change day
+- Adjust time
+- View conflicts
 
 ---
 
@@ -1172,16 +1172,16 @@ The form should remain short.
 
 Required:
 
-* Place
-* Discovery type
-* Description
+- Place
+- Discovery type
+- Description
 
 Optional:
 
-* Photo
-* Exact timing
-* Additional context
-* Supporting information
+- Photo
+- Exact timing
+- Additional context
+- Supporting information
 
 The user should not have to understand the verification system while submitting.
 
@@ -1213,10 +1213,10 @@ OFFBEAT should support search, but search should not dominate the experience.
 
 Search can be used when the user:
 
-* Already knows a destination
-* Wants a specific place
-* Wants a specific restaurant
-* Wants to find a particular experience
+- Already knows a destination
+- Wants a specific place
+- Wants a specific restaurant
+- Wants to find a particular experience
 
 Search should act as a **shortcut**, not the product's identity.
 
@@ -1230,17 +1230,17 @@ Discovery results should support two complementary views:
 
 Best for:
 
-* Geographic exploration
-* Nearby discoveries
-* Regional understanding
+- Geographic exploration
+- Nearby discoveries
+- Regional understanding
 
 ### List View
 
 Best for:
 
-* Comparing recommendations
-* Reading details
-* Building an itinerary
+- Comparing recommendations
+- Reading details
+- Building an itinerary
 
 Possible toggle:
 
@@ -1254,9 +1254,9 @@ Possible toggle:
 
 OFFBEAT must support:
 
-* Desktop
-* Tablet
-* Mobile
+- Desktop
+- Tablet
+- Mobile
 
 The information architecture should remain consistent while layouts adapt.
 
@@ -1308,20 +1308,20 @@ Map and cards should not fight for screen space.
 
 The design system should define:
 
-* Typography
-* Colors
-* Spacing
-* Grid
-* Icons
-* Buttons
-* Cards
-* Badges
-* Inputs
-* Modals
-* Tooltips
-* Map markers
-* States
-* Animations
+- Typography
+- Colors
+- Spacing
+- Grid
+- Icons
+- Buttons
+- Cards
+- Badges
+- Inputs
+- Modals
+- Tooltips
+- Map markers
+- States
+- Animations
 
 ---
 
@@ -1387,10 +1387,10 @@ A distinctive travel-oriented accent may be selected during visual design explor
 
 Confidence indicators should use semantic colors:
 
-* Verified → Green
-* Supported → Amber
-* New → Neutral
-* Flagged → Red
+- Verified → Green
+- Supported → Amber
+- New → Neutral
+- Flagged → Red
 
 Semantic colors should not be used as decorative elements.
 
@@ -1406,9 +1406,9 @@ Strong editorial/display font.
 
 Used for:
 
-* Hero statements
-* Large destinations
-* Major section titles
+- Hero statements
+- Large destinations
+- Major section titles
 
 ### UI
 
@@ -1416,10 +1416,10 @@ Clean sans-serif.
 
 Used for:
 
-* Buttons
-* Navigation
-* Labels
-* Metadata
+- Buttons
+- Navigation
+- Labels
+- Metadata
 
 ### Body
 
@@ -1427,9 +1427,9 @@ Highly readable sans-serif.
 
 Used for:
 
-* Community descriptions
-* Explanations
-* Place information
+- Community descriptions
+- Explanations
+- Place information
 
 Typography should create hierarchy without excessive font variation.
 
@@ -1463,16 +1463,16 @@ OFFBEAT should use moderate corner rounding.
 
 Avoid:
 
-* Excessive pill-shaped interfaces
-* Extremely rounded cards
-* Overly soft UI
+- Excessive pill-shaped interfaces
+- Extremely rounded cards
+- Overly soft UI
 
 Rounded elements should communicate:
 
-* Controls
-* Tags
-* Status
-* Interactive surfaces
+- Controls
+- Tags
+- Status
+- Interactive surfaces
 
 ---
 
@@ -1523,10 +1523,10 @@ Badges should provide useful information rather than decoration.
 
 Icons should be:
 
-* Simple
-* Consistent
-* Recognizable
-* Accessible
+- Simple
+- Consistent
+- Recognizable
+- Accessible
 
 Avoid using icons as the sole source of meaning.
 
@@ -1603,19 +1603,19 @@ Use animation to communicate system state.
 
 Examples:
 
-* Map region highlight
-* Card selection
-* Loading discovery
-* Recommendation reveal
-* Itinerary addition
-* Confidence update
-* Alternative transition
+- Map region highlight
+- Card selection
+- Loading discovery
+- Recommendation reveal
+- Itinerary addition
+- Confidence update
+- Alternative transition
 
 Animations should generally be:
 
-* Fast
-* Purposeful
-* Subtle
+- Fast
+- Purposeful
+- Subtle
 
 Avoid decorative animation that delays the user.
 
@@ -1673,14 +1673,14 @@ for user-generated information.
 
 The interface must support:
 
-* Keyboard navigation
-* Focus states
-* Sufficient color contrast
-* Screen-reader labels
-* Accessible form inputs
-* Reduced-motion preference
-* Non-color indicators
-* Descriptive button labels
+- Keyboard navigation
+- Focus states
+- Sufficient color contrast
+- Screen-reader labels
+- Accessible form inputs
+- Reduced-motion preference
+- Non-color indicators
+- Descriptive button labels
 
 Maps must not be the only way to access discovery information.
 
@@ -1975,12 +1975,12 @@ Every screen should pass this question:
 
 If a UI element does not improve:
 
-* Discovery
-* Understanding
-* Trust
-* Planning
-* Experience
-* Contribution
+- Discovery
+- Understanding
+- Trust
+- Planning
+- Experience
+- Contribution
 
 it should be questioned before being included.
 

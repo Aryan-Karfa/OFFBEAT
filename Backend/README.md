@@ -3,6 +3,7 @@
 The backend intelligence and API foundation will be implemented from Phase 4 onward.
 
 Technology baseline:
+
 - Node.js + Express + TypeScript
 - Zod
 - Prisma + PostgreSQL

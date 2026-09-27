@@ -15,7 +15,7 @@ const required = [
   "tsconfig.base.json",
   ".env.example",
   ".gitignore",
-  "README.md"
+  "README.md",
 ];
 
 const docs = [
@@ -28,7 +28,7 @@ const docs = [
   "PRD.md",
   "SSD.md",
   "TRD.md",
-  "UI_UX.md"
+  "UI_UX.md",
 ];
 
 const failures = [];
@@ -61,4 +61,6 @@ if (failures.length > 0) {
 }
 
 console.log("Phase 0 repository structure: OK");
-console.log(`Verified ${required.length} root entries and ${docs.length} source-of-truth documents.`);
+console.log(
+  `Verified ${required.length} root entries and ${docs.length} source-of-truth documents.`,
+);

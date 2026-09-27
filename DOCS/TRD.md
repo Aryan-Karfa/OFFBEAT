@@ -18,20 +18,20 @@ The TRD translates the OFFBEAT Product Requirements Document into an implementab
 
 The system must support:
 
-* Destination discovery
-* Interactive geographic exploration
-* Travel Taste
-* Experience Taste
-* Time-aware discovery
-* Crowd-aware discovery
-* Community-generated travel intelligence
-* Community verification
-* Confidence scoring
-* AI-powered recommendations
-* Context-aware alternatives
-* Itinerary construction
-* TAKE HOME discoveries
-* User contributions
+- Destination discovery
+- Interactive geographic exploration
+- Travel Taste
+- Experience Taste
+- Time-aware discovery
+- Crowd-aware discovery
+- Community-generated travel intelligence
+- Community verification
+- Confidence scoring
+- AI-powered recommendations
+- Context-aware alternatives
+- Itinerary construction
+- TAKE HOME discoveries
+- User contributions
 
 ---
 
@@ -130,28 +130,28 @@ OFFBEAT will use a layered architecture.
 
 ## 4.1 Frontend
 
-* React
-* TypeScript
-* Vite
-* Tailwind CSS
-* Zustand
-* React Router
-* Map rendering library
-* REST API client
-* Form validation library
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Zustand
+- React Router
+- Map rendering library
+- REST API client
+- Form validation library
 
 ## 4.2 Backend
 
-* Node.js
-* Express.js
-* TypeScript
-* Zod
-* Prisma
-* PostgreSQL
-* JWT authentication if authentication is enabled
-* Structured logging
-* Request ID middleware
-* Centralized error handling
+- Node.js
+- Express.js
+- TypeScript
+- Zod
+- Prisma
+- PostgreSQL
+- JWT authentication if authentication is enabled
+- Structured logging
+- Request ID middleware
+- Centralized error handling
 
 ## 4.3 External Intelligence
 
@@ -205,22 +205,22 @@ and can return structured local-place information such as ratings, reviews, hour
 
 SerpApi should provide external factual/contextual signals such as:
 
-* Places
-* Attractions
-* Restaurants
-* Local businesses
-* Reviews
-* Ratings
-* Opening hours
-* Addresses
-* GPS coordinates
-* Place categories
-* Descriptions
-* Related places
-* Similar places
-* Local search results
-* Search results
-* Relevant destination information
+- Places
+- Attractions
+- Restaurants
+- Local businesses
+- Reviews
+- Ratings
+- Opening hours
+- Addresses
+- GPS coordinates
+- Place categories
+- Descriptions
+- Related places
+- Similar places
+- Local search results
+- Search results
+- Relevant destination information
 
 SerpApi is an **information source**, not the recommendation engine.
 
@@ -256,15 +256,15 @@ The frontend must never depend directly on SerpApi response structures.
 
 The backend should construct queries based on:
 
-* Country
-* State / Region
-* City
-* Travel Taste
-* Experience Taste
-* Day / Night
-* Place type
-* User intent
-* Optional geographic coordinates
+- Country
+- State / Region
+- City
+- Travel Taste
+- Experience Taste
+- Day / Night
+- Place type
+- User intent
+- Optional geographic coordinates
 
 Example:
 
@@ -292,11 +292,11 @@ External API requests should be cached whenever practical.
 
 Caching objectives:
 
-* Reduce API consumption
-* Reduce response latency
-* Improve reliability
-* Avoid repeated identical requests
-* Reduce unnecessary duplicate searches
+- Reduce API consumption
+- Reduce response latency
+- Improve reliability
+- Avoid repeated identical requests
+- Reduce unnecessary duplicate searches
 
 Potential cache key:
 
@@ -365,20 +365,20 @@ Potential responsibilities include:
 
 Interpret:
 
-* Travel Taste
-* Experience Taste
-* Day/Night
-* Destination intent
-* User constraints
+- Travel Taste
+- Experience Taste
+- Day/Night
+- Destination intent
+- User constraints
 
 ### Recommendation Synthesis
 
 Combine:
 
-* SerpApi data
-* Community data
-* Confidence signals
-* User preferences
+- SerpApi data
+- Community data
+- Confidence signals
+- User preferences
 
 ### Alternative Generation
 
@@ -388,20 +388,20 @@ Determine what "alternative" means for the selected place.
 
 Determine:
 
-* Ordering
-* Timing
-* Grouping
-* Compatibility
-* Experience flow
+- Ordering
+- Timing
+- Grouping
+- Compatibility
+- Experience flow
 
 ### Community Interpretation
 
 Interpret:
 
-* Repeated observations
-* Contradictions
-* Timing recommendations
-* Place relevance
+- Repeated observations
+- Contradictions
+- Timing recommendations
+- Place relevance
 
 ### TAKE HOME
 
@@ -527,40 +527,40 @@ Potential signals include:
 
 ## User Signals
 
-* Travel Taste
-* Experience Taste
-* Day/Night
-* Selected region
-* Selected duration
-* Saved places
-* Itinerary context
+- Travel Taste
+- Experience Taste
+- Day/Night
+- Selected region
+- Selected duration
+- Saved places
+- Itinerary context
 
 ## Place Signals
 
-* Category
-* Rating
-* Reviews
-* Location
-* Opening hours
-* Place type
-* Description
+- Category
+- Rating
+- Reviews
+- Location
+- Opening hours
+- Place type
+- Description
 
 ## Community Signals
 
-* Number of submissions
-* Number of supporting users
-* Repeated observations
-* User endorsements
-* Photos
-* Timing observations
+- Number of submissions
+- Number of supporting users
+- Repeated observations
+- User endorsements
+- Photos
+- Timing observations
 
 ## Context Signals
 
-* Distance
-* Opening availability
-* Destination relevance
-* Crowd-related information
-* Similarity to selected experience
+- Distance
+- Opening availability
+- Destination relevance
+- Crowd-related information
+- Similarity to selected experience
 
 ---
 
@@ -600,16 +600,8 @@ Example:
 
 ```json
 {
-  "taste": [
-    "historical",
-    "mountains",
-    "photography"
-  ],
-  "experience": [
-    "sunrise",
-    "peaceful",
-    "less_crowded"
-  ]
+  "taste": ["historical", "mountains", "photography"],
+  "experience": ["sunrise", "peaceful", "less_crowded"]
 }
 ```
 
@@ -696,9 +688,9 @@ The system should not fabricate crowd measurements.
 
 If direct crowd data is unavailable, the UI should clearly distinguish:
 
-* External crowd information
-* Community observations
-* AI inference
+- External crowd information
+- Community observations
+- AI inference
 
 ---
 
@@ -938,11 +930,11 @@ DAY 2
 
 The itinerary engine must prevent obvious conflicts such as:
 
-* Closed places
-* Impossible travel times
-* Overlapping time windows
-* Duplicate places
-* Invalid sequencing
+- Closed places
+- Impossible travel times
+- Overlapping time windows
+- Duplicate places
+- Invalid sequencing
 
 ---
 
@@ -1217,11 +1209,11 @@ Distance preference
 
 The backend determines whether the response should represent:
 
-* Replacement
-* Complementary experience
-* Nearby discovery
-* Better timing
-* Hidden spot
+- Replacement
+- Complementary experience
+- Nearby discovery
+- Better timing
+- Hidden spot
 
 ---
 
@@ -1276,11 +1268,11 @@ Recommended:
 
 Validation must occur for:
 
-* Query parameters
-* Request bodies
-* Path parameters
-* AI outputs
-* Community submissions
+- Query parameters
+- Request bodies
+- Path parameters
+- AI outputs
+- Community submissions
 
 Invalid requests should return structured errors.
 
@@ -1410,13 +1402,13 @@ Use caching and request deduplication to control SerpApi usage.
 
 The system should support:
 
-* Submission rate limits
-* Reporting
-* Moderation state
-* Duplicate detection
-* Suspicious activity detection
-* Evidence requirements
-* Confidence decay where appropriate
+- Submission rate limits
+- Reporting
+- Moderation state
+- Duplicate detection
+- Suspicious activity detection
+- Evidence requirements
+- Confidence decay where appropriate
 
 Users should not be able to artificially inflate confidence through unlimited self-support actions.
 
@@ -1476,12 +1468,12 @@ Originates from SerpApi or another external provider.
 
 Generated/stored by OFFBEAT:
 
-* Community submissions
-* Confidence records
-* User preferences
-* Itineraries
-* Saved places
-* Recommendation history
+- Community submissions
+- Confidence records
+- User preferences
+- Itineraries
+- Saved places
+- Recommendation history
 
 ### AI Data
 
@@ -1630,22 +1622,22 @@ Confidence: High
 
 The backend should record:
 
-* Request ID
-* Endpoint
-* Response status
-* Response time
-* External API latency
-* AI latency
-* Errors
-* Cache hit/miss
-* Recommendation generation failures
+- Request ID
+- Endpoint
+- Response status
+- Response time
+- External API latency
+- AI latency
+- Errors
+- Cache hit/miss
+- Recommendation generation failures
 
 Logs must not contain:
 
-* API keys
-* Passwords
-* Sensitive tokens
-* Private user content unnecessarily
+- API keys
+- Passwords
+- Sensitive tokens
+- Private user content unnecessarily
 
 ---
 
@@ -1655,19 +1647,19 @@ Target experience:
 
 ### Frontend
 
-* Fast initial load
-* Lazy loading for heavy components
-* Optimized map rendering
-* Image optimization
-* Minimal unnecessary re-renders
+- Fast initial load
+- Lazy loading for heavy components
+- Optimized map rendering
+- Image optimization
+- Minimal unnecessary re-renders
 
 ### Backend
 
-* Cached external results
-* Parallel external requests where safe
-* Timeouts for external APIs
-* AI request timeouts
-* Database indexing
+- Cached external results
+- Parallel external requests where safe
+- Timeouts for external APIs
+- AI request timeouts
+- Database indexing
 
 ### AI
 
@@ -1751,16 +1743,16 @@ Different data types require different freshness policies.
 
 The architecture should allow future expansion to:
 
-* More countries
-* More regions
-* More travel categories
-* More users
-* More community contributions
-* More external APIs
-* Mobile applications
-* Personalized profiles
-* Social features
-* Advanced recommendation models
+- More countries
+- More regions
+- More travel categories
+- More users
+- More community contributions
+- More external APIs
+- Mobile applications
+- Personalized profiles
+- Social features
+- Advanced recommendation models
 
 The initial implementation should remain modular.
 
@@ -1980,36 +1972,36 @@ The TRD should be followed by:
 
 Detailed:
 
-* Endpoint contracts
-* Request schemas
-* Response schemas
-* Error codes
-* Authentication
-* Pagination
-* Rate limits
+- Endpoint contracts
+- Request schemas
+- Response schemas
+- Error codes
+- Authentication
+- Pagination
+- Rate limits
 
 ### 2. Database Design Document
 
 Detailed:
 
-* ER diagram
-* Prisma schema
-* Relationships
-* Indexes
-* Constraints
-* Enums
-* Seed data
+- ER diagram
+- Prisma schema
+- Relationships
+- Indexes
+- Constraints
+- Enums
+- Seed data
 
 ### 3. AI / Intelligence Specification
 
 Detailed:
 
-* Gemini prompts
-* Structured outputs
-* Recommendation pipeline
-* Confidence engine
-* Alternative engine
-* Itinerary reasoning
+- Gemini prompts
+- Structured outputs
+- Recommendation pipeline
+- Confidence engine
+- Alternative engine
+- Itinerary reasoning
 
 ### 4. SerpApi Integration Specification
 
@@ -2019,25 +2011,25 @@ Detailed mapping of the **specific SerpApi APIs allowed/required by the hackatho
 
 Detailed:
 
-* Folder structure
-* Components
-* Hooks
-* Stores
-* Routes
-* API clients
-* State boundaries
+- Folder structure
+- Components
+- Hooks
+- Stores
+- Routes
+- API clients
+- State boundaries
 
 ### 6. UI/UX Specification
 
 Detailed:
 
-* Screen-by-screen behavior
-* Interaction states
-* Empty states
-* Loading states
-* Error states
-* Responsive behavior
-* Design system
+- Screen-by-screen behavior
+- Interaction states
+- Empty states
+- Loading states
+- Error states
+- Responsive behavior
+- Design system
 
 ---
 

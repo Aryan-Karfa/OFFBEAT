@@ -4,7 +4,7 @@
 **Status:** Baseline Draft
 **Product:** OFFBEAT
 **Track:** Travel & Local Discovery
-**Core Philosophy:** *Let's discover where you should go.*
+**Core Philosophy:** _Let's discover where you should go._
 
 ---
 
@@ -22,15 +22,15 @@ OFFBEAT asks:
 
 OFFBEAT combines:
 
-* Travel Taste
-* Destination discovery
-* Time-aware recommendations
-* Community intelligence
-* External travel and place data
-* AI-powered reasoning
-* Context-aware alternatives
-* Itinerary building
-* TAKE HOME discoveries
+- Travel Taste
+- Destination discovery
+- Time-aware recommendations
+- Community intelligence
+- External travel and place data
+- AI-powered reasoning
+- Context-aware alternatives
+- Itinerary building
+- TAKE HOME discoveries
 
 into one connected travel-discovery experience.
 
@@ -72,17 +72,17 @@ Modern travel discovery is fragmented.
 
 A traveler may need multiple platforms to answer:
 
-* Where should I go?
-* What kind of places exist there?
-* What matches my interests?
-* What time should I visit?
-* When is the place open?
-* Are there lesser-known alternatives?
-* What do actual travelers recommend?
-* Where are the hidden photography spots?
-* Which local businesses are worth visiting?
-* What local specialties are worth taking home?
-* How can all of this become one coherent trip?
+- Where should I go?
+- What kind of places exist there?
+- What matches my interests?
+- What time should I visit?
+- When is the place open?
+- Are there lesser-known alternatives?
+- What do actual travelers recommend?
+- Where are the hidden photography spots?
+- Which local businesses are worth visiting?
+- What local specialties are worth taking home?
+- How can all of this become one coherent trip?
 
 Most conventional travel platforms primarily focus on destinations, established attractions, search, reviews, maps, and popular recommendations.
 
@@ -119,27 +119,27 @@ OFFBEAT aims to allow users to:
 
 A traveler who:
 
-* Enjoys discovering new places.
-* Does not always know where they want to travel.
-* Wants experiences aligned with personal interests.
-* Wants to avoid unnecessarily crowded experiences.
-* Values local knowledge.
-* Enjoys discovering lesser-known places.
-* Wants practical timing information.
-* Enjoys contributing travel knowledge.
+- Enjoys discovering new places.
+- Does not always know where they want to travel.
+- Wants experiences aligned with personal interests.
+- Wants to avoid unnecessarily crowded experiences.
+- Values local knowledge.
+- Enjoys discovering lesser-known places.
+- Wants practical timing information.
+- Enjoys contributing travel knowledge.
 
 ## 5.2 Secondary User
 
 A traveler who already knows their destination but wants:
 
-* Hidden places.
-* Better visiting times.
-* Local recommendations.
-* Photography spots.
-* Local businesses.
-* Alternative experiences.
-* Local specialties.
-* Itinerary assistance.
+- Hidden places.
+- Better visiting times.
+- Local recommendations.
+- Photography spots.
+- Local businesses.
+- Alternative experiences.
+- Local specialties.
+- Itinerary assistance.
 
 ---
 
@@ -222,13 +222,13 @@ For example:
 
 A user may further select:
 
-* Sunrise
-* Photography
-* Peaceful
-* Adventure
-* Nature
-* Local Culture
-* Less Crowded
+- Sunrise
+- Photography
+- Peaceful
+- Adventure
+- Nature
+- Local Culture
+- Less Crowded
 
 Therefore:
 
@@ -346,48 +346,48 @@ Users can contribute information relevant to travel.
 
 ## 12.1 Places
 
-* Hidden locations
-* Lesser-known attractions
-* Viewpoints
-* Local destinations
-* Hidden wonders
+- Hidden locations
+- Lesser-known attractions
+- Viewpoints
+- Local destinations
+- Hidden wonders
 
 ## 12.2 Timing
 
-* Best time to visit
-* Sunrise/sunset observations
-* Less crowded periods
-* Time-specific experiences
+- Best time to visit
+- Sunrise/sunset observations
+- Less crowded periods
+- Time-specific experiences
 
 ## 12.3 Photography
 
-* Hidden photography spots
-* Best angles
-* Specific viewpoints
-* Lesser-known photo locations
+- Hidden photography spots
+- Best angles
+- Specific viewpoints
+- Lesser-known photo locations
 
 ## 12.4 Businesses
 
-* Restaurants
-* Cafés
-* Local shops
-* Small businesses
-* Local services
+- Restaurants
+- Cafés
+- Local shops
+- Small businesses
+- Local services
 
 ## 12.5 Reviews & Experiences
 
-* First-hand observations
-* Recommendations
-* Warnings
-* Personal experiences
+- First-hand observations
+- Recommendations
+- Warnings
+- Personal experiences
 
 ## 12.6 Local Discoveries
 
-* Local specialties
-* Crafts
-* Food
-* Products
-* Cultural experiences
+- Local specialties
+- Crafts
+- Food
+- Products
+- Cultural experiences
 
 The guiding principle is:
 
@@ -403,31 +403,31 @@ OFFBEAT can evaluate submissions using multiple possible signals.
 
 ## 13.1 Community Signals
 
-* Number of supporting users
-* Repeated observations
-* Upvotes / endorsements
-* Supporting photos
-* User reports
-* Consistency across submissions
+- Number of supporting users
+- Repeated observations
+- Upvotes / endorsements
+- Supporting photos
+- User reports
+- Consistency across submissions
 
 ## 13.2 External Signals
 
-* Place information
-* Reviews
-* Opening hours
-* Geographic information
-* Search results
-* Other relevant external data
+- Place information
+- Reviews
+- Opening hours
+- Geographic information
+- Search results
+- Other relevant external data
 
 ## 13.3 AI Interpretation
 
 AI may evaluate:
 
-* Consistency between sources
-* Relevance
-* Contradictions
-* Evidence strength
-* Context
+- Consistency between sources
+- Relevance
+- Contradictions
+- Evidence strength
+- Context
 
 ---
 
@@ -475,9 +475,9 @@ Community members may provide conflicting information.
 
 Example:
 
-* User A: "Visit at 7 AM."
-* User B: "10 AM is better."
-* User C: "It becomes crowded after 9 AM."
+- User A: "Visit at 7 AM."
+- User B: "10 AM is better."
+- User C: "It becomes crowded after 9 AM."
 
 OFFBEAT should not automatically discard conflicting information.
 
@@ -509,17 +509,17 @@ It acts as the reasoning and interpretation layer across external and community 
 
 ## Potential AI Responsibilities
 
-* Understand user intent.
-* Interpret Travel Taste.
-* Interpret Experience Taste.
-* Combine external data and community information.
-* Generate contextual recommendations.
-* Explain recommendations.
-* Interpret community signals.
-* Assist with confidence assessment.
-* Build itinerary logic.
-* Generate contextual alternatives.
-* Identify relationships between places and experiences.
+- Understand user intent.
+- Interpret Travel Taste.
+- Interpret Experience Taste.
+- Combine external data and community information.
+- Generate contextual recommendations.
+- Explain recommendations.
+- Interpret community signals.
+- Assist with confidence assessment.
+- Build itinerary logic.
+- Generate contextual alternatives.
+- Identify relationships between places and experiences.
 
 ---
 
@@ -592,13 +592,13 @@ The meaning of "alternative" changes according to context.
 
 If a selected attraction is replaceable, OFFBEAT may recommend:
 
-* Less-crowded experiences
-* Lesser-known attractions
-* Similar experiences
-* Nearby alternatives
-* More suitable timing
-* Lower-cost alternatives
-* Alternatives aligned with Travel Taste
+- Less-crowded experiences
+- Lesser-known attractions
+- Similar experiences
+- Nearby alternatives
+- More suitable timing
+- Lower-cost alternatives
+- Alternatives aligned with Travel Taste
 
 ## 18.2 For Must-Visit Places
 
@@ -614,12 +614,12 @@ Instead, the narrative can change.
 
 OFFBEAT may surface:
 
-* Lesser-known experiences around the attraction
-* Hidden photography spots
-* Better visiting times
-* Nearby local discoveries
-* Complementary attractions
-* Less-crowded experiences surrounding the main attraction
+- Lesser-known experiences around the attraction
+- Hidden photography spots
+- Better visiting times
+- Nearby local discoveries
+- Complementary attractions
+- Less-crowded experiences surrounding the main attraction
 
 Therefore:
 
@@ -627,14 +627,14 @@ Therefore:
 
 The system should determine the appropriate interpretation based on:
 
-* Place significance
-* User intent
-* Travel Taste
-* Experience Taste
-* Community signals
-* Crowd conditions
-* Location
-* Time
+- Place significance
+- User intent
+- Travel Taste
+- Experience Taste
+- Community signals
+- Crowd conditions
+- Location
+- Time
 
 ---
 
@@ -644,17 +644,17 @@ OFFBEAT converts discovered recommendations into an itinerary.
 
 The itinerary may consider:
 
-* Selected destinations
-* Travel Taste
-* Experience Taste
-* Opening/operating hours
-* Recommended visiting windows
-* Geographic proximity
-* Time availability
-* Community recommendations
-* User-selected places
-* Alternative recommendations
-* Local experiences
+- Selected destinations
+- Travel Taste
+- Experience Taste
+- Opening/operating hours
+- Recommended visiting windows
+- Geographic proximity
+- Time availability
+- Community recommendations
+- User-selected places
+- Alternative recommendations
+- Local experiences
 
 The itinerary is an output of the discovery process rather than the sole purpose of OFFBEAT.
 
@@ -680,16 +680,16 @@ The system is intentionally broad.
 
 Potential discoveries include:
 
-* Food
-* Handicrafts
-* Clothing
-* Art
-* Local products
-* Regional specialties
-* Cultural items
-* Workshops
-* Experiences
-* Other meaningful local discoveries
+- Food
+- Handicrafts
+- Clothing
+- Art
+- Local products
+- Regional specialties
+- Cultural items
+- Workshops
+- Experiences
+- Other meaningful local discoveries
 
 The exact category should depend on the destination and available information.
 

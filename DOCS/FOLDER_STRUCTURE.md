@@ -20,13 +20,13 @@ OFFBEAT uses a **domain-oriented monorepo architecture**.
 
 The structure should make it immediately clear:
 
-* Where a feature belongs
-* Where business logic lives
-* Where intelligence lives
-* Where database logic lives
-* Where API contracts live
-* Where frontend presentation lives
-* Where shared types belong
+- Where a feature belongs
+- Where business logic lives
+- Where intelligence lives
+- Where database logic lives
+- Where API contracts live
+- Where frontend presentation lives
+- Where shared types belong
 
 The primary principle is:
 
@@ -53,8 +53,8 @@ OFFBEAT/
 
 The project is divided into two primary application layers:
 
-* **Frontend** — User interface, interaction, state management, map experience, and presentation.
-* **Backend** — API, business logic, intelligence engines, database access, external integrations, and AI orchestration.
+- **Frontend** — User interface, interaction, state management, map experience, and presentation.
+- **Backend** — API, business logic, intelligence engines, database access, external integrations, and AI orchestration.
 
 Shared code belongs inside `packages/`.
 
@@ -145,31 +145,31 @@ Frontend/
 
 The Frontend is responsible for:
 
-* User interface
-* Navigation
-* Page composition
-* Map interaction
-* State/region selection
-* Travel Taste selection
-* Experience Taste selection
-* Discovery presentation
-* Place exploration
-* Community interaction
-* Itinerary interaction
-* TAKE HOME presentation
-* Animations and transitions
-* Responsive design
-* Accessibility
-* Client-side state
+- User interface
+- Navigation
+- Page composition
+- Map interaction
+- State/region selection
+- Travel Taste selection
+- Experience Taste selection
+- Discovery presentation
+- Place exploration
+- Community interaction
+- Itinerary interaction
+- TAKE HOME presentation
+- Animations and transitions
+- Responsive design
+- Accessibility
+- Client-side state
 
 The Frontend **must not** directly access:
 
-* PostgreSQL
-* Prisma
-* SerpApi
-* Gemini API
-* Backend secrets
-* Backend business logic
+- PostgreSQL
+- Prisma
+- SerpApi
+- Gemini API
+- Backend secrets
+- Backend business logic
 
 All application intelligence is accessed through the Backend API.
 
@@ -284,32 +284,32 @@ Not every module is required to contain every file.
 
 **Controller**
 
-* Receives HTTP requests
-* Validates request flow
-* Calls the appropriate service
-* Returns API responses
+- Receives HTTP requests
+- Validates request flow
+- Calls the appropriate service
+- Returns API responses
 
 **Service**
 
-* Owns domain-level business logic
-* Coordinates repositories and intelligence services
+- Owns domain-level business logic
+- Coordinates repositories and intelligence services
 
 **Repository**
 
-* Owns database access
-* Uses Prisma
+- Owns database access
+- Uses Prisma
 
 **Schema**
 
-* Zod request/response validation
+- Zod request/response validation
 
 **Types**
 
-* Module-specific TypeScript types
+- Module-specific TypeScript types
 
 **Routes**
 
-* Defines HTTP endpoints
+- Defines HTTP endpoints
 
 ---
 
@@ -360,12 +360,12 @@ The Backend controls the evidence and context available to Gemini.
 
 Gemini does not directly control:
 
-* Database state
-* Authorization
-* User permissions
-* Internal IDs
-* Final database writes
-* Backend security decisions
+- Database state
+- Authorization
+- User permissions
+- Internal IDs
+- Final database writes
+- Backend security decisions
 
 ---
 
@@ -441,30 +441,30 @@ The database layer contains persistent application and knowledge data.
 
 Major entities include:
 
-* User
-* Profile
-* TravelTaste
-* ExperienceTaste
-* Country
-* Region
-* Destination
-* Place
-* PlaceCategory
-* CommunitySubmission
-* SubmissionEvidence
-* SubmissionSupport
-* SubmissionReport
-* VerificationRecord
-* ConfidenceRecord
-* CrowdObservation
-* TimeObservation
-* Itinerary
-* ItineraryItem
-* TakeHomeItem
-* SavedPlace
-* Recommendation
-* ExternalPlaceReference
-* SearchCache
+- User
+- Profile
+- TravelTaste
+- ExperienceTaste
+- Country
+- Region
+- Destination
+- Place
+- PlaceCategory
+- CommunitySubmission
+- SubmissionEvidence
+- SubmissionSupport
+- SubmissionReport
+- VerificationRecord
+- ConfidenceRecord
+- CrowdObservation
+- TimeObservation
+- Itinerary
+- ItineraryItem
+- TakeHomeItem
+- SavedPlace
+- Recommendation
+- ExternalPlaceReference
+- SearchCache
 
 ---
 
