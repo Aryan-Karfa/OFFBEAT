@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, MapPin, ArrowRight } from "lucide-react";
+import { Search, MapPin, ArrowRight, Compass } from "lucide-react";
 import type { Region } from "../../types/geography";
 import { INDIA_REGIONS } from "../../features/geography/data";
 import { Card } from "../ui/Card";
@@ -28,7 +28,8 @@ export const RegionListFallback: React.FC<RegionListFallbackProps> = ({
     const matchesSearch =
       region.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       region.tagline.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      region.tags.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()));
+      region.tags.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      region.destinations.some((d) => d.name.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesZone && matchesSearch;
   });
 
@@ -125,6 +126,14 @@ export const RegionListFallback: React.FC<RegionListFallbackProps> = ({
               <Text variant="muted" className="text-xs mb-3 line-clamp-2">
                 {region.tagline}
               </Text>
+
+              {/* Destination Hubs Chips */}
+              <div className="flex items-center gap-1.5 text-[11px] text-offbeat-secondary mb-3">
+                <Compass className="h-3.5 w-3.5 text-offbeat-accent shrink-0" />
+                <span className="truncate">
+                  {region.destinations.map((d) => d.name).join(" · ")}
+                </span>
+              </div>
 
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {region.tags.slice(0, 3).map((tag) => (

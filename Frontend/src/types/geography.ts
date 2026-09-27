@@ -1,11 +1,27 @@
 export type ConfidenceLevel = "verified" | "supported" | "new" | "flagged";
 
-export interface Region {
+export type MapInteractionState =
+  "idle" | "hover" | "pressed" | "rising" | "focused" | "active" | "exploring" | "back";
+
+export interface DestinationPreview {
   id: string;
   name: string;
+  type: string;
+  tagline: string;
+  highlight: string;
+  discoveryCount: number;
+}
+
+export interface Region {
+  id: string;
+  countryId: string;
+  name: string;
   code: string;
+  type: "STATE" | "UNION_TERRITORY";
+  slug: string;
   zone: "North" | "South" | "East" | "West" | "Northeast" | "Central";
   tagline: string;
+  description: string;
   tags: string[];
   discoveryCount: number;
   highlight: string;
@@ -14,6 +30,7 @@ export interface Region {
     lng: number;
   };
   svgPath?: string;
+  destinations: DestinationPreview[];
 }
 
 export interface Country {

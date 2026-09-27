@@ -7,6 +7,7 @@ import { InteractiveMapPage } from "../../pages/Country/InteractiveMapPage";
 import { RegionPage } from "../../pages/Region/RegionPage";
 import { TravelTastePage } from "../../pages/TravelTaste/TravelTastePage";
 import { ExperienceTastePage } from "../../pages/ExperienceTaste/ExperienceTastePage";
+import { DiscoveryContextPage } from "../../pages/DiscoveryContext/DiscoveryContextPage";
 import { DiscoveryPage } from "../../pages/Discovery/DiscoveryPage";
 import { PlacePage } from "../../pages/Place/PlacePage";
 import { AlternativesPage } from "../../pages/Alternatives/AlternativesPage";
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
       {
         path: "experience-taste",
         element: <ExperienceTastePage />,
+      },
+      {
+        path: "discovery-context",
+        element: <DiscoveryContextPage />,
       },
       {
         path: "discovery",
