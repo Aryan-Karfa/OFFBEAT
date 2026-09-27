@@ -2,3 +2,5 @@ packages:
   - "Frontend"
   - "Backend"
   - "packages/*"
+allowBuilds:
+  esbuild: true
