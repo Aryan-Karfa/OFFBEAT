@@ -1,40 +1,31 @@
 # Dependencies
 node_modules/
+.pnpm-store/
 
-# Environment
+# Build outputs
+dist/
+build/
+coverage/
+.vite/
+
+# Environment / secrets
 .env
 .env.*
 !.env.example
 
-# Build output
-dist/
-build/
-.next/
-.vite/
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 
 # Logs
 *.log
-logs/
+npm-debug.log*
+pnpm-debug.log*
 
-# Coverage
-coverage/
-
-# IDE
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Runtime
-*.pid
-*.pid.lock
-
-# Temporary
-tmp/
-temp/
-
-# Database
-*.db
-*.db-journal
+# Prisma local artifacts
+prisma/*.db
+prisma/*.db-journal
