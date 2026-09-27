@@ -1,6 +1,11 @@
 import React, { useEffect, useState, useRef, useId } from "react";
 import type { Region, MapInteractionState } from "../../types/geography";
 import { INDIA_REGIONS } from "../../features/geography/data";
+import {
+  MAP_VIEWBOX,
+  calculateRegionCamera,
+  getRegionCoordinates,
+} from "../../features/geography/projection";
 import { MapRegion } from "./MapRegion";
 import { MapControls } from "./MapControls";
 
@@ -12,18 +17,6 @@ interface InteractiveMapFoundationProps {
   onHoverRegion: (region: Region | null) => void;
   onBackToCountry: () => void;
 }
-
-// Normalized coordinate projection for SVG canvas (viewBox 0 0 800 850)
-export const projectCoords = (lat: number, lng: number): { x: number; y: number } => {
-  const minLng = 68.0;
-  const maxLng = 96.0;
-  const minLat = 8.0;
-  const maxLat = 36.5;
-
-  const x = 70 + ((lng - minLng) / (maxLng - minLng)) * 620;
-  const y = 780 - ((lat - minLat) / (maxLat - minLat)) * 720;
-  return { x: Math.round(x), y: Math.round(y) };
-};
 
 export const InteractiveMapFoundation: React.FC<InteractiveMapFoundationProps> = ({
   selectedRegion,
@@ -61,54 +54,45 @@ export const InteractiveMapFoundation: React.FC<InteractiveMapFoundationProps> =
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedRegion, onBackToCountry]);
 
-  // Camera calculation:
-  // When a region is focused/active/exploring, smoothly pan and zoom to its center
+  // Dynamic Camera calculation based on the actual geometry bounding box
   const isCameraFocused =
     selectedRegion &&
     (interactionState === "focused" ||
       interactionState === "active" ||
       interactionState === "exploring");
 
-  let cameraTransform = `scale(${manualZoom})`;
+  const camera =
+    isCameraFocused && selectedRegion
+      ? calculateRegionCamera(selectedRegion, manualZoom)
+      : {
+          translateX: 0,
+          translateY: 0,
+          scale: manualZoom,
+          transform: `scale(${manualZoom})`,
+        };
 
-  if (isCameraFocused && selectedRegion) {
-    const coords = projectCoords(selectedRegion.coordinates.lat, selectedRegion.coordinates.lng);
-
-    // Dynamic zoom factor depending on country scale vs regional focus
-    const focusZoom = 2.1 * manualZoom;
-
-    if (isReducedMotion) {
-      // Immediate transform for reduced motion
-      cameraTransform = `translate(${400 - coords.x}px, ${425 - coords.y}px) scale(${focusZoom})`;
-    } else {
-      cameraTransform = `translate(${400 - coords.x}px, ${425 - coords.y}px) scale(${focusZoom})`;
-    }
-  }
-
-  const handleZoomIn = () => setManualZoom((z) => Math.min(z + 0.25, 2.2));
-  const handleZoomOut = () => setManualZoom((z) => Math.max(z - 0.25, 0.75));
-  const handleReset = () => {
+  // Reset zoom on unmount or selection cancel
+  const handleResetZoom = () => {
     setManualZoom(1);
     if (selectedRegion) {
       onBackToCountry();
     }
   };
 
-  // Announce state transitions for accessibility screen readers
-  const getAnnouncement = () => {
-    if (!selectedRegion) return "Whole India country map displayed.";
-    if (interactionState === "rising") return `${selectedRegion.name} rising from map plane.`;
-    if (interactionState === "focused") return `Camera focused on ${selectedRegion.name}.`;
-    if (interactionState === "active" || interactionState === "exploring")
-      return `${selectedRegion.name} is active. Press Escape to return.`;
-    if (interactionState === "back") return "Returning to India country map.";
-    return "";
+  const handleZoomIn = () => {
+    setManualZoom((prev) => Math.min(prev + 0.3, 2.5));
   };
 
-  // Sort regions so the selected region is rendered last (DOM z-index order)
+  const handleZoomOut = () => {
+    setManualZoom((prev) => Math.max(prev - 0.3, 0.7));
+  };
+
+  // Ensure selectedRegion renders on top of neighboring regions
   const sortedRegions = [...INDIA_REGIONS].sort((a, b) => {
     if (a.id === selectedRegion?.id) return 1;
     if (b.id === selectedRegion?.id) return -1;
+    if (a.id === hoveredRegion?.id) return 1;
+    if (b.id === hoveredRegion?.id) return -1;
     return 0;
   });
 
@@ -116,66 +100,59 @@ export const InteractiveMapFoundation: React.FC<InteractiveMapFoundationProps> =
     <div
       ref={containerRef}
       role="region"
-      aria-label="Interactive Geographic Discovery Map of India"
-      className="relative w-full h-[520px] sm:h-[620px] md:h-[700px] rounded-2xl bg-offbeat-surface/95 border border-offbeat-border overflow-hidden select-none shadow-elevated focus-visible:outline-none"
+      aria-label="Interactive Map of India with 28 States and 8 Union Territories"
+      className="relative w-full aspect-[800/920] max-h-[820px] rounded-2xl bg-offbeat-dark border border-offbeat-border/80 overflow-hidden shadow-elevated flex items-center justify-center p-2 sm:p-4 select-none"
     >
-      {/* Live Region for Screen Readers */}
-      <div aria-live="polite" className="sr-only">
-        {getAnnouncement()}
-      </div>
-
-      {/* Cartographic Background Grid */}
+      {/* Subtle cartographic grid background pattern */}
       <div
-        className="absolute inset-0 opacity-[0.035] pointer-events-none"
-        style={{
-          backgroundImage: "radial-gradient(circle, #F5F2EA 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-        }}
+        className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(#262C30_1px,transparent_1px)] [background-size:24px_24px]"
+        aria-hidden="true"
       />
 
-      {/* Map Controls & Status Overlay */}
+      {/* Cartographic Title & Scale Metadata Pill */}
+      <div className="absolute top-4 left-4 z-20 pointer-events-none flex flex-col gap-1">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-offbeat-surface/90 border border-offbeat-border text-[11px] font-mono text-offbeat-accent tracking-widest uppercase">
+          <span className="h-1.5 w-1.5 rounded-full bg-offbeat-accent animate-pulse" />
+          <span>SURVEY OF INDIA REFERENCE · 36 ADMINISTRATIVE UNITS</span>
+        </div>
+        <span className="text-[10px] font-mono text-offbeat-muted/70 pl-1">
+          Lambert Conformal Conic · 12°N - 32°N Standard Parallels
+        </span>
+      </div>
+
+      {/* Floating Tactical Zoom Controls */}
       <MapControls
         interactionState={interactionState}
         selectedRegion={selectedRegion}
         hoveredRegion={hoveredRegion}
         onZoomIn={handleZoomIn}
         onZoomOut={handleZoomOut}
-        onReset={handleReset}
+        onReset={handleResetZoom}
         onBackToCountry={onBackToCountry}
       />
 
-      {/* Main SVG Vector Surface with Smooth Hardware-Accelerated Camera */}
+      {/* Main SVG Vector Surface */}
       <div className="w-full h-full flex items-center justify-center overflow-hidden">
         <svg
-          viewBox="0 0 800 850"
-          className="w-full h-full max-h-[850px] object-contain overflow-visible"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox={MAP_VIEWBOX.viewBox}
+          className="w-full h-full max-h-[920px] object-contain overflow-visible"
           role="img"
-          aria-label="Interactive Vector Geography of India"
+          aria-label="Accurate Vector Cartography of India"
         >
           <defs>
             <radialGradient id={`glow-${gradientId}`} cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#E5A93C" stopOpacity="0.12" />
-              <stop offset="60%" stopColor="#15191B" stopOpacity="0.04" />
+              <stop offset="0%" stopColor="#E5A93C" stopOpacity="0.10" />
+              <stop offset="60%" stopColor="#15191B" stopOpacity="0.03" />
               <stop offset="100%" stopColor="#0B0D0E" stopOpacity="0" />
             </radialGradient>
-
-            <filter id={`softGlow-${gradientId}`} x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="8" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
           </defs>
 
-          {/* Camera Focus Wrapper Group */}
+          {/* Camera Pan & Zoom Transform Layer */}
           <g
             style={{
-              transform: cameraTransform,
-              transformOrigin:
-                isCameraFocused && selectedRegion
-                  ? `${projectCoords(selectedRegion.coordinates.lat, selectedRegion.coordinates.lng).x}px ${
-                      projectCoords(selectedRegion.coordinates.lat, selectedRegion.coordinates.lng)
-                        .y
-                    }px`
-                  : "400px 425px",
+              transform: isReducedMotion ? `scale(${manualZoom})` : camera.transform,
+              transformOrigin: isCameraFocused ? "0 0" : "400px 460px",
             }}
             className={
               isReducedMotion
@@ -183,97 +160,83 @@ export const InteractiveMapFoundation: React.FC<InteractiveMapFoundationProps> =
                 : "transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
             }
           >
-            {/* Subcontinent Ambient Base Silhouette */}
-            <path
-              d="M 330 65 L 390 85 L 430 135 L 440 185 L 530 205 L 590 220 L 640 215 L 720 220 L 730 250 L 660 300 L 600 320 L 535 320 L 520 375 L 530 460 L 480 540 L 440 660 L 400 750 L 375 745 L 340 640 L 310 520 L 250 430 L 205 385 L 200 310 L 245 270 L 270 205 L 310 135 Z"
-              fill={`url(#glow-${gradientId})`}
-              stroke="#202528"
-              strokeWidth="1.5"
-              strokeDasharray="4 4"
-              className={
-                selectedRegion
-                  ? "opacity-20 transition-opacity duration-500"
-                  : "opacity-100 transition-opacity duration-300"
-              }
-            />
-
-            {/* Subtle Latitude & Longitude Coordinate Lines */}
+            {/* Subtle Cartographic Coordinate Parallels and Meridians */}
             <g
               className={
                 selectedRegion
                   ? "opacity-10 transition-opacity duration-500"
-                  : "opacity-25 transition-opacity duration-300"
+                  : "opacity-30 transition-opacity duration-300"
               }
             >
               <line
-                x1="100"
-                y1="200"
+                x1="80"
+                y1="190"
                 x2="720"
-                y2="200"
+                y2="190"
                 stroke="#262C30"
                 strokeWidth="0.8"
                 strokeDasharray="3 3"
               />
-              <text x="725" y="204" fill="#757D82" fontSize="9" fontFamily="monospace">
+              <text x="725" y="194" fill="#757D82" fontSize="9" fontFamily="monospace">
                 28°N
               </text>
 
               <line
-                x1="100"
-                y1="420"
+                x1="60"
+                y1="430"
                 x2="720"
-                y2="420"
+                y2="430"
                 stroke="#262C30"
                 strokeWidth="0.8"
                 strokeDasharray="3 3"
               />
-              <text x="725" y="424" fill="#757D82" fontSize="9" fontFamily="monospace">
+              <text x="725" y="434" fill="#757D82" fontSize="9" fontFamily="monospace">
                 20°N
               </text>
 
               <line
-                x1="100"
-                y1="640"
-                x2="720"
-                y2="640"
+                x1="120"
+                y1="670"
+                x2="680"
+                y2="670"
                 stroke="#262C30"
                 strokeWidth="0.8"
                 strokeDasharray="3 3"
               />
-              <text x="725" y="644" fill="#757D82" fontSize="9" fontFamily="monospace">
+              <text x="685" y="674" fill="#757D82" fontSize="9" fontFamily="monospace">
                 12°N
               </text>
 
               <line
                 x1="260"
-                y1="100"
+                y1="80"
                 x2="260"
-                y2="760"
+                y2="820"
                 stroke="#262C30"
                 strokeWidth="0.8"
                 strokeDasharray="3 3"
               />
-              <text x="250" y="775" fill="#757D82" fontSize="9" fontFamily="monospace">
+              <text x="250" y="835" fill="#757D82" fontSize="9" fontFamily="monospace">
                 74°E
               </text>
 
               <line
-                x1="500"
-                y1="100"
-                x2="500"
-                y2="760"
+                x1="520"
+                y1="80"
+                x2="520"
+                y2="820"
                 stroke="#262C30"
                 strokeWidth="0.8"
                 strokeDasharray="3 3"
               />
-              <text x="490" y="775" fill="#757D82" fontSize="9" fontFamily="monospace">
+              <text x="510" y="835" fill="#757D82" fontSize="9" fontFamily="monospace">
                 84°E
               </text>
             </g>
 
-            {/* Individual Regions with 3D Elevation and State Transitions */}
+            {/* Individual Accurate Geographic Regions */}
             {sortedRegions.map((region) => {
-              const coords = projectCoords(region.coordinates.lat, region.coordinates.lng);
+              const coords = getRegionCoordinates(region);
               const isSelected = selectedRegion?.id === region.id;
               const isHovered = hoveredRegion?.id === region.id;
               const isOtherSelected = !!selectedRegion && !isSelected;
@@ -295,6 +258,22 @@ export const InteractiveMapFoundation: React.FC<InteractiveMapFoundationProps> =
             })}
           </g>
         </svg>
+      </div>
+
+      {/* Keyboard Accessibility Hint Banner */}
+      <div className="absolute bottom-3 left-3 sm:left-4 z-20 pointer-events-none hidden sm:flex items-center gap-2 text-[11px] text-offbeat-muted/80 bg-offbeat-surface/80 px-2.5 py-1 rounded-md border border-offbeat-border/50 backdrop-blur-sm">
+        <kbd className="px-1 py-0.5 rounded bg-offbeat-dark border border-offbeat-border text-offbeat-primary text-[10px]">
+          Tab
+        </kbd>
+        <span>to browse</span>
+        <kbd className="px-1 py-0.5 rounded bg-offbeat-dark border border-offbeat-border text-offbeat-primary text-[10px]">
+          Enter
+        </kbd>
+        <span>to elevate</span>
+        <kbd className="px-1 py-0.5 rounded bg-offbeat-dark border border-offbeat-border text-offbeat-primary text-[10px]">
+          Esc
+        </kbd>
+        <span>to restore</span>
       </div>
     </div>
   );

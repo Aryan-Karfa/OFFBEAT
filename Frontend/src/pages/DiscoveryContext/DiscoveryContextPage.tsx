@@ -12,7 +12,7 @@ import {
   getTravelTasteBySlug,
   getExperienceTasteBySlug,
 } from "../../features/taste/tasteUtils";
-import { INDIA_REGIONS } from "../../features/geography/data";
+import { INDIA_REGIONS, findRegion } from "../../features/geography/data";
 import { useTasteStore } from "../../stores/tasteStore";
 import { useDiscoveryStore } from "../../stores/discoveryStore";
 import {
@@ -42,8 +42,7 @@ export const DiscoveryContextPage: React.FC = () => {
   const [copiedJson, setCopiedJson] = useState<boolean>(false);
   const [showJsonInspector, setShowJsonInspector] = useState<boolean>(false);
 
-  const currentRegion =
-    selectedRegion || INDIA_REGIONS.find((r) => r.id === activeRegionId) || INDIA_REGIONS[0];
+  const currentRegion = selectedRegion || findRegion(activeRegionId) || INDIA_REGIONS[0];
 
   const countryName = selectedCountry?.name || "India";
   const regionName = currentRegion?.name || "West Bengal";

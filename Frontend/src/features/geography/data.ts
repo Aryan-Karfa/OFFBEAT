@@ -1,4 +1,6 @@
 import type { Country, Region } from "../../types/geography";
+import adminData from "./data/india-administrative.json";
+import { REGION_EDITORIAL_METADATA } from "./data/regionMetadata";
 
 export const FEATURED_COUNTRIES: Country[] = [
   {
@@ -47,698 +49,78 @@ export const FEATURED_COUNTRIES: Country[] = [
   },
 ];
 
-export const INDIA_REGIONS: Region[] = [
-  {
-    id: "wb",
+interface RawGeoRegion {
+  id: string;
+  name: string;
+  code: string;
+  slug: string;
+  type: "STATE" | "UNION_TERRITORY";
+  zone: "North" | "South" | "East" | "West" | "Northeast" | "Central";
+  isSmallTerritory: boolean;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  bbox: [number, number, number, number];
+  projectedCentroid: [number, number];
+  projectedBounds: [[number, number], [number, number]];
+  svgPath: string;
+  geometry: unknown;
+}
+
+/**
+ * Composed single source of truth for all Indian states and Union Territories.
+ * Merges official Survey of India administrative geometries with OFFBEAT editorial metadata.
+ */
+export const INDIA_REGIONS: Region[] = (adminData.regions as RawGeoRegion[]).map((geo) => {
+  const meta = REGION_EDITORIAL_METADATA[geo.id] || {
+    id: geo.id,
+    tagline: `${geo.name} · Cultural Exploration`,
+    description: `Discover authentic community gems and offbeat destinations across ${geo.name}.`,
+    tags: ["Culture", "Heritage", "Landscape"],
+    discoveryCount: 40,
+    highlight: `Regional highlights and heritage pathways across ${geo.name}.`,
+    destinations: [],
+  };
+
+  return {
+    id: geo.id,
     countryId: "in",
-    name: "West Bengal",
-    code: "WB",
-    type: "STATE",
-    slug: "west-bengal",
-    zone: "East",
-    tagline: "Eastern India · Himalayas to the Bay of Bengal",
-    description:
-      "A land stretching from snowbound Kanchenjunga peaks to the largest mangrove delta on Earth. Rich in colonial architecture, terracotta temples, handlooms, and timeless intellectual culture.",
-    tags: ["Mountains", "Tea Estates", "Living Heritage", "Art & Literature", "Coastal Mangroves"],
-    discoveryCount: 148,
-    highlight:
-      "Darjeeling toy train morning curves, Bishnupur terracotta temples, and heritage tea bungalows.",
-    coordinates: { lat: 22.9868, lng: 87.855 },
-    svgPath: "M 515 285 L 535 280 L 540 345 L 550 405 L 538 465 L 495 448 L 485 395 L 510 360 Z",
-    destinations: [
-      {
-        id: "wb-darjeeling",
-        name: "Darjeeling",
-        type: "Himalayan Hill Station",
-        tagline: "Colonial tea estates & Kanchenjunga sunrises",
-        highlight:
-          "Heritage tea bungalows in Tukvar and quiet walking paths through cedar forests.",
-        discoveryCount: 42,
-      },
-      {
-        id: "wb-kalimpong",
-        name: "Kalimpong",
-        type: "Alpine Ridge",
-        tagline: "Monasteries, nurseries & quiet valley outlooks",
-        highlight: "Zang Dhok Palri Phodang monastery and rare Himalayan orchid nurseries.",
-        discoveryCount: 28,
-      },
-      {
-        id: "wb-bishnupur",
-        name: "Bishnupur",
-        type: "Heritage Town",
-        tagline: "17th-century terracotta craftsmanship",
-        highlight: "Ornate burnt-clay temples and family-run Baluchari silk weaving looms.",
-        discoveryCount: 31,
-      },
-      {
-        id: "wb-sundarbans",
-        name: "Sundarbans Delta",
-        type: "Tidal Mangroves",
-        tagline: "Tidal river maze & wildlife sanctuary",
-        highlight:
-          "Silent dawn wooden skiff rides through narrow creek channels away from motorboats.",
-        discoveryCount: 25,
-      },
-      {
-        id: "wb-shantiniketan",
-        name: "Shantiniketan",
-        type: "Cultural Sanctuary",
-        tagline: "Tagore's open-air university & red earth paths",
-        highlight: "Saturday Khoai fair, baul folk balladeers, and handmade leather craft guilds.",
-        discoveryCount: 22,
-      },
-    ],
-  },
-  {
-    id: "kl",
-    countryId: "in",
-    name: "Kerala",
-    code: "KL",
-    type: "STATE",
-    slug: "kerala",
-    zone: "South",
-    tagline: "Malabar Coast · Western Ghats Biodiversity",
-    description:
-      "A coastal ribbon flanked by the Arabian Sea and misty spice peaks. Known for tranquil backwaters, indigenous martial arts, sacred groves, and century-old spice trades.",
-    tags: ["Spice Routes", "Backwaters", "Monsoon Trails", "Forest Foraging", "Ayurvedic Heritage"],
-    discoveryCount: 182,
-    highlight:
-      "Wayanad mist trails, quiet canoe waterways off Kumarakom, and traditional Kalaripayattu kalari.",
-    coordinates: { lat: 10.8505, lng: 76.2711 },
-    svgPath: "M 230 655 L 260 655 L 275 730 L 255 768 L 232 730 Z",
-    destinations: [
-      {
-        id: "kl-wayanad",
-        name: "Wayanad",
-        type: "Highland Rainforest",
-        tagline: "Neolithic caves & wild cardamom plantations",
-        highlight: "Prehistoric petroglyphs at Edakkal caves and tree-canopy homestays.",
-        discoveryCount: 45,
-      },
-      {
-        id: "kl-kumarakom",
-        name: "Kumarakom",
-        type: "Backwater Lagoon",
-        tagline: "Lotus-covered channels & bird sanctuaries",
-        highlight: "Paddling handmade wooden canoes through quiet village canals at dawn.",
-        discoveryCount: 38,
-      },
-      {
-        id: "kl-munnar",
-        name: "Munnar Highlands",
-        type: "Tea Ridge",
-        tagline: "Rolling tea carpets & endangered Nilgiri tahr",
-        highlight: "Colonial bridle paths and hidden mountain streams near Top Station.",
-        discoveryCount: 41,
-      },
-      {
-        id: "kl-fort-kochi",
-        name: "Fort Kochi",
-        type: "Historic Port",
-        tagline: "Spice warehouses & Portuguese courtyards",
-        highlight: "Bicycle journeys through Mattancherry spice markets and antique alleys.",
-        discoveryCount: 34,
-      },
-      {
-        id: "kl-varkala",
-        name: "Varkala Cliffs",
-        type: "Coastal Escarpment",
-        tagline: "Dramatic red laterite cliffs over the sea",
-        highlight: "Natural mineral water springs flowing straight onto secluded beaches.",
-        discoveryCount: 24,
-      },
-    ],
-  },
-  {
-    id: "sk",
-    countryId: "in",
-    name: "Sikkim",
-    code: "SK",
-    type: "STATE",
-    slug: "sikkim",
-    zone: "Northeast",
-    tagline: "Himalayan Sanctuary · Sacred Glacial Lakes",
-    description:
-      "India's first fully organic state, nestled in the shadow of Mount Kangchenjunga. A land of ancient Buddhist monasteries, high glacial passes, and pristine rhododendron valleys.",
-    tags: ["Alpine Monasteries", "High Passes", "Organic Farming", "Trekking", "Orchids"],
-    discoveryCount: 94,
-    highlight:
-      "Dzongu Lepcha reserve, sunrise over Kangchenjunga from Pelling, and Yumthang valley wildflowers.",
-    coordinates: { lat: 27.533, lng: 88.5122 },
-    svgPath: "M 515 268 L 538 268 L 542 295 L 518 295 Z",
-    destinations: [
-      {
-        id: "sk-dzongu",
-        name: "Dzongu",
-        type: "Indigenous Reserve",
-        tagline: "Protected Lepcha tribal homeland",
-        highlight: "Cane suspension bridges, sacred mountain groves, and cardamom harvests.",
-        discoveryCount: 29,
-      },
-      {
-        id: "sk-pelling",
-        name: "Pelling",
-        type: "Ridge Sanctuary",
-        tagline: "Direct vantage of Kangchenjunga massif",
-        highlight: "17th-century Pemayangtse Monastery and ruined Rabdentse palace walls.",
-        discoveryCount: 26,
-      },
-      {
-        id: "sk-yumthang",
-        name: "Yumthang Valley",
-        type: "Alpine Meadow",
-        tagline: "Valley of 24 indigenous rhododendron species",
-        highlight: "Natural sulphur thermal springs surrounded by snowy alpine crags.",
-        discoveryCount: 21,
-      },
-      {
-        id: "sk-ravangla",
-        name: "Ravangla",
-        type: "Pine Ridge",
-        tagline: "Tathagata Tsal & quiet birding trails",
-        highlight: "Forest walking path to the isolated Ralang monastery complex.",
-        discoveryCount: 18,
-      },
-    ],
-  },
-  {
-    id: "rj",
-    countryId: "in",
-    name: "Rajasthan",
-    code: "RJ",
-    type: "STATE",
-    slug: "rajasthan",
-    zone: "West",
-    tagline: "Thar Desert & Aravalli Ridges",
-    description:
-      "From carved sandstone stepwells to windswept dunes and dramatic hill forts. Deep rooted in folk astronomy, desert music, and architectural geometry.",
-    tags: ["Stepwells", "Starlit Dunes", "Desert Astronomy", "Folk Music", "Craft Guilds"],
-    discoveryCount: 165,
-    highlight:
-      "Chand Baori stepwell geometry, shepherd paths through Jawai granite hills, and Shekhawati painted havelis.",
-    coordinates: { lat: 27.0238, lng: 74.2179 },
-    svgPath: "M 160 245 L 235 235 L 265 280 L 248 350 L 180 358 L 148 310 Z",
-    destinations: [
-      {
-        id: "rj-bundi",
-        name: "Bundi",
-        type: "Stepwell Oasis",
-        tagline: "Carved subterranean wells & hillside palace",
-        highlight: "Intricate stepwells with zero tourist buses and crumbling blue lanes.",
-        discoveryCount: 46,
-      },
-      {
-        id: "rj-shekhawati",
-        name: "Shekhawati",
-        type: "Open-Air Gallery",
-        tagline: "Painted merchant mansions & courtyards",
-        highlight: "Intricate 19th-century botanical wall frescoes in Mandawa and Nawalgarh.",
-        discoveryCount: 37,
-      },
-      {
-        id: "rj-jawai",
-        name: "Jawai Bandh",
-        type: "Granite Wilderness",
-        tagline: "Prehistoric boulders & Rabari shepherd paths",
-        highlight: "Leopards coexisting peacefully with indigenous pastoralist clans.",
-        discoveryCount: 32,
-      },
-      {
-        id: "rj-jaisalmer-outposts",
-        name: "Thar Desert Outposts",
-        type: "Remote Sand Dunes",
-        tagline: "Uncrowded starlit desert wilderness",
-        highlight: "Stargazing from remote fossil dunes near Khuri without tourist loudspeakers.",
-        discoveryCount: 29,
-      },
-      {
-        id: "rj-kumbhalgarh",
-        name: "Kumbhalgarh Buffer",
-        type: "Hill Fortress",
-        tagline: "World's second-longest continuous wall",
-        highlight: "Horse trails through dense teak and dhok forests of the Aravalli sanctuary.",
-        discoveryCount: 21,
-      },
-    ],
-  },
-  {
-    id: "la",
-    countryId: "in",
-    name: "Ladakh",
-    code: "LA",
-    type: "UNION_TERRITORY",
-    slug: "ladakh",
-    zone: "North",
-    tagline: "High-Altitude Plateau & Cold Desert",
-    description:
-      "Barren peaks touching azure skies above 4,000 meters. Ancient Tibetan Buddhist monasteries, mountain passes, and stargazing under the purest night skies in Asia.",
-    tags: [
-      "Buddhist Monasteries",
-      "Dark Sky Reserves",
-      "Passes Above 5000m",
-      "Silk Route Heritage",
-      "Apricots",
-    ],
-    discoveryCount: 104,
-    highlight:
-      "Hanle dark sky stargazing, Hemis festival cham dances, and Turtuk Balti village stone alleys.",
-    coordinates: { lat: 34.1526, lng: 77.5771 },
-    svgPath: "M 248 85 L 298 68 L 345 88 L 365 135 L 322 162 L 268 145 Z",
-    destinations: [
-      {
-        id: "la-hanle",
-        name: "Hanle Valley",
-        type: "Dark Sky Reserve",
-        tagline: "4,500m elevation with pristine star clarity",
-        highlight: "Observing Milky Way dust lanes with the naked eye from village homestays.",
-        discoveryCount: 33,
-      },
-      {
-        id: "la-turtuk",
-        name: "Turtuk",
-        type: "Balti Village",
-        tagline: "Northernmost apricot orchard settlement",
-        highlight: "Stone irrigation aqueducts and traditional wooden Balti grain storehouses.",
-        discoveryCount: 27,
-      },
-      {
-        id: "la-zanskar",
-        name: "Zanskar Valley",
-        type: "Glacial Gorge",
-        tagline: "Remote monastery citadels & river ice",
-        highlight: "Phuktal Gompa carved into a limestone cliff face above a roaring gorge.",
-        discoveryCount: 24,
-      },
-      {
-        id: "la-nubra",
-        name: "Nubra Valley",
-        type: "High Desert",
-        tagline: "Double-humped camel dunes & river confluences",
-        highlight: "Hidden hot springs in Panamik and Diskit monastery morning chants.",
-        discoveryCount: 20,
-      },
-    ],
-  },
-  {
-    id: "hp",
-    countryId: "in",
-    name: "Himachal Pradesh",
-    code: "HP",
-    type: "STATE",
-    slug: "himachal-pradesh",
-    zone: "North",
-    tagline: "Cedar Forests & Trans-Himalayan Valleys",
-    description:
-      "From deep deodar valleys and roaring mountain rivers to trans-Himalayan desert high plains. Famed for kath-kuni wooden architecture and high mountain passes.",
-    tags: [
-      "Apple Orchards",
-      "Spiti Silence",
-      "River Valleys",
-      "Wood Architecture",
-      "High Altitudes",
-    ],
-    discoveryCount: 139,
-    highlight:
-      "Tirthan valley trout streams, ancient kath-kuni wooden temples, and Pin Valley moonscapes.",
-    coordinates: { lat: 31.1048, lng: 77.1734 },
-    svgPath: "M 252 168 L 295 158 L 312 195 L 285 225 L 248 205 Z",
-    destinations: [
-      {
-        id: "hp-tirthan",
-        name: "Tirthan Valley",
-        type: "Forest Riverbed",
-        tagline: "Crystal waters & Great Himalayan National Park",
-        highlight: "Walking through ancient cedar groves to hidden Chhoie waterfall.",
-        discoveryCount: 42,
-      },
-      {
-        id: "hp-spiti",
-        name: "Spiti Valley",
-        type: "Cold Desert",
-        tagline: "1,000-year-old mud monasteries",
-        highlight: "Key Monastery dawn prayer rituals and Dhankar fort cliff viewpoint.",
-        discoveryCount: 39,
-      },
-      {
-        id: "hp-kinnaur",
-        name: "Kinnaur & Kalpa",
-        type: "Alpine Ridge",
-        tagline: "Sacred Kinnaur Kailash & apple hamlets",
-        highlight: "Multi-tiered pagoda temples in Kamru and crisp mountain air.",
-        discoveryCount: 31,
-      },
-      {
-        id: "hp-barot",
-        name: "Barot Valley",
-        type: "Hidden Gorge",
-        tagline: "Vintage British funicular & Uhl river",
-        highlight: "Forest walking tracks through deodars with zero commercial resorts.",
-        discoveryCount: 27,
-      },
-    ],
-  },
-  {
-    id: "ut",
-    countryId: "in",
-    name: "Uttarakhand",
-    code: "UT",
-    type: "STATE",
-    slug: "uttarakhand",
-    zone: "North",
-    tagline: "Land of Gods · Glacial Headwaters & Bugyals",
-    description:
-      "The sacred origins of the Ganges and Yamuna rivers. Vast alpine meadows known as bugyals, quiet pine hamlets, and views of Nanda Devi.",
-    tags: [
-      "High Meadows",
-      "Alpine Lakes",
-      "Ganges Headwaters",
-      "Kumaon Hamlets",
-      "Forest Solitude",
-    ],
-    discoveryCount: 121,
-    highlight:
-      "Dayara Bugyal alpine meadows, quiet pine walks through Pangot, and Binsar wildlife sanctuary views.",
-    coordinates: { lat: 30.0668, lng: 79.0193 },
-    svgPath: "M 288 202 L 332 192 L 352 230 L 322 252 L 282 225 Z",
-    destinations: [
-      {
-        id: "ut-binsar",
-        name: "Binsar Sanctuary",
-        type: "Oak & Rhododendron Forest",
-        tagline: "300km Himalayan panoramas from Zero Point",
-        highlight:
-          "Walking inside a vehicle-free forest with unobstructed Nanda Devi sunrise views.",
-        discoveryCount: 36,
-      },
-      {
-        id: "ut-dayara",
-        name: "Dayara Bugyal",
-        type: "Alpine Grassland",
-        tagline: "Undulating high-altitude velvet meadows",
-        highlight: "Summer wildflowers and pristine mountain streams at 3,600m.",
-        discoveryCount: 31,
-      },
-      {
-        id: "ut-munsiyari",
-        name: "Munsiyari",
-        type: "Border Hamlet",
-        tagline: "Base of the five Panchachuli peaks",
-        highlight: "Traditional Johari wool weavers and hidden Birch forest trails.",
-        discoveryCount: 28,
-      },
-      {
-        id: "ut-chopta",
-        name: "Chopta & Tungnath",
-        type: "High Meadow Ridge",
-        tagline: "Highest Shiva temple in the world",
-        highlight: "Dawn trek to Chandrashila peak overlooking 360-degree Himalayan ridges.",
-        discoveryCount: 26,
-      },
-    ],
-  },
-  {
-    id: "ml",
-    countryId: "in",
-    name: "Meghalaya",
-    code: "ML",
-    type: "STATE",
-    slug: "meghalaya",
-    zone: "Northeast",
-    tagline: "Abode of Clouds · Living Root Architecture",
-    description:
-      "A lush plateau with the wettest places on earth. Indigenous Khasi and Garo clans engineer bridges from the living aerial roots of ficus trees.",
-    tags: [
-      "Living Root Bridges",
-      "Limestone Caves",
-      "Sacred Groves",
-      "Rainforest Trekking",
-      "Cascades",
-    ],
-    discoveryCount: 88,
-    highlight:
-      "Nongriat bio-engineered bridges, Mawphlang ancient sacred forest, and crystal-clear Umngot waters.",
-    coordinates: { lat: 25.467, lng: 91.3662 },
-    svgPath: "M 562 328 L 618 328 L 622 355 L 568 355 Z",
-    destinations: [
-      {
-        id: "ml-nongriat",
-        name: "Nongriat",
-        type: "Subtropical Gorge",
-        tagline: "Double-decker living root bridges",
-        highlight: "Natural turquoise swimming pools fed by subterranean springs.",
-        discoveryCount: 31,
-      },
-      {
-        id: "ml-mawphlang",
-        name: "Mawphlang Sacred Grove",
-        type: "Old-Growth Forest",
-        tagline: "800-year-old preserved medicinal forest",
-        highlight: "Ancient monolith coronation sites guarded by indigenous village taboos.",
-        discoveryCount: 24,
-      },
-      {
-        id: "ml-shnongpdeng",
-        name: "Shnongpdeng / Dawki",
-        type: "River Basin",
-        tagline: "Crystal waters where boats seem to fly",
-        highlight: "Drifting over river pebbles in hand-carved wooden canoes at sunset.",
-        discoveryCount: 20,
-      },
-      {
-        id: "ml-kongthong",
-        name: "Kongthong",
-        type: "Whistling Village",
-        tagline: "Every resident is called by a unique melody",
-        highlight: "The living tradition of jingrwai Iawbei acoustic nicknames.",
-        discoveryCount: 13,
-      },
-    ],
-  },
-  {
-    id: "ga",
-    countryId: "in",
-    name: "Goa",
-    code: "GA",
-    type: "STATE",
-    slug: "goa",
-    zone: "West",
-    tagline: "Konkan Hinterland & Estuarine Islands",
-    description:
-      "Beyond crowded northern beaches lies a hinterland of tidal mangrove islands, centuries-old spice plantations, baroque whitewashed chapels, and artisanal cashew feni distilleries.",
-    tags: [
-      "Spice Plantations",
-      "Indo-Portuguese Architecture",
-      "Mangrove Kayaking",
-      "Feni Distilleries",
-      "Birding",
-    ],
-    discoveryCount: 112,
-    highlight:
-      "Divar and Chorão river islands, Netravali bubbling lake, and cashew-smoking wood stills.",
-    coordinates: { lat: 15.2993, lng: 74.124 },
-    svgPath: "M 194 584 L 218 584 L 222 610 L 198 610 Z",
-    destinations: [
-      {
-        id: "ga-divar",
-        name: "Divar Island",
-        type: "River Island",
-        tagline: "Quiet lanes, paddy fields & Portuguese villas",
-        highlight: "Ferry arrival to sleepy heritage streets untouched by commercial tourism.",
-        discoveryCount: 34,
-      },
-      {
-        id: "ga-netravali",
-        name: "Netravali Sanctuary",
-        type: "Forest Reserve",
-        tagline: "Bubbling lake & Western Ghats rainforest",
-        highlight: "Freshwater streams and traditional cashew-feni wood stills.",
-        discoveryCount: 28,
-      },
-      {
-        id: "ga-chorao",
-        name: "Chorão Island",
-        type: "Mangrove Estuary",
-        tagline: "Dr. Salim Ali Bird Sanctuary",
-        highlight: "Canoeing through mangrove tunnels listening to kingfishers and otters.",
-        discoveryCount: 26,
-      },
-      {
-        id: "ga-cabo-de-rama",
-        name: "Cabo de Rama",
-        type: "Coastal Fortress",
-        tagline: "Wild cliffside ruins over turquoise waters",
-        highlight: "Solitary sunsets from the crumbling ramparts over the Arabian Sea.",
-        discoveryCount: 24,
-      },
-    ],
-  },
-  {
-    id: "ka",
-    countryId: "in",
-    name: "Karnataka",
-    code: "KA",
-    type: "STATE",
-    slug: "karnataka",
-    zone: "South",
-    tagline: "Deccan Plateau to the Arabian Sea",
-    description:
-      "Ancient empires etched in pink granite boulders at Hampi, intricate Hoysala stone filigree, misty coffee estates of Coorg, and rainforest reserves in the Western Ghats.",
-    tags: [
-      "Hampi Boulders",
-      "Coffee Estates",
-      "Hoysala Temples",
-      "Western Ghats",
-      "Coastal Temples",
-    ],
-    discoveryCount: 141,
-    highlight:
-      "Belur & Halebidu intricate stone filigree, Chikmagalur misty estate mornings, and Anegundi coracle crossings.",
-    coordinates: { lat: 15.3173, lng: 75.7139 },
-    svgPath: "M 215 538 L 272 535 L 288 620 L 255 670 L 210 650 L 210 590 Z",
-    destinations: [
-      {
-        id: "ka-anegundi",
-        name: "Anegundi & Hampi",
-        type: "Granite Kingdom",
-        tagline: "Older than Hampi across the Tungabhadra",
-        highlight: "Coracle boat crossings to hidden rock art and monkey kingdom hills.",
-        discoveryCount: 44,
-      },
-      {
-        id: "ka-chikmagalur",
-        name: "Chikmagalur",
-        type: "Coffee Highlands",
-        tagline: "Misty peaks & heritage coffee estates",
-        highlight: "Baba Budangiri trails where coffee was first planted in India in 1670.",
-        discoveryCount: 38,
-      },
-      {
-        id: "ka-agumbe",
-        name: "Agumbe",
-        type: "Rainforest Basin",
-        tagline: "Cherrapunji of the South & King Cobra habitat",
-        highlight: "Canopy walks and sunset viewpoints overlooking the Arabian Sea horizon.",
-        discoveryCount: 31,
-      },
-      {
-        id: "ka-badami",
-        name: "Badami & Aihole",
-        type: "Rock Architecture",
-        tagline: "Chalukyan rock-cut cave temples",
-        highlight: "Red sandstone cliffs reflected in Agastya Lake at twilight.",
-        discoveryCount: 28,
-      },
-    ],
-  },
-  {
-    id: "mp",
-    countryId: "in",
-    name: "Madhya Pradesh",
-    code: "MP",
-    type: "STATE",
-    slug: "madhya-pradesh",
-    zone: "Central",
-    tagline: "Heart of India · Forest Corridors & Rock Art",
-    description:
-      "The geographic heart of India. Paleolithic rock paintings, deserted medieval palaces along sacred rivers, dense sal forests, and living Gond tribal art traditions.",
-    tags: ["Bhimbetka Petroglyphs", "Tiger Corridors", "Cenotaphs", "Sacred Rivers", "Gond Art"],
-    discoveryCount: 97,
-    highlight:
-      "Orchha Betwa riverbanks, Bhimbetka Paleolithic cave paintings, and Maheshwar handloom weavers.",
-    coordinates: { lat: 22.9734, lng: 78.6569 },
-    svgPath: "M 255 368 L 350 358 L 388 410 L 338 448 L 250 435 L 240 395 Z",
-    destinations: [
-      {
-        id: "mp-orchha",
-        name: "Orchha",
-        type: "Medieval Citadel",
-        tagline: "Silent cenotaphs on the Betwa riverbank",
-        highlight: "Chhatris glowing in golden hour light with vultures nesting in palace domes.",
-        discoveryCount: 33,
-      },
-      {
-        id: "mp-bhimbetka",
-        name: "Bhimbetka",
-        type: "Prehistoric Caves",
-        tagline: "30,000-year-old hunter-gatherer paintings",
-        highlight: "Viewing ochre animal frescoes inside natural sandstone rock shelters.",
-        discoveryCount: 26,
-      },
-      {
-        id: "mp-maheshwar",
-        name: "Maheshwar",
-        type: "Temple Ghat",
-        tagline: "Sacred Narmada river ghats & handloom silk",
-        highlight: "Sitting on Ahilya Fort ramparts watching lamps float on the river at dusk.",
-        discoveryCount: 22,
-      },
-      {
-        id: "mp-mandu",
-        name: "Mandu",
-        type: "Ruined Citadel",
-        tagline: "Monsoon palaces & African baobab trees",
-        highlight: "Jahaz Mahal floating between two lakes under dramatic monsoon clouds.",
-        discoveryCount: 16,
-      },
-    ],
-  },
-  {
-    id: "od",
-    countryId: "in",
-    name: "Odisha",
-    code: "OD",
-    type: "STATE",
-    slug: "odisha",
-    zone: "East",
-    tagline: "Bay of Bengal Shoreline & Tribal Highlands",
-    description:
-      "A state of artisanal heritage villages, ancient Kalinga temple architecture, Asia's largest brackish lagoon, and untamed tribal highland forests.",
-    tags: [
-      "Pattachitra Art",
-      "Marine Sanctuaries",
-      "Kalinga Architecture",
-      "Chilika Flamingos",
-      "Handlooms",
-    ],
-    discoveryCount: 86,
-    highlight:
-      "Raghurajpur heritage crafts village, Chilika lagoon Irrawaddy dolphins, and Konark stone wheels.",
-    coordinates: { lat: 20.9517, lng: 85.0985 },
-    svgPath: "M 425 428 L 485 425 L 490 480 L 435 500 L 410 460 Z",
-    destinations: [
-      {
-        id: "od-raghurajpur",
-        name: "Raghurajpur",
-        type: "Artisan Village",
-        tagline: "Every family paints on palm leaf & cloth",
-        highlight: "Watching master artists grind natural mineral stones into organic paints.",
-        discoveryCount: 29,
-      },
-      {
-        id: "od-chilika",
-        name: "Chilika Lagoon",
-        type: "Brackish Wetland",
-        tagline: "Winter flamingo flyways & rare river dolphins",
-        highlight: "Wooden rowboats to isolated fishing hamlets on Rajhans island.",
-        discoveryCount: 25,
-      },
-      {
-        id: "od-daringbadi",
-        name: "Daringbadi",
-        type: "Pine Plateau",
-        tagline: "Highland coffee and pepper gardens",
-        highlight: "Silent pine valley walks where occasional winter frost touches the hills.",
-        discoveryCount: 18,
-      },
-      {
-        id: "od-chandrabhaga",
-        name: "Chandrabhaga",
-        type: "Pristine Coast",
-        tagline: "Wild casuarina shorelines near Konark",
-        highlight: "Dawn solitude on empty sands as local fishermen haul their catamaran nets.",
-        discoveryCount: 14,
-      },
-    ],
-  },
-];
+    name: geo.name,
+    code: geo.code,
+    type: geo.type,
+    slug: geo.slug,
+    zone: geo.zone,
+    isSmallTerritory: geo.isSmallTerritory,
+    tagline: meta.tagline,
+    description: meta.description,
+    tags: meta.tags,
+    discoveryCount: meta.discoveryCount,
+    highlight: meta.highlight,
+    coordinates: geo.coordinates,
+    bbox: geo.bbox,
+    projectedCentroid: geo.projectedCentroid,
+    projectedBounds: geo.projectedBounds,
+    svgPath: geo.svgPath,
+    geometry: geo.geometry,
+    destinations: meta.destinations,
+  };
+});
+
+/**
+ * Universal lookup supporting ISO ID ("IN-WB"), short code ("WB" or "wb"),
+ * or URL slug ("west-bengal") for maximum backwards compatibility.
+ */
+export function findRegion(query: string | undefined | null): Region | undefined {
+  if (!query) return undefined;
+  const normalized = query.toLowerCase().trim();
+
+  return INDIA_REGIONS.find(
+    (r) =>
+      r.id.toLowerCase() === normalized ||
+      r.code.toLowerCase() === normalized ||
+      r.slug.toLowerCase() === normalized ||
+      r.name.toLowerCase() === normalized ||
+      r.id.replace("in-", "").toLowerCase() === normalized,
+  );
+}

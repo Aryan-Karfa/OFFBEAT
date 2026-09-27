@@ -10,7 +10,7 @@ import { ExperienceTasteGrid } from "../../components/taste/ExperienceTasteGrid"
 import { TimeContextSelector } from "../../components/taste/TimeContextSelector";
 import { TasteSummary } from "../../components/taste/TasteSummary";
 import { getAvailableExperienceTastes } from "../../features/taste/tasteUtils";
-import { INDIA_REGIONS } from "../../features/geography/data";
+import { INDIA_REGIONS, findRegion } from "../../features/geography/data";
 import { useTasteStore } from "../../stores/tasteStore";
 import { useDiscoveryStore } from "../../stores/discoveryStore";
 import { ArrowLeft, ArrowRight, Sparkles, MapPin, AlertCircle } from "lucide-react";
@@ -39,8 +39,7 @@ export const ExperienceTastePage: React.FC = () => {
     return () => mediaQuery.removeEventListener("change", listener);
   }, []);
 
-  const currentRegion =
-    selectedRegion || INDIA_REGIONS.find((r) => r.id === activeRegionId) || INDIA_REGIONS[0];
+  const currentRegion = selectedRegion || findRegion(activeRegionId) || INDIA_REGIONS[0];
 
   const countryName = selectedCountry?.name || "India";
   const regionName = currentRegion?.name || "West Bengal";

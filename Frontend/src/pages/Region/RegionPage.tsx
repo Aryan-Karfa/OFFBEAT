@@ -7,14 +7,13 @@ import { Text } from "../../components/ui/Text";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
-import { INDIA_REGIONS } from "../../features/geography/data";
+import { INDIA_REGIONS, findRegion } from "../../features/geography/data";
 import { useTasteStore } from "../../stores/tasteStore";
 import { ArrowLeft, Compass, Sparkles, MapPin, ArrowRight } from "lucide-react";
 
 export const RegionPage: React.FC = () => {
   const { regionId } = useParams<{ regionId: string }>();
-  const region =
-    INDIA_REGIONS.find((r) => r.id === regionId || r.slug === regionId) || INDIA_REGIONS[0];
+  const region = findRegion(regionId) || INDIA_REGIONS[0];
 
   return (
     <div className="w-full">

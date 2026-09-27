@@ -26,7 +26,7 @@ export const useTasteStore = create<TasteState>()(
   persist(
     (set, get) => ({
       activeCountryId: "in",
-      activeRegionId: "wb", // Default to West Bengal as benchmark
+      activeRegionId: "IN-WB", // Default to West Bengal as benchmark
       selectedTravelTastes: [],
       selectedExperienceTastes: [],
       timeContext: null,

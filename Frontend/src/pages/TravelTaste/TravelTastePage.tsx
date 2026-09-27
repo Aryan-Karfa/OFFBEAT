@@ -9,7 +9,7 @@ import { Badge } from "../../components/ui/Badge";
 import { TravelTasteGrid } from "../../components/taste/TravelTasteGrid";
 import { TasteSummary } from "../../components/taste/TasteSummary";
 import { TRAVEL_TASTES } from "../../features/taste/travelTasteData";
-import { INDIA_REGIONS } from "../../features/geography/data";
+import { INDIA_REGIONS, findRegion } from "../../features/geography/data";
 import { useTasteStore } from "../../stores/tasteStore";
 import { useDiscoveryStore } from "../../stores/discoveryStore";
 import { ArrowLeft, ArrowRight, Sparkles, MapPin } from "lucide-react";
@@ -45,8 +45,7 @@ export const TravelTastePage: React.FC = () => {
     }
   }, [selectedRegion, selectedCountry, activeRegionId, setActiveRegion]);
 
-  const currentRegion =
-    selectedRegion || INDIA_REGIONS.find((r) => r.id === activeRegionId) || INDIA_REGIONS[0];
+  const currentRegion = selectedRegion || findRegion(activeRegionId) || INDIA_REGIONS[0];
 
   const countryName = selectedCountry?.name || "India";
   const regionName = currentRegion?.name || "West Bengal";

@@ -9,10 +9,11 @@
   },
   "scripts": {
     "verify": "node scripts/verify-phase-0.mjs",
+    "validate:geography": "node scripts/validate-geography.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "pnpm verify && pnpm lint && pnpm format:check",
+    "check": "pnpm verify && pnpm validate:geography && pnpm lint && pnpm format:check",
     "dev": "pnpm --if-present --recursive --parallel dev",
     "build": "pnpm --if-present --recursive build"
   },
@@ -24,5 +25,9 @@
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0"
+  },
+  "dependencies": {
+    "d3-geo": "^3.1.1",
+    "topojson-client": "^3.1.0"
   }
 }

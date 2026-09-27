@@ -29,7 +29,13 @@ export interface Region {
     lat: number;
     lng: number;
   };
-  svgPath?: string;
+  bbox?: [number, number, number, number];
+  projectedCentroid?: [number, number];
+  projectedBounds?: [[number, number], [number, number]];
+  isSmallTerritory?: boolean;
+  labelAnchor?: [number, number];
+  svgPath: string;
+  geometry?: unknown;
   destinations: DestinationPreview[];
 }
 
