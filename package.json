@@ -15,13 +15,19 @@
     "format:check": "prettier --check .",
     "check": "pnpm verify && pnpm validate:geography && pnpm lint && pnpm format:check",
     "dev": "pnpm --if-present --recursive --parallel dev",
-    "build": "pnpm --if-present --recursive build"
+    "build": "pnpm --if-present --recursive build",
+    "typecheck": "pnpm --if-present --recursive typecheck",
+    "test": "pnpm --if-present --recursive test",
+    "prisma:generate": "prisma generate --schema=prisma/schema.prisma",
+    "db:seed": "tsx prisma/seed.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@prisma/client": "^6.4.1",
     "@types/node": "^26.6.2",
     "eslint": "^10.11.0",
     "prettier": "^3.9.9",
+    "prisma": "^6.4.1",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.0"
