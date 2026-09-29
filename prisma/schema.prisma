@@ -1,5 +1,5 @@
 // OFFBEAT — Prisma Database Schema
-// Phase 4: Baseline Database Foundation (User & Profile)
+// Phase 5: Geography & Place Data Layer
 
 datasource db {
   provider = "postgresql"
@@ -14,6 +14,25 @@ enum UserStatus {
   ACTIVE
   INACTIVE
   SUSPENDED
+}
+
+enum RegionType {
+  STATE
+  UNION_TERRITORY
+  PROVINCE
+  EQUIVALENT
+}
+
+enum DestinationStatus {
+  ACTIVE
+  INACTIVE
+  DRAFT
+}
+
+enum PlaceStatus {
+  ACTIVE
+  INACTIVE
+  DRAFT
 }
 
 model User {
@@ -46,4 +65,119 @@ model Profile {
 
   @@index([userId])
   @@map("profiles")
+}
+
+model Country {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique
+  slug      String   @unique
+  geometry  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  regions Region[]
+
+  @@index([slug])
+  @@index([code])
+  @@map("countries")
+}
+
+model Region {
+  id          String     @id @default(uuid())
+  countryId   String     @map("country_id")
+  name        String
+  code        String
+  type        RegionType @default(STATE)
+  slug        String
+  description String?
+  geometry    Json
+  centroid    Json
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  country      Country       @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  destinations Destination[]
+
+  @@unique([countryId, slug])
+  @@unique([countryId, code])
+  @@index([countryId])
+  @@index([slug])
+  @@index([code])
+  @@map("regions")
+}
+
+model Destination {
+  id          String            @id @default(uuid())
+  regionId    String            @map("region_id")
+  name        String
+  slug        String
+  description String?
+  coordinates Json?
+  imageUrl    String?           @map("image_url")
+  status      DestinationStatus @default(ACTIVE)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  region Region  @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  places Place[]
+
+  @@unique([regionId, slug])
+  @@index([regionId])
+  @@index([slug])
+  @@map("destinations")
+}
+
+model Place {
+  id            String      @id @default(uuid())
+  destinationId String      @map("destination_id")
+  name          String
+  slug          String
+  description   String?
+  latitude      Float
+  longitude     Float
+  address       String?
+  website       String?
+  phone         String?
+  imageUrl      String?     @map("image_url")
+  status        PlaceStatus @default(ACTIVE)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  destination Destination             @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  categories  PlaceCategoryRelation[]
+
+  @@unique([destinationId, slug])
+  @@index([destinationId])
+  @@index([slug])
+  @@map("places")
+}
+
+model PlaceCategory {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  places PlaceCategoryRelation[]
+
+  @@index([slug])
+  @@map("place_categories")
+}
+
+model PlaceCategoryRelation {
+  id         String   @id @default(uuid())
+  placeId    String   @map("place_id")
+  categoryId String   @map("category_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  place    Place         @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  category PlaceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([placeId, categoryId])
+  @@index([placeId])
+  @@index([categoryId])
+  @@map("place_category_relations")
 }
