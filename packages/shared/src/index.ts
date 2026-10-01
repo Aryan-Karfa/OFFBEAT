@@ -112,3 +112,70 @@ export interface PlaceDetailDto {
   imageUrl?: string | null;
   status: PlaceStatus;
 }
+
+// ==========================================
+// Phase 6: External Intelligence Contracts
+// ==========================================
+
+export interface NormalizedExternalPlace {
+  provider: string;
+  externalId: string;
+  placeId?: string | null;
+  name: string;
+  description?: string | null;
+  address?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  phone?: string | null;
+  website?: string | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+  categories: string[];
+  openingHours?: string[];
+  thumbnailUrl?: string | null;
+  sourceUrl?: string | null;
+  rawMetadata?: Record<string, unknown>;
+}
+
+export interface NormalizedExternalReview {
+  id: string;
+  authorName: string;
+  rating?: number | null;
+  text?: string | null;
+  relativePublishTime?: string | null;
+  timestamp?: string | null;
+}
+
+export interface NormalizedExternalReviewsResult {
+  placeInfo?: {
+    title?: string | null;
+    rating?: number | null;
+    reviewsCount?: number | null;
+    address?: string | null;
+  };
+  reviews: NormalizedExternalReview[];
+  nextPageToken?: string | null;
+}
+
+export interface ExternalPlaceReferenceDto {
+  id: string;
+  placeId?: string | null;
+  provider: string;
+  externalId: string;
+  sourceUrl?: string | null;
+  metadata?: Record<string, unknown> | null;
+  lastSyncedAt: string;
+  createdAt: string;
+}
+
+export interface SearchQueryContext {
+  country?: string;
+  region?: string;
+  destination?: string;
+  travelTaste?: string[];
+  experienceTaste?: string[];
+  dayNight?: "DAY" | "NIGHT" | "ANY";
+  placeType?: string;
+  coordinates?: GeoLocation;
+  query?: string;
+}
