@@ -1,6 +1,7 @@
 import { placeRepository, type PlaceRepository } from "./places.repository.js";
 import type { PlaceDetailDto, PlaceCategoryDto, PlaceWithDetails } from "./places.types.js";
 import { NotFoundError } from "../../lib/errors/AppError.js";
+import { communityService } from "../community/community.service.js";
 
 export class PlaceService {
   constructor(private repo: PlaceRepository = placeRepository) {}
@@ -11,7 +12,17 @@ export class PlaceService {
       throw new NotFoundError(`Place with identifier '${identifier}' not found`);
     }
 
-    return this.mapPlaceToDto(place);
+    const dto = this.mapPlaceToDto(place);
+    try {
+      const signals = await communityService.getCommunitySignalsForPlace(place.id);
+      if (signals.submissionCount > 0) {
+        dto.community = signals;
+      }
+    } catch {
+      // Community signals are non-blocking enhancement
+    }
+
+    return dto;
   }
 
   async getCategories(): Promise<PlaceCategoryDto[]> {

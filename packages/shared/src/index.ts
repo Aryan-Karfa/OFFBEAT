@@ -111,6 +111,7 @@ export interface PlaceDetailDto {
   phone?: string | null;
   imageUrl?: string | null;
   status: PlaceStatus;
+  community?: CommunitySignalSummaryDto;
 }
 
 // ==========================================
@@ -245,6 +246,7 @@ export interface DiscoveryResultItemDto {
     type: DiscoverySourceType;
     provider: DiscoveryProvider;
   };
+  community?: CommunitySignalSummaryDto;
 }
 
 export interface DiscoveryPaginationDto {
@@ -264,3 +266,149 @@ export interface DiscoveryResponseDataDto {
 }
 
 export type DiscoveryApiResponse = ApiResponse<DiscoveryResponseDataDto>;
+
+// ==========================================
+// Phase 8: Community Intelligence Contracts
+// ==========================================
+
+export type SubmissionType =
+  | "HIDDEN_PLACE"
+  | "LOCAL_BUSINESS"
+  | "RESTAURANT"
+  | "PHOTO_SPOT"
+  | "BEST_TIME"
+  | "CROWD_TIP"
+  | "TRAVEL_TIP"
+  | "LOCAL_SPECIALTY"
+  | "TAKE_HOME"
+  | "EXPERIENCE"
+  | "ALTERNATIVE"
+  | "OTHER";
+
+export type SubmissionStatus = "PENDING" | "APPROVED" | "FLAGGED" | "REJECTED";
+
+export type EvidenceType = "PHOTO" | "TEXT" | "EXTERNAL_REFERENCE";
+
+export type SupportType = "AGREE" | "USEFUL" | "CONFIRM";
+
+export type ReportReason =
+  "INCORRECT" | "OUTDATED" | "DUPLICATE" | "SPAM" | "MISLEADING" | "INAPPROPRIATE" | "OTHER";
+
+export type ReportStatus = "PENDING" | "REVIEWED" | "DISMISSED";
+
+export interface SubmissionEvidenceDto {
+  id: string;
+  type: EvidenceType;
+  source?: string | null;
+  content?: string | null;
+  mediaUrl?: string | null;
+  externalReference?: string | null;
+  metadata?: Record<string, unknown> | null;
+  createdAt: string;
+}
+
+export interface SubmissionAuthorDto {
+  id: string;
+  username: string;
+  displayName: string;
+  avatarUrl?: string | null;
+}
+
+export interface SubmissionPlaceSummaryDto {
+  id: string;
+  name: string;
+  slug: string;
+  destination?: string | null;
+  region?: string | null;
+}
+
+export interface SubmissionSupportSummaryDto {
+  count: number;
+  usefulCount: number;
+  confirmCount: number;
+  agreeCount: number;
+  userSupported?: boolean;
+  userSupportType?: SupportType | null;
+}
+
+export interface CommunitySubmissionDto {
+  id: string;
+  userId: string;
+  placeId?: string | null;
+  destinationId?: string | null;
+  type: SubmissionType;
+  title: string;
+  content: string;
+  status: SubmissionStatus;
+  createdAt: string;
+  updatedAt: string;
+  author: SubmissionAuthorDto;
+  place?: SubmissionPlaceSummaryDto | null;
+  evidence: SubmissionEvidenceDto[];
+  support: SubmissionSupportSummaryDto;
+  reportCount?: number;
+}
+
+export interface CommunityHighlightDto {
+  id: string;
+  type: SubmissionType;
+  title: string;
+  content: string;
+  supportCount: number;
+  author: {
+    displayName: string;
+  };
+}
+
+export interface CommunitySignalSummaryDto {
+  submissionCount: number;
+  usefulCount: number;
+  confirmCount: number;
+  highlights: CommunityHighlightDto[];
+}
+
+export interface CreateCommunityEvidenceInput {
+  type: EvidenceType;
+  mediaUrl?: string;
+  content?: string;
+  externalReference?: string;
+  source?: string;
+}
+
+export interface CreateCommunitySubmissionRequestDto {
+  placeId?: string;
+  destinationId?: string;
+  type: SubmissionType;
+  title: string;
+  content: string;
+  evidence?: CreateCommunityEvidenceInput[];
+}
+
+export interface CommunitySubmissionsListFilterDto {
+  placeId?: string;
+  destinationId?: string;
+  type?: SubmissionType;
+  status?: SubmissionStatus;
+  page?: number;
+  limit?: number;
+}
+
+export interface CommunitySubmissionsListResponseDto {
+  items: CommunitySubmissionDto[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasMore: boolean;
+  };
+}
+
+export interface CreateSupportRequestDto {
+  type?: SupportType;
+}
+
+export interface CreateReportRequestDto {
+  reason: ReportReason;
+  description?: string;
+}

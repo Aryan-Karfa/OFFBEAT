@@ -5,6 +5,7 @@ import { userRoutes } from "../modules/users/user.routes.js";
 import { countryRoutes, regionRoutes } from "../modules/geography/geography.routes.js";
 import { placeRoutes } from "../modules/places/places.routes.js";
 import { discoveryRoutes } from "../modules/discovery/discovery.routes.js";
+import { communityRoutes } from "../modules/community/community.routes.js";
 
 export const apiRouter: Router = Router();
 
@@ -31,11 +32,13 @@ apiRouter.use("/places", placeRoutes);
 // Phase 7: Discovery Engine Intelligence Module
 apiRouter.use("/discover", discoveryRoutes);
 
-// Reserved Future Domain Endpoints (Phases 8-11):
+// Phase 8: Community Intelligence Module
+apiRouter.use("/community", communityRoutes);
+
+// Reserved Future Domain Endpoints (Phases 9-11):
 // apiRouter.use("/auth", authRoutes);
 // apiRouter.use("/profile", profileRoutes);
 // apiRouter.use("/recommendations", recommendationRoutes);
-// apiRouter.use("/community", communityRoutes);
 // apiRouter.use("/itineraries", itineraryRoutes);
 // apiRouter.use("/take-home", takeHomeRoutes);
 // apiRouter.use("/saved-places", savedPlacesRoutes);

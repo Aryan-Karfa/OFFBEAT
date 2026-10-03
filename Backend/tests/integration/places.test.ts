@@ -100,8 +100,10 @@ describe("Places API Integration Tests", () => {
       expect(res.body.data.status).toBe("ACTIVE");
       expect(res.body.meta.requestId).toBeDefined();
 
-      // Ensure no premature intelligence fields are fabricated
-      expect(res.body.data.community).toBeUndefined();
+      // Ensure no premature future intelligence fields are fabricated (Phases 9-11)
+      if (res.body.data.community) {
+        expect(res.body.data.community.submissionCount).toBeGreaterThanOrEqual(1);
+      }
       expect(res.body.data.timeIntelligence).toBeUndefined();
       expect(res.body.data.crowdIntelligence).toBeUndefined();
       expect(res.body.data.confidence).toBeUndefined();

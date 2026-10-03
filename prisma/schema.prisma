@@ -45,6 +45,9 @@ model User {
   updatedAt    DateTime   @updatedAt @map("updated_at")
 
   profile Profile?
+  submissions CommunitySubmission[]
+  supports    SubmissionSupport[]
+  reports     SubmissionReport[]
 
   @@index([email])
   @@index([username])
@@ -121,6 +124,7 @@ model Destination {
 
   region Region  @relation(fields: [regionId], references: [id], onDelete: Cascade)
   places Place[]
+  communitySubmissions CommunitySubmission[]
 
   @@unique([regionId, slug])
   @@index([regionId])
@@ -147,6 +151,7 @@ model Place {
   destination Destination             @relation(fields: [destinationId], references: [id], onDelete: Cascade)
   categories  PlaceCategoryRelation[]
   externalReferences ExternalPlaceReference[]
+  communitySubmissions CommunitySubmission[]
 
   @@unique([destinationId, slug])
   @@index([destinationId])
@@ -216,3 +221,139 @@ model SearchCache {
   @@index([expiresAt])
   @@map("search_caches")
 }
+
+// ==========================================
+// Phase 8: Community Intelligence Domain
+// ==========================================
+
+enum SubmissionType {
+  HIDDEN_PLACE
+  LOCAL_BUSINESS
+  RESTAURANT
+  PHOTO_SPOT
+  BEST_TIME
+  CROWD_TIP
+  TRAVEL_TIP
+  LOCAL_SPECIALTY
+  TAKE_HOME
+  EXPERIENCE
+  ALTERNATIVE
+  OTHER
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  FLAGGED
+  REJECTED
+}
+
+enum EvidenceType {
+  PHOTO
+  TEXT
+  EXTERNAL_REFERENCE
+}
+
+enum SupportType {
+  AGREE
+  USEFUL
+  CONFIRM
+}
+
+enum ReportReason {
+  INCORRECT
+  OUTDATED
+  DUPLICATE
+  SPAM
+  MISLEADING
+  INAPPROPRIATE
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
+}
+
+model CommunitySubmission {
+  id            String           @id @default(uuid())
+  userId        String           @map("user_id")
+  placeId       String?          @map("place_id")
+  destinationId String?          @map("destination_id")
+  type          SubmissionType
+  title         String
+  content       String
+  status        SubmissionStatus @default(PENDING)
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  place       Place?               @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  destination Destination?         @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  evidence    SubmissionEvidence[]
+  supports    SubmissionSupport[]
+  reports     SubmissionReport[]
+
+  @@index([userId])
+  @@index([placeId])
+  @@index([destinationId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@map("community_submissions")
+}
+
+model SubmissionEvidence {
+  id                String       @id @default(uuid())
+  submissionId      String       @map("submission_id")
+  type              EvidenceType
+  source            String?
+  content           String?
+  mediaUrl          String?      @map("media_url")
+  externalReference String?      @map("external_reference")
+  metadata          Json?
+  createdAt         DateTime     @default(now()) @map("created_at")
+
+  submission CommunitySubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
+  @@index([type])
+  @@map("submission_evidence")
+}
+
+model SubmissionSupport {
+  id           String      @id @default(uuid())
+  submissionId String      @map("submission_id")
+  userId       String      @map("user_id")
+  type         SupportType @default(USEFUL)
+  createdAt    DateTime    @default(now()) @map("created_at")
+
+  submission CommunitySubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([submissionId, userId, type])
+  @@index([submissionId])
+  @@index([userId])
+  @@map("submission_supports")
+}
+
+model SubmissionReport {
+  id           String       @id @default(uuid())
+  submissionId String       @map("submission_id")
+  userId       String       @map("user_id")
+  reason       ReportReason
+  description  String?
+  status       ReportStatus @default(PENDING)
+  createdAt    DateTime     @default(now()) @map("created_at")
+  resolvedAt   DateTime?    @map("resolved_at")
+
+  submission CommunitySubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
+  @@index([userId])
+  @@index([status])
+  @@map("submission_reports")
+}
+

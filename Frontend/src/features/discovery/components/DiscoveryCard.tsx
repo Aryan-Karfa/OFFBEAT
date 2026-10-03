@@ -13,6 +13,7 @@ import {
   Compass,
   CheckCircle2,
   ExternalLink,
+  Users,
 } from "lucide-react";
 
 interface DiscoveryCardProps {
@@ -123,7 +124,7 @@ export const DiscoveryCard: React.FC<DiscoveryCardProps> = ({ item }) => {
           </div>
 
           {/* 3. "WHY THIS MATCHES" — Central UX Feature */}
-          <div className="p-3.5 rounded-xl bg-offbeat-dark/70 border border-offbeat-accent/25 space-y-2 mb-4">
+          <div className="p-3.5 rounded-xl bg-offbeat-dark/70 border border-offbeat-accent/25 space-y-2 mb-3">
             <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-offbeat-accent">
               <Sparkles className="h-3.5 w-3.5 text-offbeat-accent" />
               <span>Why Offbeat Discovered This</span>
@@ -137,6 +138,38 @@ export const DiscoveryCard: React.FC<DiscoveryCardProps> = ({ item }) => {
               ))}
             </ul>
           </div>
+
+          {/* 3b. "FROM THE OFFBEAT COMMUNITY" — Traveler Highlights */}
+          {item.community && item.community.highlights.length > 0 && (
+            <div className="p-3 rounded-xl bg-offbeat-dark/60 border border-emerald-500/25 space-y-2 mb-3">
+              <div className="flex items-center justify-between gap-1">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                  <Users className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>From The Community</span>
+                </div>
+                <span className="text-[10px] font-mono text-emerald-400/90 px-1.5 py-0.5 rounded bg-emerald-950/40 border border-emerald-500/30">
+                  {item.community.submissionCount}{" "}
+                  {item.community.submissionCount === 1 ? "discovery" : "discoveries"}
+                </span>
+              </div>
+              <ul className="space-y-1.5 text-xs text-offbeat-secondary leading-snug">
+                {item.community.highlights.slice(0, 2).map((h) => (
+                  <li key={h.id} className="flex items-start gap-1.5 text-[11px]">
+                    <span className="text-offbeat-accent font-bold mt-0.5">•</span>
+                    <span className="line-clamp-2">
+                      <strong className="text-offbeat-primary font-semibold">{h.title}:</strong>{" "}
+                      &ldquo;{h.content}&rdquo;
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {item.community.usefulCount > 0 && (
+                <div className="pt-1.5 border-t border-emerald-500/15 text-[10px] text-offbeat-muted flex items-center justify-between">
+                  <span>👍 {item.community.usefulCount} travelers found these useful</span>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Description Snippet if available */}
           {place.description && (

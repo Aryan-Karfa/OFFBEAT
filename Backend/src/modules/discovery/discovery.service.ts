@@ -18,7 +18,8 @@ import type { ValidatedDiscoveryRequest } from "./discovery.schema.js";
 import { CandidateMerger } from "./discovery.merger.js";
 import { discoveryScorer, type DiscoveryScorer } from "./discovery.scorer.js";
 import { DiscoveryDiversity } from "./discovery.diversity.js";
-import type { SearchQueryContext } from "@offbeat/shared";
+import { communityService } from "../community/community.service.js";
+import type { SearchQueryContext, CommunitySignalSummaryDto } from "@offbeat/shared";
 
 export class DiscoveryService {
   constructor(
@@ -160,31 +161,48 @@ export class DiscoveryService {
     const paginatedWindow = diversifiedCandidates.slice(startIndex, startIndex + limit);
     const hasMore = startIndex + paginatedWindow.length < total;
 
-    // 9. Transform to Output DTOs
-    const results: DiscoveryResultItemDto[] = paginatedWindow.map((item) => ({
-      place: {
-        id: item.candidate.id,
-        name: item.candidate.name,
-        slug: item.candidate.slug,
-        destination: item.candidate.destination,
-        region: item.candidate.region,
-        categories: item.candidate.categories,
-        location: item.candidate.location,
-        address: item.candidate.address,
-        description: item.candidate.description,
-        imageUrl: item.candidate.imageUrl,
-        rating: item.candidate.rating,
-        reviewCount: item.candidate.reviewCount,
-        openingHours: item.candidate.openingHours,
-        sourceUrl: item.candidate.sourceUrl,
-      },
-      score: item.score,
-      why: item.why,
-      source: {
-        type: item.candidate.source,
-        provider: item.candidate.provider,
-      },
-    }));
+    // 9. Transform to Output DTOs with community signals where available
+    const results: DiscoveryResultItemDto[] = await Promise.all(
+      paginatedWindow.map(async (item) => {
+        let community: CommunitySignalSummaryDto | undefined;
+        if (item.candidate.id) {
+          try {
+            const signals = await communityService.getCommunitySignalsForPlace(item.candidate.id);
+            if (signals.submissionCount > 0) {
+              community = signals;
+            }
+          } catch {
+            // Community signals non-blocking
+          }
+        }
+
+        return {
+          place: {
+            id: item.candidate.id,
+            name: item.candidate.name,
+            slug: item.candidate.slug,
+            destination: item.candidate.destination,
+            region: item.candidate.region,
+            categories: item.candidate.categories,
+            location: item.candidate.location,
+            address: item.candidate.address,
+            description: item.candidate.description,
+            imageUrl: item.candidate.imageUrl,
+            rating: item.candidate.rating,
+            reviewCount: item.candidate.reviewCount,
+            openingHours: item.candidate.openingHours,
+            sourceUrl: item.candidate.sourceUrl,
+          },
+          score: item.score,
+          why: item.why,
+          source: {
+            type: item.candidate.source,
+            provider: item.candidate.provider,
+          },
+          community,
+        };
+      }),
+    );
 
     const durationMs = Date.now() - startTime;
     logger.info("Contextual discovery completed successfully", requestId, {
