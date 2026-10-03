@@ -9,6 +9,8 @@ import type {
   Prisma,
 } from "@prisma/client";
 import type { FindSubmissionsOptions } from "./community.types.js";
+import type { VerificationRecordSnapshot } from "./verification/verification.types.js";
+import type { ConfidenceRecordSnapshot } from "./confidence/confidence.types.js";
 
 export interface DemoUser {
   id: string;
@@ -85,6 +87,28 @@ export interface InMemorySubmission {
   evidence: InMemoryEvidence[];
   supports: InMemorySupport[];
   reports: InMemoryReport[];
+  verifications?: Array<{
+    id: string;
+    submissionId: string;
+    status: import("@offbeat/shared").VerificationStatus;
+    method: import("@offbeat/shared").VerificationMethod;
+    reviewer?: string | null;
+    reasoning?: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
+  confidenceRecords?: Array<{
+    id: string;
+    submissionId: string;
+    score: number;
+    evidenceCount: number;
+    supportCount: number;
+    contradictionCount: number;
+    externalCorroboration: boolean;
+    reasoning?: unknown;
+    calculatedAt: Date;
+    version: string;
+  }>;
 }
 
 export class CommunityRepository {
@@ -111,7 +135,16 @@ export class CommunityRepository {
       status: "APPROVED",
       createdAt: new Date("2026-09-20T05:30:00Z"),
       updatedAt: new Date("2026-09-20T05:30:00Z"),
-      evidence: [],
+      evidence: [
+        {
+          id: "evi_th_1",
+          submissionId: "sub_tiger_hill_best_time",
+          type: "PHOTO",
+          mediaUrl: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800",
+          content: "Sunrise glow over Kanchenjunga seen from the upper ridge trail",
+          createdAt: new Date("2026-09-20T05:35:00Z"),
+        },
+      ],
       supports: [
         {
           id: "sup_1",
@@ -136,6 +169,32 @@ export class CommunityRepository {
         })),
       ],
       reports: [],
+      verifications: [
+        {
+          id: "verif_tiger_best_time",
+          submissionId: "sub_tiger_hill_best_time",
+          status: "COMMUNITY_VERIFIED",
+          method: "EXTERNAL_CORROBORATION",
+          reviewer: "system:verification-engine",
+          reasoning:
+            "Corroborated by verified external place records, 12 traveler supports (8 confirmations), and photo evidence.",
+          createdAt: new Date("2026-09-24T10:00:00Z"),
+          updatedAt: new Date("2026-09-24T10:00:00Z"),
+        },
+      ],
+      confidenceRecords: [
+        {
+          id: "conf_tiger_best_time",
+          submissionId: "sub_tiger_hill_best_time",
+          score: 0.88,
+          evidenceCount: 1,
+          supportCount: 12,
+          contradictionCount: 0,
+          externalCorroboration: true,
+          version: "confidence-v1",
+          calculatedAt: new Date("2026-09-24T10:00:00Z"),
+        },
+      ],
     };
 
     const tigerHillPhotoSpot: InMemorySubmission = {
@@ -177,6 +236,31 @@ export class CommunityRepository {
         })),
       ],
       reports: [],
+      verifications: [
+        {
+          id: "verif_tiger_photo",
+          submissionId: "sub_tiger_hill_photo_spot",
+          status: "COMMUNITY_VERIFIED",
+          method: "COMMUNITY_SIGNAL",
+          reviewer: "system:verification-engine",
+          reasoning: "Confirmed by 9 travelers and verified photo evidence.",
+          createdAt: new Date("2026-09-24T12:00:00Z"),
+          updatedAt: new Date("2026-09-24T12:00:00Z"),
+        },
+      ],
+      confidenceRecords: [
+        {
+          id: "conf_tiger_photo",
+          submissionId: "sub_tiger_hill_photo_spot",
+          score: 0.82,
+          evidenceCount: 1,
+          supportCount: 9,
+          contradictionCount: 0,
+          externalCorroboration: true,
+          version: "confidence-v1",
+          calculatedAt: new Date("2026-09-24T12:00:00Z"),
+        },
+      ],
     };
 
     const tigerHillCrowdTip: InMemorySubmission = {
@@ -209,6 +293,31 @@ export class CommunityRepository {
         })),
       ],
       reports: [],
+      verifications: [
+        {
+          id: "verif_tiger_crowd",
+          submissionId: "sub_tiger_hill_crowd_tip",
+          status: "COMMUNITY_SUPPORTED",
+          method: "COMMUNITY_SIGNAL",
+          reviewer: "system:verification-engine",
+          reasoning: "Supported by 6 travelers (7 confirmations).",
+          createdAt: new Date("2026-09-27T10:00:00Z"),
+          updatedAt: new Date("2026-09-27T10:00:00Z"),
+        },
+      ],
+      confidenceRecords: [
+        {
+          id: "conf_tiger_crowd",
+          submissionId: "sub_tiger_hill_crowd_tip",
+          score: 0.62,
+          evidenceCount: 0,
+          supportCount: 7,
+          contradictionCount: 0,
+          externalCorroboration: true,
+          version: "confidence-v1",
+          calculatedAt: new Date("2026-09-27T10:00:00Z"),
+        },
+      ],
     };
 
     // Batasia Loop Seed
@@ -224,7 +333,16 @@ export class CommunityRepository {
       status: "APPROVED",
       createdAt: new Date("2026-09-26T10:15:00Z"),
       updatedAt: new Date("2026-09-26T10:15:00Z"),
-      evidence: [],
+      evidence: [
+        {
+          id: "evi_batasia_1",
+          submissionId: "sub_batasia_loop_tip",
+          type: "PHOTO",
+          mediaUrl: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800",
+          content: "Darjeeling Himalayan Railway steam locomotive traversing Batasia spiral",
+          createdAt: new Date("2026-09-26T10:20:00Z"),
+        },
+      ],
       supports: [
         {
           id: "sup_batasia_1",
@@ -240,8 +358,40 @@ export class CommunityRepository {
           type: "USEFUL",
           createdAt: new Date("2026-09-28T11:00:00Z"),
         },
+        ...Array.from({ length: 5 }, (_, i) => ({
+          id: `sup_batasia_seed_${i + 3}`,
+          submissionId: "sub_batasia_loop_tip",
+          userId: `seed_user_batasia_${i}`,
+          type: "CONFIRM" as const,
+          createdAt: new Date("2026-09-28T14:00:00Z"),
+        })),
       ],
       reports: [],
+      verifications: [
+        {
+          id: "verif_batasia",
+          submissionId: "sub_batasia_loop_tip",
+          status: "COMMUNITY_VERIFIED",
+          method: "COMMUNITY_SIGNAL",
+          reviewer: "system:verification-engine",
+          reasoning: "Confirmed by 7 travelers with photo evidence.",
+          createdAt: new Date("2026-09-28T15:00:00Z"),
+          updatedAt: new Date("2026-09-28T15:00:00Z"),
+        },
+      ],
+      confidenceRecords: [
+        {
+          id: "conf_batasia",
+          submissionId: "sub_batasia_loop_tip",
+          score: 0.77,
+          evidenceCount: 1,
+          supportCount: 7,
+          contradictionCount: 0,
+          externalCorroboration: true,
+          version: "confidence-v1",
+          calculatedAt: new Date("2026-09-28T15:00:00Z"),
+        },
+      ],
     };
 
     // Victoria Memorial Seed
@@ -275,6 +425,31 @@ export class CommunityRepository {
         })),
       ],
       reports: [],
+      verifications: [
+        {
+          id: "verif_vm",
+          submissionId: "sub_victoria_memorial_tip",
+          status: "COMMUNITY_SUPPORTED",
+          method: "COMMUNITY_SIGNAL",
+          reviewer: "system:verification-engine",
+          reasoning: "Supported by 11 travelers.",
+          createdAt: new Date("2026-09-29T19:00:00Z"),
+          updatedAt: new Date("2026-09-29T19:00:00Z"),
+        },
+      ],
+      confidenceRecords: [
+        {
+          id: "conf_vm",
+          submissionId: "sub_victoria_memorial_tip",
+          score: 0.58,
+          evidenceCount: 0,
+          supportCount: 11,
+          contradictionCount: 0,
+          externalCorroboration: true,
+          version: "confidence-v1",
+          calculatedAt: new Date("2026-09-29T19:00:00Z"),
+        },
+      ],
     };
 
     this.inMemorySubmissions = [
@@ -308,6 +483,14 @@ export class CommunityRepository {
             evidence: true,
             supports: true,
             reports: true,
+            verifications: {
+              orderBy: { createdAt: "desc" },
+              take: 1,
+            },
+            confidenceRecords: {
+              orderBy: { calculatedAt: "desc" },
+              take: 1,
+            },
           },
         });
       } catch {
@@ -345,6 +528,14 @@ export class CommunityRepository {
               evidence: true,
               supports: true,
               reports: true,
+              verifications: {
+                orderBy: { createdAt: "desc" },
+                take: 1,
+              },
+              confidenceRecords: {
+                orderBy: { calculatedAt: "desc" },
+                take: 1,
+              },
             },
             orderBy: { createdAt: "desc" },
             skip,
@@ -633,6 +824,22 @@ export class CommunityRepository {
 
     sub.reports.push(report);
     return report;
+  }
+
+  attachVerificationToMemory(submissionId: string, verification: VerificationRecordSnapshot) {
+    const sub = this.inMemorySubmissions.find((s) => s.id === submissionId);
+    if (sub) {
+      if (!sub.verifications) sub.verifications = [];
+      sub.verifications.unshift(verification);
+    }
+  }
+
+  attachConfidenceToMemory(submissionId: string, confidence: ConfidenceRecordSnapshot) {
+    const sub = this.inMemorySubmissions.find((s) => s.id === submissionId);
+    if (sub) {
+      if (!sub.confidenceRecords) sub.confidenceRecords = [];
+      sub.confidenceRecords.unshift(confidence);
+    }
   }
 
   private normalizeTitle(title: string): string {

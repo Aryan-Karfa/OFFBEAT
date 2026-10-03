@@ -288,12 +288,14 @@ model CommunitySubmission {
   createdAt     DateTime         @default(now()) @map("created_at")
   updatedAt     DateTime         @updatedAt @map("updated_at")
 
-  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  place       Place?               @relation(fields: [placeId], references: [id], onDelete: SetNull)
-  destination Destination?         @relation(fields: [destinationId], references: [id], onDelete: SetNull)
-  evidence    SubmissionEvidence[]
-  supports    SubmissionSupport[]
-  reports     SubmissionReport[]
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  place             Place?                @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  destination       Destination?          @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  evidence          SubmissionEvidence[]
+  supports          SubmissionSupport[]
+  reports           SubmissionReport[]
+  verifications     VerificationRecord[]
+  confidenceRecords ConfidenceRecord[]
 
   @@index([userId])
   @@index([placeId])
@@ -355,5 +357,62 @@ model SubmissionReport {
   @@index([userId])
   @@index([status])
   @@map("submission_reports")
+}
+
+// ==========================================
+// Phase 9: Verification & Confidence Domain
+// ==========================================
+
+enum VerificationStatus {
+  PENDING
+  COMMUNITY_SUPPORTED
+  COMMUNITY_VERIFIED
+  FLAGGED
+  REJECTED
+}
+
+enum VerificationMethod {
+  COMMUNITY_SIGNAL
+  EVIDENCE_REVIEW
+  EXTERNAL_CORROBORATION
+  DETERMINISTIC_RULES
+  MANUAL_REVIEW
+}
+
+model VerificationRecord {
+  id           String             @id @default(uuid())
+  submissionId String             @map("submission_id")
+  status       VerificationStatus @default(PENDING)
+  method       VerificationMethod @default(DETERMINISTIC_RULES)
+  reviewer     String?
+  reasoning    String?
+  createdAt    DateTime           @default(now()) @map("created_at")
+  updatedAt    DateTime           @updatedAt @map("updated_at")
+
+  submission CommunitySubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
+  @@index([status])
+  @@index([method])
+  @@map("verification_records")
+}
+
+model ConfidenceRecord {
+  id                    String   @id @default(uuid())
+  submissionId          String   @map("submission_id")
+  score                 Float
+  evidenceCount         Int      @map("evidence_count")
+  supportCount          Int      @map("support_count")
+  contradictionCount    Int      @map("contradiction_count")
+  externalCorroboration Boolean  @default(false) @map("external_corroboration")
+  reasoning             Json?
+  calculatedAt          DateTime @default(now()) @map("calculated_at")
+  version               String   @default("confidence-v1")
+
+  submission CommunitySubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
+  @@index([calculatedAt])
+  @@map("confidence_records")
 }
 

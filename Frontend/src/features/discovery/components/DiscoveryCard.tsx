@@ -148,16 +148,34 @@ export const DiscoveryCard: React.FC<DiscoveryCardProps> = ({ item }) => {
                   <span>From The Community</span>
                 </div>
                 <span className="text-[10px] font-mono text-emerald-400/90 px-1.5 py-0.5 rounded bg-emerald-950/40 border border-emerald-500/30">
+                  {item.community.verifiedCount && item.community.verifiedCount > 0
+                    ? `${item.community.verifiedCount} verified • `
+                    : ""}
                   {item.community.submissionCount}{" "}
                   {item.community.submissionCount === 1 ? "discovery" : "discoveries"}
                 </span>
               </div>
-              <ul className="space-y-1.5 text-xs text-offbeat-secondary leading-snug">
+              <ul className="space-y-2 text-xs text-offbeat-secondary leading-snug">
                 {item.community.highlights.slice(0, 2).map((h) => (
-                  <li key={h.id} className="flex items-start gap-1.5 text-[11px]">
-                    <span className="text-offbeat-accent font-bold mt-0.5">•</span>
-                    <span className="line-clamp-2">
-                      <strong className="text-offbeat-primary font-semibold">{h.title}:</strong>{" "}
+                  <li
+                    key={h.id}
+                    className="flex flex-col gap-0.5 text-[11px] pb-1.5 border-b border-emerald-500/10 last:border-0 last:pb-0"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-offbeat-accent font-bold">•</span>
+                      <span className="font-semibold text-offbeat-primary truncate">{h.title}</span>
+                      {h.verification?.status === "COMMUNITY_VERIFIED" && (
+                        <span className="ml-auto shrink-0 text-[9px] px-1.5 py-0.5 text-emerald-300 bg-emerald-950/70 rounded border border-emerald-500/40 font-medium">
+                          ✓ Verified
+                        </span>
+                      )}
+                      {h.verification?.status === "COMMUNITY_SUPPORTED" && (
+                        <span className="ml-auto shrink-0 text-[9px] px-1.5 py-0.5 text-sky-300 bg-sky-950/70 rounded border border-sky-500/40 font-medium">
+                          ★ Supported
+                        </span>
+                      )}
+                    </div>
+                    <span className="line-clamp-2 text-offbeat-secondary pl-3">
                       &ldquo;{h.content}&rdquo;
                     </span>
                   </li>
@@ -166,6 +184,9 @@ export const DiscoveryCard: React.FC<DiscoveryCardProps> = ({ item }) => {
               {item.community.usefulCount > 0 && (
                 <div className="pt-1.5 border-t border-emerald-500/15 text-[10px] text-offbeat-muted flex items-center justify-between">
                   <span>👍 {item.community.usefulCount} travelers found these useful</span>
+                  {item.community.confirmCount > 0 && (
+                    <span>✓ {item.community.confirmCount} confirmations</span>
+                  )}
                 </div>
               )}
             </div>

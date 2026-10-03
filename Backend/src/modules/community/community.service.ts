@@ -9,6 +9,11 @@ import {
 } from "./community.repository.js";
 import { placeRepository, type PlaceRepository } from "../places/places.repository.js";
 import { userRepository, type UserRepository } from "../users/user.repository.js";
+import {
+  verificationService,
+  type VerificationService,
+} from "./verification/verification.service.js";
+import { buildVerificationSummary } from "./verification/verification.explanations.js";
 import type {
   CommunitySubmissionDto,
   CommunitySubmissionsListResponseDto,
@@ -23,6 +28,9 @@ import type {
   SubmissionRecord,
   SubmissionSupportRecord,
   SubmissionEvidenceRecord,
+  VerificationStatus,
+  VerificationSummaryDto,
+  VerificationDetailDto,
 } from "./community.types.js";
 import type {
   CreateCommunitySubmissionInput,
@@ -34,6 +42,7 @@ export class CommunityService {
     private repo: CommunityRepository = communityRepository,
     private placesRepo: PlaceRepository = placeRepository,
     private userRepo: UserRepository = userRepository,
+    private verifService: VerificationService = verificationService,
   ) {}
 
   /**
@@ -110,14 +119,30 @@ export class CommunityService {
       evidenceToCreate,
     );
 
+    // Automatic recalculation: evaluate verification and confidence snapshot
+    const evaluation = await this.verifService.evaluateSubmission(
+      created as unknown as SubmissionRecord,
+      requestId,
+    );
+    this.repo.attachVerificationToMemory(created.id, evaluation.verification);
+    this.repo.attachConfidenceToMemory(created.id, evaluation.confidenceSnapshot);
+
     logger.info("Successfully created community submission", requestId, {
       submissionId: created.id,
       userId: author.id,
       placeId: input.placeId,
       type: input.type,
+      verificationStatus: evaluation.verification.status,
+      confidenceScore: evaluation.confidence.score,
     });
 
-    return this.mapToDto(created as unknown as SubmissionRecord, author.id, placeInfo);
+    const createdWithVerif = {
+      ...(created as unknown as SubmissionRecord),
+      verifications: [evaluation.verification],
+      confidenceRecords: [evaluation.confidenceSnapshot],
+    };
+
+    return this.mapToDto(createdWithVerif as unknown as SubmissionRecord, author.id, placeInfo);
   }
 
   /**
@@ -223,15 +248,23 @@ export class CommunityService {
       type,
     });
 
-    // Re-fetch to return latest support aggregate
+    // Re-fetch to return latest support aggregate and trigger automatic recalculation
     const updated = await this.repo.findSubmissionById(submissionId);
+    if (updated) {
+      const evaluation = await this.verifService.evaluateSubmission(
+        updated as unknown as SubmissionRecord,
+        requestId,
+      );
+      this.repo.attachVerificationToMemory(submissionId, evaluation.verification);
+      this.repo.attachConfidenceToMemory(submissionId, evaluation.confidenceSnapshot);
+    }
     const supports = updated?.supports || [];
 
     return this.buildSupportSummary(supports, author.id);
   }
 
   /**
-   * Report a community submission for review.
+   * Report a community submission for review and trigger confidence recalculation.
    */
   async reportSubmission(
     submissionId: string,
@@ -248,7 +281,18 @@ export class CommunityService {
 
     await this.repo.createReport(submissionId, author.id, reason, description);
 
-    logger.info("Submission report submitted", requestId, {
+    // Trigger automatic recalculation upon receiving a report
+    const updated = await this.repo.findSubmissionById(submissionId);
+    if (updated) {
+      const evaluation = await this.verifService.evaluateSubmission(
+        updated as unknown as SubmissionRecord,
+        requestId,
+      );
+      this.repo.attachVerificationToMemory(submissionId, evaluation.verification);
+      this.repo.attachConfidenceToMemory(submissionId, evaluation.confidenceSnapshot);
+    }
+
+    logger.info("Submission report submitted and confidence recalculated", requestId, {
       submissionId,
       userId: author.id,
       reason,
@@ -262,6 +306,38 @@ export class CommunityService {
   }
 
   /**
+   * Retrieves full verification details for a submission.
+   */
+  async getSubmissionVerification(submissionId: string): Promise<VerificationDetailDto> {
+    return this.verifService.getVerificationDetail(
+      submissionId,
+      async (id) => (await this.repo.findSubmissionById(id)) as unknown as SubmissionRecord | null,
+    );
+  }
+
+  /**
+   * Recalculates confidence and verification state for a submission (internal/testing/demo).
+   */
+  async recalculateSubmissionVerification(
+    submissionId: string,
+    requestId?: string,
+  ): Promise<VerificationDetailDto> {
+    const submission = await this.repo.findSubmissionById(submissionId);
+    if (!submission) {
+      throw new NotFoundError(`Community submission with id '${submissionId}' not found`);
+    }
+
+    const evaluation = await this.verifService.evaluateSubmission(
+      submission as unknown as SubmissionRecord,
+      requestId,
+    );
+    this.repo.attachVerificationToMemory(submissionId, evaluation.verification);
+    this.repo.attachConfidenceToMemory(submissionId, evaluation.confidenceSnapshot);
+
+    return this.getSubmissionVerification(submissionId);
+  }
+
+  /**
    * Compute community signal summary and highlights for a place.
    */
   async getCommunitySignalsForPlace(placeId: string): Promise<CommunitySignalSummaryDto> {
@@ -269,11 +345,21 @@ export class CommunityService {
 
     let usefulCount = 0;
     let confirmCount = 0;
+    let verifiedCount = 0;
+    let supportedCount = 0;
 
     for (const item of items) {
       for (const sup of item.supports) {
         if (sup.type === "USEFUL") usefulCount++;
         if (sup.type === "CONFIRM") confirmCount++;
+      }
+
+      const verifStatus = item.verifications?.[0]?.status;
+      if (verifStatus === "COMMUNITY_VERIFIED") {
+        verifiedCount++;
+        supportedCount++;
+      } else if (verifStatus === "COMMUNITY_SUPPORTED") {
+        supportedCount++;
       }
     }
 
@@ -282,6 +368,32 @@ export class CommunityService {
 
     const highlights: CommunityHighlightDto[] = sorted.slice(0, 3).map((sub) => {
       const author = this.extractAuthorFromSubmission(sub as unknown as SubmissionRecord);
+
+      let verification: VerificationSummaryDto | null = null;
+      const latestVerif = sub.verifications?.[0];
+      const latestConf = sub.confidenceRecords?.[0];
+      if (latestVerif && latestConf) {
+        verification = buildVerificationSummary(latestVerif.status as VerificationStatus, {
+          score: latestConf.score,
+          evidenceCount: latestConf.evidenceCount,
+          supportCount: latestConf.supportCount,
+          contradictionCount: latestConf.contradictionCount,
+          externalCorroboration: latestConf.externalCorroboration,
+          reasoning: {
+            baseEvidenceScore: 0,
+            supportScore: 0,
+            diversityScore: 0,
+            confirmingSignalScore: 0,
+            corroborationScore: 0,
+            consistencyScore: 0,
+            rawPositiveScore: 0,
+            penaltyScore: 0,
+            penaltiesApplied: [],
+          },
+          version: latestConf.version,
+        });
+      }
+
       return {
         id: sub.id,
         type: sub.type,
@@ -291,6 +403,7 @@ export class CommunityService {
         author: {
           displayName: author.displayName,
         },
+        verification,
       };
     });
 
@@ -298,6 +411,8 @@ export class CommunityService {
       submissionCount: items.length,
       usefulCount,
       confirmCount,
+      verifiedCount,
+      supportedCount,
       highlights,
     };
   }
@@ -460,6 +575,31 @@ export class CommunityService {
       }),
     );
 
+    let verification: VerificationSummaryDto | null = null;
+    const latestVerif = submission.verifications?.[0];
+    const latestConf = submission.confidenceRecords?.[0];
+    if (latestVerif && latestConf) {
+      verification = buildVerificationSummary(latestVerif.status as VerificationStatus, {
+        score: latestConf.score,
+        evidenceCount: latestConf.evidenceCount,
+        supportCount: latestConf.supportCount,
+        contradictionCount: latestConf.contradictionCount,
+        externalCorroboration: latestConf.externalCorroboration,
+        reasoning: {
+          baseEvidenceScore: 0,
+          supportScore: 0,
+          diversityScore: 0,
+          confirmingSignalScore: 0,
+          corroborationScore: 0,
+          consistencyScore: 0,
+          rawPositiveScore: 0,
+          penaltyScore: 0,
+          penaltiesApplied: [],
+        },
+        version: latestConf.version,
+      });
+    }
+
     return {
       id: submission.id,
       userId: submission.userId,
@@ -482,6 +622,7 @@ export class CommunityService {
       evidence: evidenceDtos,
       support: this.buildSupportSummary(supports, currentUserId),
       reportCount: reports.length,
+      verification,
     };
   }
 

@@ -4,3 +4,5 @@ export * from "./community.repository.js";
 export * from "./community.service.js";
 export * from "./community.controller.js";
 export * from "./community.routes.js";
+export * from "./verification/index.js";
+export * from "./confidence/index.js";

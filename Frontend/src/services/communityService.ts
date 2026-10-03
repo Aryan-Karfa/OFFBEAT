@@ -82,4 +82,29 @@ export const communityService = {
       },
     );
   },
+
+  /**
+   * Retrieves full verification and confidence detail for a submission.
+   */
+  async getSubmissionVerification(
+    submissionId: string,
+  ): Promise<import("@offbeat/shared").VerificationDetailDto> {
+    return await fetchApi<import("@offbeat/shared").VerificationDetailDto>(
+      `community/submissions/${submissionId}/verification`,
+    );
+  },
+
+  /**
+   * Recalculates confidence and verification state for a submission.
+   */
+  async recalculateSubmissionVerification(
+    submissionId: string,
+  ): Promise<import("@offbeat/shared").VerificationDetailDto> {
+    return await fetchApi<import("@offbeat/shared").VerificationDetailDto>(
+      `community/submissions/${submissionId}/verification/recalculate`,
+      {
+        method: "POST",
+      },
+    );
+  },
 };

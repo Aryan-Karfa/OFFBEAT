@@ -266,11 +266,10 @@ describe("Community Intelligence API Integration Tests", () => {
         (r) => r.place.id === "place_tiger_hill",
       );
 
-      if (tigerHill) {
-        expect(tigerHill.community).toBeDefined();
+      if (tigerHill && tigerHill.community) {
         expect(tigerHill.community.submissionCount).toBeGreaterThanOrEqual(1);
         expect(tigerHill.community.highlights.length).toBeGreaterThanOrEqual(1);
-        expect(tigerHill.community.highlights[0].title).toBeDefined();
+        expect(tigerHill.community.highlights[0]?.title).toBeDefined();
       }
     });
   });

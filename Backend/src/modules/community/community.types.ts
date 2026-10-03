@@ -17,6 +17,13 @@ import type {
   CommunitySubmissionsListResponseDto,
   CreateSupportRequestDto,
   CreateReportRequestDto,
+  VerificationStatus,
+  VerificationMethod,
+  EvidenceStrength,
+  ConfidenceSummaryDto,
+  VerificationExplanationDto,
+  VerificationSummaryDto,
+  VerificationDetailDto,
 } from "@offbeat/shared";
 
 export type {
@@ -38,6 +45,13 @@ export type {
   CommunitySubmissionsListResponseDto,
   CreateSupportRequestDto,
   CreateReportRequestDto,
+  VerificationStatus,
+  VerificationMethod,
+  EvidenceStrength,
+  ConfidenceSummaryDto,
+  VerificationExplanationDto,
+  VerificationSummaryDto,
+  VerificationDetailDto,
 };
 
 export interface FindSubmissionsOptions {
@@ -108,4 +122,23 @@ export interface SubmissionRecord {
   evidence?: SubmissionEvidenceRecord[];
   supports?: SubmissionSupportRecord[];
   reports?: unknown[];
+  verifications?: Array<{
+    id: string;
+    status: VerificationStatus;
+    method: VerificationMethod;
+    reviewer?: string | null;
+    reasoning?: string | null;
+    createdAt: Date | string;
+    updatedAt?: Date | string;
+  }>;
+  confidenceRecords?: Array<{
+    id: string;
+    score: number;
+    evidenceCount: number;
+    supportCount: number;
+    contradictionCount: number;
+    externalCorroboration: boolean;
+    version: string;
+    calculatedAt: Date | string;
+  }>;
 }

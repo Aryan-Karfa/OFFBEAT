@@ -331,6 +331,56 @@ export interface SubmissionSupportSummaryDto {
   userSupportType?: SupportType | null;
 }
 
+// ==========================================
+// Phase 9: Verification & Confidence Contracts
+// ==========================================
+
+export type VerificationStatus =
+  "PENDING" | "COMMUNITY_SUPPORTED" | "COMMUNITY_VERIFIED" | "FLAGGED" | "REJECTED";
+
+export type VerificationMethod =
+  | "COMMUNITY_SIGNAL"
+  | "EVIDENCE_REVIEW"
+  | "EXTERNAL_CORROBORATION"
+  | "DETERMINISTIC_RULES"
+  | "MANUAL_REVIEW";
+
+export type EvidenceStrength = "HIGH" | "MODERATE" | "EMERGING" | "CONTESTED";
+
+export interface ConfidenceSummaryDto {
+  score: number;
+  evidenceCount: number;
+  supportCount: number;
+  contradictionCount: number;
+  externalCorroboration: boolean;
+  version: string;
+}
+
+export interface VerificationExplanationDto {
+  headline: string;
+  signals: string[];
+  summary: string;
+}
+
+export interface VerificationSummaryDto {
+  status: VerificationStatus;
+  strength: EvidenceStrength;
+  score: number;
+  headline?: string;
+  supportedCount: number;
+  externalCorroborated: boolean;
+}
+
+export interface VerificationDetailDto {
+  submissionId: string;
+  status: VerificationStatus;
+  method: VerificationMethod;
+  confidence: ConfidenceSummaryDto;
+  strength: EvidenceStrength;
+  explanation: VerificationExplanationDto;
+  updatedAt: string;
+}
+
 export interface CommunitySubmissionDto {
   id: string;
   userId: string;
@@ -347,6 +397,7 @@ export interface CommunitySubmissionDto {
   evidence: SubmissionEvidenceDto[];
   support: SubmissionSupportSummaryDto;
   reportCount?: number;
+  verification?: VerificationSummaryDto | null;
 }
 
 export interface CommunityHighlightDto {
@@ -358,12 +409,15 @@ export interface CommunityHighlightDto {
   author: {
     displayName: string;
   };
+  verification?: VerificationSummaryDto | null;
 }
 
 export interface CommunitySignalSummaryDto {
   submissionCount: number;
   usefulCount: number;
   confirmCount: number;
+  verifiedCount?: number;
+  supportedCount?: number;
   highlights: CommunityHighlightDto[];
 }
 

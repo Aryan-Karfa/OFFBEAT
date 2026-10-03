@@ -11,3 +11,10 @@ communityRoutes.get("/submissions/:submissionId", communityController.getSubmiss
 // Support & Report
 communityRoutes.post("/submissions/:submissionId/support", communityController.supportSubmission);
 communityRoutes.post("/submissions/:submissionId/report", communityController.reportSubmission);
+
+// Verification & Confidence (Phase 9)
+communityRoutes.get("/submissions/:submissionId/verification", communityController.getVerification);
+communityRoutes.post(
+  "/submissions/:submissionId/verification/recalculate",
+  communityController.recalculateVerification,
+);

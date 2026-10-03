@@ -18,6 +18,9 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
+import { VerificationBadge } from "./VerificationBadge";
+import { EvidenceStrengthBadge } from "./EvidenceStrengthBadge";
+import { VerificationDetailsModal } from "./VerificationDetailsModal";
 
 interface CommunityCardProps {
   submission: CommunitySubmissionDto;
@@ -28,6 +31,7 @@ export const CommunityCard: React.FC<CommunityCardProps> = ({ submission, onUpda
   const [supportState, setSupportState] = useState(submission.support);
   const [supporting, setSupporting] = useState<SupportType | null>(null);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [reportReason, setReportReason] = useState<ReportReason>("OUTDATED");
   const [reportDescription, setReportDescription] = useState("");
   const [reporting, setReporting] = useState(false);
@@ -151,6 +155,22 @@ export const CommunityCard: React.FC<CommunityCardProps> = ({ submission, onUpda
           >
             OFFBEAT COMMUNITY
           </span>
+        </div>
+
+        {/* Phase 9 Verification & Evidence Row */}
+        <div className="flex flex-wrap items-center justify-between gap-1.5 mb-2.5">
+          <VerificationBadge
+            status={submission.verification?.status || "PENDING"}
+            size="sm"
+            onClick={() => setShowVerificationModal(true)}
+          />
+          {submission.verification && (
+            <EvidenceStrengthBadge
+              strength={submission.verification.strength}
+              score={submission.verification.score}
+              showScore
+            />
+          )}
         </div>
 
         {/* Discovery Title */}
@@ -353,6 +373,29 @@ export const CommunityCard: React.FC<CommunityCardProps> = ({ submission, onUpda
           </div>
         </div>
       )}
+
+      {/* Verification Details Modal */}
+      <VerificationDetailsModal
+        submissionId={submission.id}
+        submissionTitle={submission.title}
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        onRecalculated={(updatedDetail) => {
+          if (onUpdated) {
+            onUpdated({
+              ...submission,
+              verification: {
+                status: updatedDetail.status,
+                strength: updatedDetail.strength,
+                score: updatedDetail.confidence.score,
+                supportedCount: updatedDetail.confidence.supportCount,
+                externalCorroborated: updatedDetail.confidence.externalCorroboration,
+                headline: updatedDetail.explanation.headline,
+              },
+            });
+          }
+        }}
+      />
     </Card>
   );
 };

@@ -102,6 +102,11 @@ export const PlacePage: React.FC = () => {
                     <Badge variant="accent" dot size="sm">
                       OFFBEAT CANONICAL PLACE
                     </Badge>
+                    {place.community && (place.community.verifiedCount ?? 0) > 0 && (
+                      <Badge variant="verified" size="sm">
+                        ✓ {place.community.verifiedCount} Community Verified
+                      </Badge>
+                    )}
                     <span className="text-[11px] text-offbeat-muted font-mono">
                       LAT: {place.location.lat.toFixed(3)}, LNG: {place.location.lng.toFixed(3)}
                     </span>

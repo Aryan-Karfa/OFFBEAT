@@ -102,6 +102,31 @@ export class CommunityController {
       next(error);
     }
   };
+
+  getVerification = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const submissionId = req.params.submissionId as string;
+      const detail = await this.service.getSubmissionVerification(submissionId);
+      sendSuccess(res, detail, 200);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  recalculateVerification = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    try {
+      const submissionId = req.params.submissionId as string;
+      const requestId = req.requestId;
+      const detail = await this.service.recalculateSubmissionVerification(submissionId, requestId);
+      sendSuccess(res, detail, 200);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export const communityController = new CommunityController();
