@@ -179,3 +179,88 @@ export interface SearchQueryContext {
   coordinates?: GeoLocation;
   query?: string;
 }
+
+// ==========================================
+// Phase 7: Discovery Engine Contracts
+// ==========================================
+
+export type DiscoveryIntent =
+  "DISCOVER_PLACES" | "FIND_EXPERIENCE" | "FIND_ALTERNATIVE" | "FIND_LESS_CROWDED";
+
+export type DayNightPreference = "DAY" | "NIGHT" | "ANY";
+
+export type DiscoverySourceType = "INTERNAL" | "EXTERNAL" | "COMBINED";
+
+export type DiscoveryProvider = "OFFBEAT" | "SERPAPI" | "COMBINED";
+
+export interface DiscoveryContextDto {
+  country: string;
+  regionId: string;
+  region: string;
+  destination?: string | null;
+  travelTaste: string[];
+  experienceTaste: string[];
+  dayNight: DayNightPreference;
+  preferredTime?: string | null;
+  placeType?: string | null;
+  intent: DiscoveryIntent;
+}
+
+export interface DiscoveryRequestDto {
+  regionId: string;
+  country?: string;
+  destination?: string;
+  travelTaste?: string[];
+  experienceTaste?: string[];
+  dayNight?: DayNightPreference;
+  preferredTime?: string;
+  placeType?: string;
+  intent?: DiscoveryIntent;
+  page?: number;
+  limit?: number;
+}
+
+export interface DiscoveryPlaceDto {
+  id: string;
+  name: string;
+  slug?: string;
+  destination: string;
+  region: string;
+  categories: string[];
+  location: GeoLocation;
+  address?: string | null;
+  description?: string | null;
+  imageUrl?: string | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+  openingHours?: string[] | null;
+  sourceUrl?: string | null;
+}
+
+export interface DiscoveryResultItemDto {
+  place: DiscoveryPlaceDto;
+  score: number;
+  why: string[];
+  source: {
+    type: DiscoverySourceType;
+    provider: DiscoveryProvider;
+  };
+}
+
+export interface DiscoveryPaginationDto {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+export interface DiscoveryResponseDataDto {
+  context: DiscoveryContextDto;
+  results: DiscoveryResultItemDto[];
+  pagination: DiscoveryPaginationDto;
+  fallback?: boolean;
+  notice?: string | null;
+}
+
+export type DiscoveryApiResponse = ApiResponse<DiscoveryResponseDataDto>;

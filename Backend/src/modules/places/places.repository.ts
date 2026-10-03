@@ -166,6 +166,52 @@ export class PlaceRepository {
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
+  async findPlacesByRegion(regionId: string): Promise<PlaceWithDetails[]> {
+    const raw = regionId.trim();
+    const lower = raw.toLowerCase();
+
+    if (isDatabaseConnected()) {
+      try {
+        return await prisma.place.findMany({
+          where: {
+            destination: {
+              OR: [
+                { regionId: raw },
+                { regionId: lower },
+                { region: { id: raw } },
+                { region: { code: raw.toUpperCase() } },
+                { region: { slug: lower } },
+              ],
+            },
+          },
+          include: {
+            destination: true,
+            categories: {
+              include: {
+                category: true,
+              },
+            },
+          },
+          orderBy: { name: "asc" },
+        });
+      } catch {
+        // Fall back gracefully
+      }
+    }
+
+    const { places } = loadFallbackPlaceData();
+    return places
+      .filter((p) => {
+        const destRegion = p.destination.regionId;
+        return (
+          destRegion === raw ||
+          destRegion.toLowerCase() === lower ||
+          destRegion.toUpperCase() === raw.toUpperCase()
+        );
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
   async findAllCategories(): Promise<PlaceCategory[]> {
     if (isDatabaseConnected()) {
       try {

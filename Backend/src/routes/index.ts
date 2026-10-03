@@ -4,6 +4,7 @@ import { appConfig } from "../config/app.config.js";
 import { userRoutes } from "../modules/users/user.routes.js";
 import { countryRoutes, regionRoutes } from "../modules/geography/geography.routes.js";
 import { placeRoutes } from "../modules/places/places.routes.js";
+import { discoveryRoutes } from "../modules/discovery/discovery.routes.js";
 
 export const apiRouter: Router = Router();
 
@@ -27,10 +28,12 @@ apiRouter.use("/countries", countryRoutes);
 apiRouter.use("/regions", regionRoutes);
 apiRouter.use("/places", placeRoutes);
 
-// Reserved Future Domain Endpoints (Phases 6-11):
+// Phase 7: Discovery Engine Intelligence Module
+apiRouter.use("/discover", discoveryRoutes);
+
+// Reserved Future Domain Endpoints (Phases 8-11):
 // apiRouter.use("/auth", authRoutes);
 // apiRouter.use("/profile", profileRoutes);
-// apiRouter.use("/discover", discoveryRoutes);
 // apiRouter.use("/recommendations", recommendationRoutes);
 // apiRouter.use("/community", communityRoutes);
 // apiRouter.use("/itineraries", itineraryRoutes);

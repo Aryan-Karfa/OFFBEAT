@@ -4,7 +4,8 @@
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@offbeat/shared": ["../packages/shared/src/index.ts"]
     }
   },
   "include": ["src", "vite.config.ts", "tailwind.config.ts"]
