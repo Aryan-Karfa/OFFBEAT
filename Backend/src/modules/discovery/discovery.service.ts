@@ -153,8 +153,8 @@ export class DiscoveryService {
     const diversifiedCandidates = DiscoveryDiversity.diversify(scoredCandidates);
 
     // 8. Pagination Window
-    const page = request.page;
-    const limit = request.limit;
+    const page = request.page ?? 1;
+    const limit = request.limit ?? 12;
     const total = diversifiedCandidates.length;
     const totalPages = Math.max(1, Math.ceil(total / limit));
     const startIndex = (page - 1) * limit;
