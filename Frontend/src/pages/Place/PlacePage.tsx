@@ -9,6 +9,7 @@ import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
 import { placesService } from "../../services/placesService";
 import { CommunitySection, ContributeModal } from "../../features/community";
+import { TimeIntelligenceSection, CrowdIntelligenceSection } from "../../features/intelligence";
 import type { PlaceDetailDto } from "@offbeat/shared";
 import { ArrowLeft, MapPin, Share2, PlusCircle, Globe, Phone, Compass } from "lucide-react";
 
@@ -189,6 +190,18 @@ export const PlacePage: React.FC = () => {
                   </div>
                 )}
               </Card>
+
+              {/* Phase 10: Time & Crowd Intelligence Section */}
+              {(place.timeIntelligence || place.crowdIntelligence) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                  {place.timeIntelligence && (
+                    <TimeIntelligenceSection timeIntelligence={place.timeIntelligence} />
+                  )}
+                  {place.crowdIntelligence && (
+                    <CrowdIntelligenceSection crowdIntelligence={place.crowdIntelligence} />
+                  )}
+                </div>
+              )}
 
               {/* Community Discoveries Section */}
               <CommunitySection placeId={place.id} placeName={place.name} />

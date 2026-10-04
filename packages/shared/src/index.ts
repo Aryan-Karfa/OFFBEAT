@@ -112,6 +112,8 @@ export interface PlaceDetailDto {
   imageUrl?: string | null;
   status: PlaceStatus;
   community?: CommunitySignalSummaryDto;
+  timeIntelligence?: TimeIntelligenceDto;
+  crowdIntelligence?: CrowdIntelligenceDto;
 }
 
 // ==========================================
@@ -247,6 +249,10 @@ export interface DiscoveryResultItemDto {
     provider: DiscoveryProvider;
   };
   community?: CommunitySignalSummaryDto;
+  bestTime?: DiscoveryBestTimeDto;
+  crowd?: DiscoveryCrowdDto;
+  timeFit?: TimeFit;
+  crowdFit?: CrowdFit;
 }
 
 export interface DiscoveryPaginationDto {
@@ -465,4 +471,135 @@ export interface CreateSupportRequestDto {
 export interface CreateReportRequestDto {
   reason: ReportReason;
   description?: string;
+}
+
+// ==========================================
+// Phase 10: Time & Crowd Intelligence Contracts
+// ==========================================
+
+export type TimeObservationType =
+  | "OPENING_TIME"
+  | "CLOSING_TIME"
+  | "BEST_TIME"
+  | "SUNRISE_TIME"
+  | "SUNSET_TIME"
+  | "LOW_CROWD_TIME"
+  | "COMMUNITY_RECOMMENDED_TIME";
+
+export type ObservationSource = "EXTERNAL" | "COMMUNITY" | "SYSTEM";
+
+export type DayType = "WEEKDAY" | "WEEKEND" | "ANY";
+
+export type CrowdLevel = "LOW" | "MODERATE" | "HIGH" | "VERY_HIGH" | "UNKNOWN";
+
+export type Season = "SPRING" | "SUMMER" | "MONSOON" | "AUTUMN" | "WINTER" | "ANY" | "UNKNOWN";
+
+export type TimeFit = "GOOD" | "PARTIAL" | "CONFLICT" | "UNKNOWN";
+
+export type CrowdFit = "LOWER_CROWD_MATCH" | "NEUTRAL" | "HIGHER_CROWD" | "UNKNOWN";
+
+export interface OperatingWindowDto {
+  day?: string;
+  open?: string | null;
+  close?: string | null;
+  closed?: boolean;
+  is24Hours?: boolean;
+  description?: string;
+  windows?: Array<{ open: string | null; close: string | null }>;
+}
+
+export interface OperatingHoursDto {
+  schedule: OperatingWindowDto[];
+  text: string[];
+  raw?: string[];
+  isOpenNow?: boolean | null;
+  source: ObservationSource;
+  rawText?: string | null;
+}
+
+export interface RecommendedTimeDto {
+  start: string;
+  end: string;
+  dayType?: DayType;
+  reason?: string;
+  source: ObservationSource;
+  confidence?: number;
+  evidenceStrength?: EvidenceStrength;
+}
+
+export interface AvailableWindowDto {
+  start: string;
+  end: string;
+  label?: string;
+  source?: ObservationSource;
+}
+
+export interface TimeTimingSignalDto {
+  type: string;
+  description: string;
+  source: ObservationSource;
+}
+
+export interface TimeIntelligenceDto {
+  operatingHours: OperatingHoursDto;
+  recommendedTimes: RecommendedTimeDto[];
+  availableWindows: AvailableWindowDto[];
+  signals: TimeTimingSignalDto[];
+  explanation: string;
+  timeFit?: TimeFit;
+}
+
+export interface CrowdPatternDto {
+  dayType: DayType;
+  time?: string | null;
+  season?: Season;
+  level: CrowdLevel;
+  source: ObservationSource;
+  observation?: string | null;
+}
+
+export interface CrowdIntelligenceDto {
+  overall: CrowdLevel;
+  patterns: CrowdPatternDto[];
+  contextualSignals?: string[];
+  explanation: string;
+  evidenceStrength?: EvidenceStrength;
+  confidence?: number;
+  source: ObservationSource;
+  crowdFit?: CrowdFit;
+}
+
+export interface DiscoveryBestTimeDto {
+  start: string;
+  end: string;
+  dayType?: DayType;
+  source: ObservationSource;
+  reason?: string;
+}
+
+export interface DiscoveryCrowdDto {
+  level: CrowdLevel;
+  context?: string;
+  source: ObservationSource;
+  observation?: string;
+}
+
+export interface CreateTimeObservationRequestDto {
+  type: TimeObservationType;
+  startTime: string;
+  endTime: string;
+  dayType?: DayType;
+  observation?: string;
+  expiresAt?: string;
+}
+
+export interface CreateCrowdObservationRequestDto {
+  level: CrowdLevel;
+  timeStart?: string;
+  timeEnd?: string;
+  dayType?: DayType;
+  season?: Season;
+  observation?: string;
+  destinationId?: string;
+  expiresAt?: string;
 }

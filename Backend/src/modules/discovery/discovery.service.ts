@@ -19,7 +19,16 @@ import { CandidateMerger } from "./discovery.merger.js";
 import { discoveryScorer, type DiscoveryScorer } from "./discovery.scorer.js";
 import { DiscoveryDiversity } from "./discovery.diversity.js";
 import { communityService } from "../community/community.service.js";
-import type { SearchQueryContext, CommunitySignalSummaryDto } from "@offbeat/shared";
+import { timeService } from "../intelligence/time/time.service.js";
+import { crowdService } from "../intelligence/crowd/crowd.service.js";
+import type {
+  SearchQueryContext,
+  CommunitySignalSummaryDto,
+  DiscoveryBestTimeDto,
+  DiscoveryCrowdDto,
+  TimeFit,
+  CrowdFit,
+} from "@offbeat/shared";
 
 export class DiscoveryService {
   constructor(
@@ -165,6 +174,11 @@ export class DiscoveryService {
     const results: DiscoveryResultItemDto[] = await Promise.all(
       paginatedWindow.map(async (item) => {
         let community: CommunitySignalSummaryDto | undefined;
+        let bestTime: DiscoveryBestTimeDto | undefined;
+        let crowd: DiscoveryCrowdDto | undefined;
+        let timeFit: TimeFit | undefined;
+        let crowdFit: CrowdFit | undefined;
+
         if (item.candidate.id) {
           try {
             const signals = await communityService.getCommunitySignalsForPlace(item.candidate.id);
@@ -173,6 +187,51 @@ export class DiscoveryService {
             }
           } catch {
             // Community signals non-blocking
+          }
+
+          try {
+            const timeIntel = await timeService.getTimeIntelligenceForPlace(item.candidate.id, {
+              dayNight: context.dayNight,
+              preferredTime: context.preferredTime || undefined,
+              experienceTaste: context.experienceTaste,
+            });
+
+            if (timeIntel.recommendedTimes.length > 0) {
+              const topRec = timeIntel.recommendedTimes[0];
+              if (topRec) {
+                bestTime = {
+                  start: topRec.start,
+                  end: topRec.end,
+                  dayType: topRec.dayType,
+                  source: topRec.source,
+                  reason: topRec.reason,
+                };
+              }
+            }
+            timeFit = timeIntel.timeFit;
+          } catch {
+            // Time intelligence non-blocking
+          }
+
+          try {
+            const crowdIntel = await crowdService.getCrowdIntelligenceForPlace(item.candidate.id, {
+              dayType: "ANY",
+            });
+
+            if (crowdIntel.overall !== "UNKNOWN") {
+              const firstPattern = crowdIntel.patterns[0];
+              crowd = {
+                level: crowdIntel.overall,
+                context: firstPattern?.time
+                  ? `${firstPattern.dayType} ${firstPattern.time}`
+                  : firstPattern?.dayType,
+                source: crowdIntel.source,
+                observation: firstPattern?.observation || undefined,
+              };
+            }
+            crowdFit = crowdIntel.crowdFit;
+          } catch {
+            // Crowd intelligence non-blocking
           }
         }
 
@@ -200,6 +259,10 @@ export class DiscoveryService {
             provider: item.candidate.provider,
           },
           community,
+          bestTime,
+          crowd,
+          timeFit,
+          crowdFit,
         };
       }),
     );

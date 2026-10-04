@@ -6,6 +6,7 @@ import { countryRoutes, regionRoutes } from "../modules/geography/geography.rout
 import { placeRoutes } from "../modules/places/places.routes.js";
 import { discoveryRoutes } from "../modules/discovery/discovery.routes.js";
 import { communityRoutes } from "../modules/community/community.routes.js";
+import { intelligenceController } from "../modules/intelligence/intelligence.controller.js";
 
 export const apiRouter: Router = Router();
 
@@ -34,6 +35,9 @@ apiRouter.use("/discover", discoveryRoutes);
 
 // Phase 8: Community Intelligence Module
 apiRouter.use("/community", communityRoutes);
+
+// Phase 10: Intelligence Module Destination Endpoints
+apiRouter.get("/destinations/:destinationId/crowd", intelligenceController.getDestinationCrowd);
 
 // Reserved Future Domain Endpoints (Phases 9-11):
 // apiRouter.use("/auth", authRoutes);

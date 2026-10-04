@@ -139,6 +139,64 @@ export const DiscoveryCard: React.FC<DiscoveryCardProps> = ({ item }) => {
             </ul>
           </div>
 
+          {/* 3a. TIME & CROWD INTELLIGENCE (Phase 10) */}
+          {(item.bestTime || item.crowd) && (
+            <div
+              className={`grid ${
+                item.bestTime && item.crowd ? "grid-cols-2" : "grid-cols-1"
+              } gap-2 p-2.5 rounded-xl bg-offbeat-dark/60 border border-offbeat-border/80 text-xs mb-3`}
+            >
+              {item.bestTime && (
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-400">
+                    <Clock className="h-3 w-3 text-amber-400" />
+                    <span>Best Time</span>
+                  </div>
+                  <span className="font-semibold text-offbeat-primary text-[11px]">
+                    {item.bestTime.start && item.bestTime.end
+                      ? `${item.bestTime.start} – ${item.bestTime.end}`
+                      : item.bestTime.start || "Recommended"}
+                  </span>
+                  {item.bestTime.reason && (
+                    <span
+                      className="text-[10px] text-offbeat-muted truncate"
+                      title={item.bestTime.reason}
+                    >
+                      {item.bestTime.reason}
+                    </span>
+                  )}
+                </div>
+              )}
+              {item.crowd && (
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-teal-400">
+                    <Users className="h-3 w-3 text-teal-400" />
+                    <span>Crowd</span>
+                  </div>
+                  <span className="font-semibold text-offbeat-primary text-[11px]">
+                    {item.crowd.level === "LOW"
+                      ? "Lower Crowd"
+                      : item.crowd.level === "MODERATE"
+                        ? "Moderate Crowd"
+                        : item.crowd.level === "HIGH"
+                          ? "Busy / High Crowd"
+                          : item.crowd.level === "VERY_HIGH"
+                            ? "Peak Crowd"
+                            : "Crowd Unknown"}
+                  </span>
+                  {item.crowd.context && (
+                    <span
+                      className="text-[10px] text-offbeat-muted truncate capitalize"
+                      title={item.crowd.context}
+                    >
+                      {item.crowd.context.replace(/_/g, " ").toLowerCase()}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* 3b. "FROM THE OFFBEAT COMMUNITY" — Traveler Highlights */}
           {item.community && item.community.highlights.length > 0 && (
             <div className="p-3 rounded-xl bg-offbeat-dark/60 border border-emerald-500/25 space-y-2 mb-3">

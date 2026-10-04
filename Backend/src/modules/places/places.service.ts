@@ -2,6 +2,8 @@ import { placeRepository, type PlaceRepository } from "./places.repository.js";
 import type { PlaceDetailDto, PlaceCategoryDto, PlaceWithDetails } from "./places.types.js";
 import { NotFoundError } from "../../lib/errors/AppError.js";
 import { communityService } from "../community/community.service.js";
+import { timeService } from "../intelligence/time/time.service.js";
+import { crowdService } from "../intelligence/crowd/crowd.service.js";
 
 export class PlaceService {
   constructor(private repo: PlaceRepository = placeRepository) {}
@@ -20,6 +22,20 @@ export class PlaceService {
       }
     } catch {
       // Community signals are non-blocking enhancement
+    }
+
+    try {
+      const timeIntel = await timeService.getTimeIntelligenceForPlace(place.id);
+      dto.timeIntelligence = timeIntel;
+    } catch {
+      // Time intelligence is non-blocking enhancement
+    }
+
+    try {
+      const crowdIntel = await crowdService.getCrowdIntelligenceForPlace(place.id);
+      dto.crowdIntelligence = crowdIntel;
+    } catch {
+      // Crowd intelligence is non-blocking enhancement
     }
 
     return dto;
