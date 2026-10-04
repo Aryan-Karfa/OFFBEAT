@@ -114,6 +114,7 @@ export interface PlaceDetailDto {
   community?: CommunitySignalSummaryDto;
   timeIntelligence?: TimeIntelligenceDto;
   crowdIntelligence?: CrowdIntelligenceDto;
+  reasoning?: RecommendationReasoningDto;
 }
 
 // ==========================================
@@ -253,6 +254,7 @@ export interface DiscoveryResultItemDto {
   crowd?: DiscoveryCrowdDto;
   timeFit?: TimeFit;
   crowdFit?: CrowdFit;
+  reasoning?: RecommendationReasoningDto;
 }
 
 export interface DiscoveryPaginationDto {
@@ -269,6 +271,7 @@ export interface DiscoveryResponseDataDto {
   pagination: DiscoveryPaginationDto;
   fallback?: boolean;
   notice?: string | null;
+  reasoning?: RecommendationReasoningDto;
 }
 
 export type DiscoveryApiResponse = ApiResponse<DiscoveryResponseDataDto>;
@@ -602,4 +605,78 @@ export interface CreateCrowdObservationRequestDto {
   observation?: string;
   destinationId?: string;
   expiresAt?: string;
+}
+
+// ==========================================
+// Phase 11: Gemini Intelligence Layer Contracts
+// ==========================================
+
+export type ReasoningSource = "GEMINI" | "DETERMINISTIC";
+
+export interface RecommendationReasoningDto {
+  source: ReasoningSource;
+  summary: string;
+  reasons: string[];
+  tradeoffs?: string[];
+  contextualNotes?: string[];
+}
+
+export interface DiscoveryReasoningCandidateDto {
+  id: string;
+  name: string;
+  description?: string | null;
+  categories: string[];
+  destination: string;
+  rating?: number | null;
+  reviewCount?: number | null;
+  score?: number;
+  why?: string[];
+  bestTime?: {
+    start?: string;
+    end?: string;
+    reason?: string;
+    source: string;
+  };
+  crowd?: {
+    level: string;
+    context?: string;
+    source: string;
+    observation?: string;
+  };
+  communityHighlights?: Array<{
+    title: string;
+    content: string;
+    verificationStatus?: string;
+    evidenceStrength?: string;
+  }>;
+  timeFit?: string;
+  crowdFit?: string;
+  confidence?: {
+    score?: number;
+    evidenceStrength?: string;
+    status?: string;
+  };
+  sources?: string[];
+}
+
+export interface DiscoveryReasoningInputDto {
+  userContext: {
+    region: string;
+    destination?: string | null;
+    travelTaste: string[];
+    experienceTaste: string[];
+    dayNight: "DAY" | "NIGHT" | "ANY";
+    preferredTime?: string | null;
+  };
+  candidates: DiscoveryReasoningCandidateDto[];
+}
+
+export interface DiscoveryReasoningResultDto {
+  selectedPlaceIds: string[];
+  primaryRecommendationId: string;
+  recommendationSummary: string;
+  reasons: string[];
+  tradeoffs: string[];
+  contextualNotes: string[];
+  source: ReasoningSource;
 }

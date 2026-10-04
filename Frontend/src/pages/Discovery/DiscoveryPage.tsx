@@ -47,6 +47,7 @@ export const DiscoveryPage: React.FC = () => {
     error,
     fallback,
     notice,
+    reasoning,
     executeDiscovery,
     loadMore,
     retry,
@@ -260,6 +261,47 @@ export const DiscoveryPage: React.FC = () => {
                     "Displaying curated OFFBEAT places (live external search temporarily unavailable)."}
                 </span>
               </div>
+            </div>
+          )}
+
+          {/* 4a. Gemini Contextual Intelligence Banner (Phase 11) */}
+          {reasoning && results.length > 0 && !isLoading && (
+            <div className="mb-8 p-5 rounded-2xl bg-gradient-to-r from-purple-950/40 via-offbeat-surface to-offbeat-dark border border-purple-500/30 shadow-elevated">
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-2.5">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-purple-400" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-purple-300">
+                    Why Offbeat Chose These Recommendations
+                  </span>
+                </div>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-purple-950/70 border border-purple-500/40 text-purple-200">
+                  {reasoning.source === "GEMINI"
+                    ? "Gemini 3.8 Reasoning Layer"
+                    : "Deterministic Engine Reasoning"}
+                </span>
+              </div>
+              <p className="text-sm font-medium text-offbeat-primary mb-3 leading-relaxed">
+                {reasoning.summary}
+              </p>
+              {reasoning.reasons && reasoning.reasons.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-offbeat-secondary mb-3">
+                  {reasoning.reasons.slice(0, 4).map((r, i) => (
+                    <div
+                      key={i}
+                      className="flex items-start gap-1.5 p-2 rounded-lg bg-offbeat-dark/50 border border-purple-500/15"
+                    >
+                      <span className="text-purple-400 font-bold shrink-0">•</span>
+                      <span>{r}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {reasoning.contextualNotes && reasoning.contextualNotes.length > 0 && (
+                <div className="text-[11px] text-offbeat-muted flex flex-wrap items-center gap-2 pt-2 border-t border-purple-500/20">
+                  <span className="font-semibold text-purple-300/80">Context:</span>
+                  <span>{reasoning.contextualNotes[0]}</span>
+                </div>
+              )}
             </div>
           )}
 

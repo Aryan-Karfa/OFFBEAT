@@ -8,3 +8,5 @@ allowBuilds:
   "@prisma/engines": true
   prisma: true
   workerd: false
+  "@google/genai": true
+  protobufjs: true

@@ -123,21 +123,54 @@ export const DiscoveryCard: React.FC<DiscoveryCardProps> = ({ item }) => {
             ))}
           </div>
 
-          {/* 3. "WHY THIS MATCHES" — Central UX Feature */}
-          <div className="p-3.5 rounded-xl bg-offbeat-dark/70 border border-offbeat-accent/25 space-y-2 mb-3">
-            <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-offbeat-accent">
-              <Sparkles className="h-3.5 w-3.5 text-offbeat-accent" />
-              <span>Why Offbeat Discovered This</span>
+          {/* 3. GEMINI INTELLIGENCE REASONING (Phase 11) */}
+          {item.reasoning ? (
+            <div className="p-3.5 rounded-xl bg-purple-950/20 border border-purple-500/30 space-y-2 mb-3">
+              <div className="flex items-center justify-between gap-1.5">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-purple-400">
+                  <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+                  <span>Why Offbeat Chose This</span>
+                </div>
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-purple-950/50 border border-purple-500/30 text-purple-300">
+                  {item.reasoning.source === "GEMINI" ? "Gemini Reasoning" : "OFFBEAT Reasoned"}
+                </span>
+              </div>
+              <p className="text-xs text-offbeat-primary font-medium leading-relaxed">
+                {item.reasoning.summary}
+              </p>
+              {item.reasoning.reasons && item.reasoning.reasons.length > 0 && (
+                <ul className="space-y-1 text-xs text-offbeat-secondary leading-snug">
+                  {item.reasoning.reasons.slice(0, 3).map((r, i) => (
+                    <li key={i} className="flex items-start gap-1.5">
+                      <span className="text-purple-400 font-bold shrink-0 mt-0.5">•</span>
+                      <span>{r}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {item.reasoning.tradeoffs && item.reasoning.tradeoffs.length > 0 && (
+                <div className="pt-1.5 border-t border-purple-500/20 text-[10px] text-amber-300/90 flex items-start gap-1.5">
+                  <span className="font-semibold shrink-0">Note:</span>
+                  <span>{item.reasoning.tradeoffs[0]}</span>
+                </div>
+              )}
             </div>
-            <ul className="space-y-1.5 text-xs text-offbeat-secondary leading-snug">
-              {why.map((reason, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400/90 shrink-0 mt-0.5" />
-                  <span>{reason}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          ) : (
+            <div className="p-3.5 rounded-xl bg-offbeat-dark/70 border border-offbeat-accent/25 space-y-2 mb-3">
+              <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-offbeat-accent">
+                <Sparkles className="h-3.5 w-3.5 text-offbeat-accent" />
+                <span>Why Offbeat Discovered This</span>
+              </div>
+              <ul className="space-y-1.5 text-xs text-offbeat-secondary leading-snug">
+                {why.map((reason, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400/90 shrink-0 mt-0.5" />
+                    <span>{reason}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* 3a. TIME & CROWD INTELLIGENCE (Phase 10) */}
           {(item.bestTime || item.crowd) && (

@@ -21,6 +21,7 @@ import { DiscoveryDiversity } from "./discovery.diversity.js";
 import { communityService } from "../community/community.service.js";
 import { timeService } from "../intelligence/time/time.service.js";
 import { crowdService } from "../intelligence/crowd/crowd.service.js";
+import { geminiService } from "../../integrations/gemini/gemini.service.js";
 import type {
   SearchQueryContext,
   CommunitySignalSummaryDto,
@@ -28,6 +29,9 @@ import type {
   DiscoveryCrowdDto,
   TimeFit,
   CrowdFit,
+  DiscoveryReasoningCandidateDto,
+  DiscoveryReasoningInputDto,
+  RecommendationReasoningDto,
 } from "@offbeat/shared";
 
 export class DiscoveryService {
@@ -267,6 +271,86 @@ export class DiscoveryService {
       }),
     );
 
+    // 10. Gemini Contextual Intelligence Reasoning Layer
+    let recommendationReasoning: RecommendationReasoningDto | undefined;
+    if (results.length > 0) {
+      // Reason over a bounded candidate set (top 5 candidates)
+      const candidateSubset = results.slice(0, 5);
+      const reasoningCandidates: DiscoveryReasoningCandidateDto[] = candidateSubset.map((item) => ({
+        id: item.place.id,
+        name: item.place.name,
+        description: item.place.description,
+        categories: item.place.categories,
+        destination: item.place.destination,
+        score: item.score,
+        why: item.why,
+        bestTime: item.bestTime,
+        crowd: item.crowd,
+        timeFit: item.timeFit,
+        crowdFit: item.crowdFit,
+        communityHighlights: item.community?.highlights.map((h) => ({
+          title: h.title,
+          content: h.content,
+          verificationStatus: h.verification?.status,
+          evidenceStrength: h.verification?.strength,
+        })),
+        sources: [item.source.type, item.source.provider],
+      }));
+
+      const reasoningInput: DiscoveryReasoningInputDto = {
+        userContext: {
+          region: context.region,
+          destination: context.destination,
+          travelTaste: context.travelTaste,
+          experienceTaste: context.experienceTaste,
+          dayNight: context.dayNight,
+          preferredTime: context.preferredTime,
+        },
+        candidates: reasoningCandidates,
+      };
+
+      try {
+        const reasoningResult = await geminiService.reasonAboutDiscovery(reasoningInput);
+        recommendationReasoning = {
+          source: reasoningResult.source,
+          summary: reasoningResult.recommendationSummary,
+          reasons: reasoningResult.reasons,
+          tradeoffs: reasoningResult.tradeoffs,
+          contextualNotes: reasoningResult.contextualNotes,
+        };
+
+        // Attach reasoning to the selected primary recommendation item
+        const primaryItem =
+          results.find((r) => r.place.id === reasoningResult.primaryRecommendationId) || results[0];
+        if (primaryItem) {
+          primaryItem.reasoning = recommendationReasoning;
+        }
+
+        // If reasoning chose another approved candidate from the subset, promote it to position 0
+        if (
+          reasoningResult.primaryRecommendationId &&
+          results[0]?.place.id !== reasoningResult.primaryRecommendationId
+        ) {
+          const primaryIdx = results.findIndex(
+            (r) => r.place.id === reasoningResult.primaryRecommendationId,
+          );
+          if (primaryIdx > 0) {
+            const [promoted] = results.splice(primaryIdx, 1);
+            if (promoted) {
+              results.unshift(promoted);
+            }
+          }
+        }
+      } catch (reasoningErr) {
+        logger.warn(
+          "Discovery reasoning step encountered an unexpected error; continuing with deterministic fallback",
+          requestId,
+          {},
+          reasoningErr as Error,
+        );
+      }
+    }
+
     const durationMs = Date.now() - startTime;
     logger.info("Contextual discovery completed successfully", requestId, {
       region: context.region,
@@ -278,6 +362,7 @@ export class DiscoveryService {
       limit,
       durationMs,
       fallback: isFallback,
+      reasoningSource: recommendationReasoning?.source || "NONE",
     });
 
     return {
@@ -292,6 +377,7 @@ export class DiscoveryService {
       },
       fallback: isFallback,
       notice: fallbackNotice,
+      reasoning: recommendationReasoning,
     };
   }
 }

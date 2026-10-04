@@ -4,6 +4,7 @@ import { NotFoundError } from "../../lib/errors/AppError.js";
 import { communityService } from "../community/community.service.js";
 import { timeService } from "../intelligence/time/time.service.js";
 import { crowdService } from "../intelligence/crowd/crowd.service.js";
+import { geminiService } from "../../integrations/gemini/gemini.service.js";
 
 export class PlaceService {
   constructor(private repo: PlaceRepository = placeRepository) {}
@@ -36,6 +37,59 @@ export class PlaceService {
       dto.crowdIntelligence = crowdIntel;
     } catch {
       // Crowd intelligence is non-blocking enhancement
+    }
+
+    try {
+      const reasoning = geminiService.generateDeterministicFallback({
+        userContext: {
+          region: place.destination?.name || "Region",
+          destination: place.destination?.name || null,
+          travelTaste: place.categories.map((c) => c.category.name),
+          experienceTaste: [],
+          dayNight: "DAY",
+        },
+        candidates: [
+          {
+            id: place.id,
+            name: place.name,
+            description: place.description,
+            categories: place.categories.map((c) => c.category.name),
+            destination: place.destination.name,
+            bestTime: dto.timeIntelligence?.recommendedTimes[0]
+              ? {
+                  start: dto.timeIntelligence.recommendedTimes[0].start,
+                  end: dto.timeIntelligence.recommendedTimes[0].end,
+                  reason: dto.timeIntelligence.recommendedTimes[0].reason,
+                  source: dto.timeIntelligence.recommendedTimes[0].source,
+                }
+              : undefined,
+            crowd: dto.crowdIntelligence
+              ? {
+                  level: dto.crowdIntelligence.overall,
+                  context: dto.crowdIntelligence.patterns[0]?.time || undefined,
+                  source: dto.crowdIntelligence.source,
+                  observation: dto.crowdIntelligence.patterns[0]?.observation || undefined,
+                }
+              : undefined,
+            communityHighlights: dto.community?.highlights.map((h) => ({
+              title: h.title,
+              content: h.content,
+              verificationStatus: h.verification?.status,
+              evidenceStrength: h.verification?.strength,
+            })),
+          },
+        ],
+      });
+
+      dto.reasoning = {
+        source: reasoning.source,
+        summary: reasoning.recommendationSummary,
+        reasons: reasoning.reasons,
+        tradeoffs: reasoning.tradeoffs,
+        contextualNotes: reasoning.contextualNotes,
+      };
+    } catch {
+      // Reasoning is non-blocking enhancement
     }
 
     return dto;

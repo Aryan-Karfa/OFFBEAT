@@ -4,6 +4,7 @@ import type {
   DiscoveryResultItemDto,
   DiscoveryContextDto,
   DiscoveryPaginationDto,
+  RecommendationReasoningDto,
 } from "@offbeat/shared";
 import { discoveryService } from "../services/discoveryService";
 
@@ -11,6 +12,7 @@ interface DiscoveryResultsState {
   results: DiscoveryResultItemDto[];
   context: DiscoveryContextDto | null;
   pagination: DiscoveryPaginationDto | null;
+  reasoning: RecommendationReasoningDto | null;
   isLoading: boolean;
   isLoadingMore: boolean;
   error: string | null;
@@ -29,6 +31,7 @@ export const useDiscoveryResultsStore = create<DiscoveryResultsState>((set, get)
   results: [],
   context: null,
   pagination: null,
+  reasoning: null,
   isLoading: false,
   isLoadingMore: false,
   error: null,
@@ -53,6 +56,7 @@ export const useDiscoveryResultsStore = create<DiscoveryResultsState>((set, get)
         results: response.results,
         context: response.context,
         pagination: response.pagination,
+        reasoning: response.reasoning || null,
         fallback: Boolean(response.fallback),
         notice: response.notice || null,
         isLoading: false,
@@ -110,6 +114,7 @@ export const useDiscoveryResultsStore = create<DiscoveryResultsState>((set, get)
       results: [],
       context: null,
       pagination: null,
+      reasoning: null,
       isLoading: false,
       isLoadingMore: false,
       error: null,

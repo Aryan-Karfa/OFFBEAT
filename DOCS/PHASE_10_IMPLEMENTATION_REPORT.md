@@ -10,13 +10,17 @@
 ## 1. Objective
 
 Phase 10 answers the essential traveler question:
+
 > **“Not only where should I go, but when should I go and what crowd conditions should I expect?”**
 
 OFFBEAT deterministically correlates:
+
 ```text
 PLACE + TIME + DAY + SEASON + USER EXPERIENCE + CROWD
 ```
+
 producing two decoupled, transparent intelligence layers:
+
 1. **Time Intelligence:** Factual Operating Hours + Available Windows + User Day/Night Intent + Community Timing Observations + Experience Context $\rightarrow$ Recommended Visiting Windows + Time Fit.
 2. **Crowd Intelligence:** Destination Trends + Place Context + Time Window + Day Type + Season + Community Observations $\rightarrow$ Contextual Patterns + Crowd Fit (without statistical hallucination or arbitrary numeric percentages).
 
@@ -53,6 +57,7 @@ Backend/src/modules/intelligence/
 ```
 
 ### Core Separation of Concerns
+
 - **Operating Facts vs Community Recommendations:** Operating hours from official records/Google Maps are strictly labeled as `source: "EXTERNAL"`. Positioning recommendations from travelers (e.g. "Arrive 30 minutes before first light") are strictly labeled as `source: "COMMUNITY"`. System fallbacks are labeled `source: "SYSTEM"`.
 - **Zero Gemini / AI Dependency in Phase 10:** Phase 10 is 100% deterministic and rule-based. Gemini reasoning is strictly deferred to Phase 11.
 
@@ -162,6 +167,7 @@ model CrowdObservation {
 ## 5. Time Engine
 
 Defined in `Backend/src/modules/intelligence/time/time.engine.ts`:
+
 - **`parseOperatingHours(rawHours)`:** Normalizes provider text strings (e.g. `"Monday - Sunday: 4:00 AM – 6:00 PM"`, `"Wednesday: Closed"`, `"Open 24 hours"`, or comma-separated windows) into structured `OperatingWindowDto` entries formatted in 24-hour `HH:mm`.
 - **`calculateTimeIntelligence(inputs)`:**
   1. Priority 1: Official operating windows (`source: "EXTERNAL"`).
@@ -177,6 +183,7 @@ Defined in `Backend/src/modules/intelligence/time/time.engine.ts`:
 ## 6. Crowd Engine
 
 Defined in `Backend/src/modules/intelligence/crowd/crowd.engine.ts`:
+
 - **`calculateCrowdIntelligence(inputs)` / `calculateCrowdContext(inputs)`:**
   1. Filters expired observations (`expiresAt > now`).
   2. Aggregates place-level observations into discrete patterns (e.g. `WEEKDAY 04:30-06:30 -> LOW`, `WEEKEND 08:00-10:00 -> HIGH`).
@@ -221,25 +228,26 @@ Defined in `Backend/src/modules/intelligence/crowd/crowd.engine.ts`:
   Pattern B: Weekend morning -> HIGH
   ```
 - Transparent explanations clearly communicate nuances:
-  > *"Lower crowd reported during weekday (04:30-06:30). Expect higher visitor traffic during weekends (08:00-10:00)."*
+  > _"Lower crowd reported during weekday (04:30-06:30). Expect higher visitor traffic during weekends (08:00-10:00)."_
 
 ---
 
 ## 11. API Changes
 
-| Method | Path | Description | Status |
-|---|---|---|---|
-| `GET` | `/api/v1/places/:placeId/times` | Retrieves structured operating hours, recommended windows, signals, and explanation | 200 / 404 |
-| `GET` | `/api/v1/places/:placeId/crowd` | Retrieves overall crowd level, contextual patterns, confidence, and explanation | 200 / 404 |
-| `POST` | `/api/v1/places/:placeId/time-observations` | Records a structured traveler time observation | 201 / 400 |
-| `POST` | `/api/v1/places/:placeId/crowd-observations` | Records a structured traveler crowd observation | 201 / 400 |
-| `GET` | `/api/v1/destinations/:destinationId/crowd` | Retrieves destination-wide crowd patterns | 200 / 404 |
+| Method | Path                                         | Description                                                                         | Status    |
+| ------ | -------------------------------------------- | ----------------------------------------------------------------------------------- | --------- |
+| `GET`  | `/api/v1/places/:placeId/times`              | Retrieves structured operating hours, recommended windows, signals, and explanation | 200 / 404 |
+| `GET`  | `/api/v1/places/:placeId/crowd`              | Retrieves overall crowd level, contextual patterns, confidence, and explanation     | 200 / 404 |
+| `POST` | `/api/v1/places/:placeId/time-observations`  | Records a structured traveler time observation                                      | 201 / 400 |
+| `POST` | `/api/v1/places/:placeId/crowd-observations` | Records a structured traveler crowd observation                                     | 201 / 400 |
+| `GET`  | `/api/v1/destinations/:destinationId/crowd`  | Retrieves destination-wide crowd patterns                                           | 200 / 404 |
 
 ---
 
 ## 12. Discovery Engine Integration
 
 `discovery.service.ts` now enriches each candidate result item with:
+
 - `bestTime`: `{ start, end, dayType, source, reason }`
 - `crowd`: `{ level, context, source, observation }`
 - `timeFit`: `"GOOD" | "PARTIAL" | "CONFLICT" | "UNKNOWN"`
@@ -250,6 +258,7 @@ Defined in `Backend/src/modules/intelligence/crowd/crowd.engine.ts`:
 ## 13. Place Detail Integration
 
 `placeService.getPlaceById` enriches `PlaceDetailDto` with:
+
 - `timeIntelligence: TimeIntelligenceDto`
 - `crowdIntelligence: CrowdIntelligenceDto`
 
@@ -273,6 +282,7 @@ Defined in `Backend/src/modules/intelligence/crowd/crowd.engine.ts`:
 ## 15. Seed / Demo Data
 
 Deterministic in-memory and database seed records implemented for key benchmark destinations:
+
 - **Tiger Hill (`place_tiger_hill`):**
   - Operating Hours: `Monday - Sunday: 4:00 AM – 6:00 PM`
   - Best Time: `04:30 – 05:30` (Sunrise positioning before first light, `COMMUNITY`)
@@ -292,12 +302,15 @@ Deterministic in-memory and database seed records implemented for key benchmark 
 ## 16. Testing Results
 
 Ran full unit & integration test suite (`pnpm test`):
+
 ```text
 Test Files  36 passed (36)
 Tests       224 passed (224)
 Duration    14.86s
 ```
+
 Specific Phase 10 test suites:
+
 - `Backend/tests/unit/time.engine.test.ts`: 7/7 tests passed.
 - `Backend/tests/unit/crowd.engine.test.ts`: 5/5 tests passed.
 - `Backend/tests/integration/intelligence.test.ts`: 7/7 tests passed.
@@ -307,14 +320,14 @@ Specific Phase 10 test suites:
 
 ## 17. Quality-Gate Results
 
-| Command | Result | Details |
-|---|---|---|
-| `pnpm typecheck` | Passed (exit 0) | Shared, Backend, and Frontend all typechecked cleanly |
-| `pnpm build` | Passed (exit 0) | Frontend Vite bundle & Backend `dist` emitted cleanly |
-| `pnpm lint` | Passed (exit 0) | 0 errors, 0 warnings across monorepo |
-| `pnpm format:check` | Passed (exit 0) | All files formatted per Prettier configuration |
-| `pnpm validate:time-crowd` | Passed (exit 0) | Deterministic verification suite passed |
-| `pnpm check` | Passed (exit 0) | All Phase 0–10 validation suites passed |
+| Command                    | Result          | Details                                               |
+| -------------------------- | --------------- | ----------------------------------------------------- |
+| `pnpm typecheck`           | Passed (exit 0) | Shared, Backend, and Frontend all typechecked cleanly |
+| `pnpm build`               | Passed (exit 0) | Frontend Vite bundle & Backend `dist` emitted cleanly |
+| `pnpm lint`                | Passed (exit 0) | 0 errors, 0 warnings across monorepo                  |
+| `pnpm format:check`        | Passed (exit 0) | All files formatted per Prettier configuration        |
+| `pnpm validate:time-crowd` | Passed (exit 0) | Deterministic verification suite passed               |
+| `pnpm check`               | Passed (exit 0) | All Phase 0–10 validation suites passed               |
 
 ---
 
@@ -352,33 +365,33 @@ Verified against live backend running on `http://localhost:5000/api/v1`:
 
 ## 21. Final Status Matrix
 
-| Requirement | Status |
-|---|---|
-| TimeObservation model implemented | Verified ✅ |
-| CrowdObservation model implemented | Verified ✅ |
-| Time types & DTOs implemented | Verified ✅ |
-| Crowd levels (`LOW`, `MODERATE`, `HIGH`, `VERY_HIGH`, `UNKNOWN`) | Verified ✅ |
-| Day type (`WEEKDAY`, `WEEKEND`, `ANY`) | Verified ✅ |
-| Season taxonomy | Verified ✅ |
-| Time engine with deterministic priority | Verified ✅ |
-| Crowd engine with contextual patterns | Verified ✅ |
-| Operating hours normalization (12h/24h, closed, open 24h, multi-window) | Verified ✅ |
-| Community timing integrated | Verified ✅ |
-| Community crowd observations integrated | Verified ✅ |
-| Observation freshness & expiry exclusion | Verified ✅ |
-| Conflict handling without statistical hallucination | Verified ✅ |
-| `GET /places/:id/times` endpoint | Verified ✅ |
-| `GET /places/:id/crowd` endpoint | Verified ✅ |
-| `POST /places/:id/time-observations` endpoint | Verified ✅ |
-| `POST /places/:id/crowd-observations` endpoint | Verified ✅ |
-| `GET /destinations/:id/crowd` endpoint | Verified ✅ |
-| Place Details API enriched | Verified ✅ |
-| Discovery Engine enriched | Verified ✅ |
-| Frontend Place Page When-to-Go UI | Verified ✅ |
-| Frontend Discovery Card chips | Verified ✅ |
-| Benchmark demo data (Tiger Hill, Batasia Loop, Victoria Memorial) | Verified ✅ |
-| Zero Gemini / AI dependency in Phase 10 | Verified ✅ |
-| Phase 0–9 backwards compatibility preserved | Verified ✅ |
-| Full unit/integration tests passing (224/224) | Verified ✅ |
+| Requirement                                                                   | Status      |
+| ----------------------------------------------------------------------------- | ----------- |
+| TimeObservation model implemented                                             | Verified ✅ |
+| CrowdObservation model implemented                                            | Verified ✅ |
+| Time types & DTOs implemented                                                 | Verified ✅ |
+| Crowd levels (`LOW`, `MODERATE`, `HIGH`, `VERY_HIGH`, `UNKNOWN`)              | Verified ✅ |
+| Day type (`WEEKDAY`, `WEEKEND`, `ANY`)                                        | Verified ✅ |
+| Season taxonomy                                                               | Verified ✅ |
+| Time engine with deterministic priority                                       | Verified ✅ |
+| Crowd engine with contextual patterns                                         | Verified ✅ |
+| Operating hours normalization (12h/24h, closed, open 24h, multi-window)       | Verified ✅ |
+| Community timing integrated                                                   | Verified ✅ |
+| Community crowd observations integrated                                       | Verified ✅ |
+| Observation freshness & expiry exclusion                                      | Verified ✅ |
+| Conflict handling without statistical hallucination                           | Verified ✅ |
+| `GET /places/:id/times` endpoint                                              | Verified ✅ |
+| `GET /places/:id/crowd` endpoint                                              | Verified ✅ |
+| `POST /places/:id/time-observations` endpoint                                 | Verified ✅ |
+| `POST /places/:id/crowd-observations` endpoint                                | Verified ✅ |
+| `GET /destinations/:id/crowd` endpoint                                        | Verified ✅ |
+| Place Details API enriched                                                    | Verified ✅ |
+| Discovery Engine enriched                                                     | Verified ✅ |
+| Frontend Place Page When-to-Go UI                                             | Verified ✅ |
+| Frontend Discovery Card chips                                                 | Verified ✅ |
+| Benchmark demo data (Tiger Hill, Batasia Loop, Victoria Memorial)             | Verified ✅ |
+| Zero Gemini / AI dependency in Phase 10                                       | Verified ✅ |
+| Phase 0–9 backwards compatibility preserved                                   | Verified ✅ |
+| Full unit/integration tests passing (224/224)                                 | Verified ✅ |
 | Quality gates passing (`typecheck`, `build`, `lint`, `format:check`, `check`) | Verified ✅ |
-| Live HTTP verification passing | Verified ✅ |
+| Live HTTP verification passing                                                | Verified ✅ |
