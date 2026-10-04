@@ -87,28 +87,8 @@ export interface InMemorySubmission {
   evidence: InMemoryEvidence[];
   supports: InMemorySupport[];
   reports: InMemoryReport[];
-  verifications?: Array<{
-    id: string;
-    submissionId: string;
-    status: import("@offbeat/shared").VerificationStatus;
-    method: import("@offbeat/shared").VerificationMethod;
-    reviewer?: string | null;
-    reasoning?: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-  }>;
-  confidenceRecords?: Array<{
-    id: string;
-    submissionId: string;
-    score: number;
-    evidenceCount: number;
-    supportCount: number;
-    contradictionCount: number;
-    externalCorroboration: boolean;
-    reasoning?: unknown;
-    calculatedAt: Date;
-    version: string;
-  }>;
+  verifications?: VerificationRecordSnapshot[];
+  confidenceRecords?: ConfidenceRecordSnapshot[];
 }
 
 export class CommunityRepository {

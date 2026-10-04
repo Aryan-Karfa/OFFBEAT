@@ -236,6 +236,8 @@ async function main() {
       experienceTaste: ["sunrise"],
       dayNight: "DAY",
       intent: "DISCOVER_PLACES",
+      page: 1,
+      limit: 10,
     },
     { requestId: "phase_9_discovery" },
   );
