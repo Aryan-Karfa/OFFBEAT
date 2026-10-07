@@ -228,3 +228,101 @@ export function checkItineraryBusinessGuards(
     errors,
   };
 }
+
+/**
+ * Validates that all item and source IDs returned by Gemini in take-home reasoning
+ * are present in the supplied candidate allowlists.
+ */
+export function validateTakeHomeItemAllowlist(
+  output: import("./gemini.schemas.js").TakeHomeReasoningOutput,
+  allowedItemIds: string[],
+  allowedSourceIds?: string[],
+): GuardValidationResult {
+  const errors: string[] = [];
+  const allowedItemSet = new Set(allowedItemIds);
+  const allowedSourceSet = allowedSourceIds ? new Set(allowedSourceIds) : null;
+
+  if (output.primaryItemId && !allowedItemSet.has(output.primaryItemId)) {
+    errors.push(
+      `Primary item ID '${output.primaryItemId}' is not in allowed items list [${allowedItemIds.join(", ")}]`,
+    );
+  }
+
+  for (const id of output.selectedItemIds) {
+    if (!allowedItemSet.has(id)) {
+      errors.push(`Selected item ID '${id}' is not in allowed items list`);
+    }
+  }
+
+  for (const itemReason of output.itemReasons) {
+    if (!allowedItemSet.has(itemReason.itemId)) {
+      errors.push(`Item reason references unapproved item ID '${itemReason.itemId}'`);
+    }
+  }
+
+  if (allowedSourceSet && output.suggestedSourceIds) {
+    for (const sourceId of output.suggestedSourceIds) {
+      if (!allowedSourceSet.has(sourceId)) {
+        errors.push(`Suggested source ID '${sourceId}' is not in allowed sources list`);
+      }
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
+ * Validates business rules, hallucination guards, and ground truth for Gemini take-home output.
+ */
+export function checkTakeHomeBusinessGuards(
+  output: import("./gemini.schemas.js").TakeHomeReasoningOutput,
+  input: import("./gemini.types.js").TakeHomeReasoningInputDto,
+): GuardValidationResult {
+  const errors: string[] = [];
+
+  if (!output.explanation || output.explanation.trim().length < 10) {
+    errors.push("Take-home explanation must be meaningful and grounded (at least 10 characters)");
+  }
+
+  if (!output.selectedItemIds || output.selectedItemIds.length === 0) {
+    errors.push("At least one take-home item must be selected");
+  }
+
+  // Prevent duplicate IDs in selection
+  const seenIds = new Set<string>();
+  for (const id of output.selectedItemIds) {
+    if (seenIds.has(id)) {
+      errors.push(`Duplicate item ID '${id}' found in selectedItemIds`);
+    }
+    seenIds.add(id);
+  }
+
+  // Ensure candidate items exist in input candidates
+  const candidateMap = new Map(input.candidateItems.map((c) => [c.id, c]));
+  if (output.primaryItemId && !candidateMap.has(output.primaryItemId)) {
+    errors.push(`Primary item '${output.primaryItemId}' not found in candidate list`);
+  }
+
+  // Prevent fabricated prices
+  const combinedText = [
+    output.explanation || "",
+    ...(output.itemReasons || []).map((r) => r.reason || ""),
+  ].join(" ");
+
+  if (/[₹$€£]\s*\d+|\b\d+\s*(rupees|inr|usd|dollars)\b/i.test(combinedText)) {
+    errors.push("Fabricated price detected in take-home output");
+  }
+
+  // Prevent unsupported authenticity guarantees
+  if (/\b(100%\s*authentic|guaranteed\s*authentic|purely\s*authentic)\b/i.test(combinedText)) {
+    errors.push("Unsupported authenticity claim detected in take-home output");
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}

@@ -15,12 +15,14 @@ import {
   buildDiscoveryReasoningPrompt,
   buildAlternativeReasoningPrompt,
   buildItineraryReasoningPrompt,
+  buildTakeHomeReasoningPrompt,
 } from "./gemini.prompts.js";
 import { normalizeGeminiJson } from "./gemini.normalizer.js";
 import {
   discoveryReasoningOutputSchema,
   alternativeReasoningOutputSchema,
   itineraryReasoningOutputSchema,
+  takeHomeReasoningOutputSchema,
   type DiscoveryReasoningOutput,
 } from "./gemini.schemas.js";
 import {
@@ -30,6 +32,8 @@ import {
   checkAlternativeBusinessGuards,
   validateItineraryCandidateAllowlist,
   checkItineraryBusinessGuards,
+  validateTakeHomeItemAllowlist,
+  checkTakeHomeBusinessGuards,
 } from "./gemini.guard.js";
 import {
   type DiscoveryReasoningInputDto,
@@ -38,6 +42,8 @@ import {
   type AlternativeReasoningResultDto,
   type ItineraryReasoningInputDto,
   type ItineraryReasoningResultDto,
+  type TakeHomeReasoningInputDto,
+  type TakeHomeReasoningResultDto,
   type ReasoningProvider,
 } from "./gemini.types.js";
 import { logger } from "../../lib/logger/logger.js";
@@ -232,6 +238,62 @@ export class GeminiClient implements ReasoningProvider {
       dayAssignments: output.dayAssignments,
       explanation: output.explanation,
       tradeoffs: output.tradeoffs,
+      source: "GEMINI",
+    };
+  }
+
+  /**
+   * Generates structured reasoning and curator selections for Take Home specialties.
+   * Enforces JSON validation, candidate allowlisting, and authenticity guardrails.
+   */
+  public async reasonAboutTakeHome(
+    input: TakeHomeReasoningInputDto,
+  ): Promise<TakeHomeReasoningResultDto> {
+    const allowedItemIds = input.candidateItems.map((c) => c.id);
+    const allowedSourceIds = input.candidateItems
+      .flatMap((c) => (c.placesToFind || []).map((p) => p.externalId || p.placeId || ""))
+      .filter(Boolean);
+
+    const userPrompt = buildTakeHomeReasoningPrompt(input);
+    const rawResponseText = await this.executeWithRetryAndTimeout(userPrompt);
+
+    // 1. Normalize and parse JSON
+    const parsedJson = normalizeGeminiJson<unknown>(rawResponseText);
+
+    // 2. Schema validation via Zod
+    const schemaResult = takeHomeReasoningOutputSchema.safeParse(parsedJson);
+    if (!schemaResult.success) {
+      const issueDetails = schemaResult.error.issues
+        .map((i) => `${i.path.join(".")}: ${i.message}`)
+        .join("; ");
+      throw new GeminiOutputValidationError(
+        `Gemini take-home output failed schema validation: ${issueDetails}`,
+      );
+    }
+
+    const output = schemaResult.data;
+
+    // 3. Item & Source allowlist validation
+    const allowlistResult = validateTakeHomeItemAllowlist(output, allowedItemIds, allowedSourceIds);
+    if (!allowlistResult.valid) {
+      throw new GeminiOutputValidationError(
+        `Gemini returned unapproved take-home item or source IDs: ${allowlistResult.errors.join("; ")}`,
+      );
+    }
+
+    // 4. Business & hallucination guards
+    const guardResult = checkTakeHomeBusinessGuards(output, input);
+    if (!guardResult.valid) {
+      throw new GeminiOutputValidationError(
+        `Gemini take-home output violated business constraints: ${guardResult.errors.join("; ")}`,
+      );
+    }
+
+    return {
+      selectedItemIds: output.selectedItemIds,
+      primaryItemId: output.primaryItemId,
+      explanation: output.explanation,
+      itemReasons: output.itemReasons,
       source: "GEMINI",
     };
   }

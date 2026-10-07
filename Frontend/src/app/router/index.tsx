@@ -78,6 +78,10 @@ export const router = createBrowserRouter([
         element: <TakeHomePage />,
       },
       {
+        path: "take-home/:destinationId",
+        element: <TakeHomePage />,
+      },
+      {
         path: "community",
         element: <CommunityPage />,
       },

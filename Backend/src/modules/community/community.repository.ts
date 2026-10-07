@@ -432,12 +432,139 @@ export class CommunityRepository {
       ],
     };
 
+    // Darjeeling Tea Specialty Seed
+    const darjeelingTeaSpecialty: InMemorySubmission = {
+      id: "sub_darjeeling_tea_specialty",
+      userId: DEMO_USER_LOCAL.id,
+      placeId: null,
+      destinationId: "dest_darjeeling",
+      type: "LOCAL_SPECIALTY",
+      title: "First Flush Single-Estate Spring Tea",
+      content:
+        "Visit heritage tea boutiques around Chowrasta or estate factory counters for fresh first flush rather than commercial packaged dust.",
+      status: "APPROVED",
+      createdAt: new Date("2026-09-22T10:00:00Z"),
+      updatedAt: new Date("2026-09-22T10:00:00Z"),
+      evidence: [
+        {
+          id: "evi_dj_tea_1",
+          submissionId: "sub_darjeeling_tea_specialty",
+          type: "PHOTO",
+          mediaUrl: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800",
+          content: "Whole loose leaf Darjeeling first flush sample",
+          createdAt: new Date("2026-09-22T10:05:00Z"),
+        },
+      ],
+      supports: [
+        {
+          id: "sup_dj_tea_1",
+          submissionId: "sub_darjeeling_tea_specialty",
+          userId: DEMO_USER_TRAVELER.id,
+          type: "USEFUL",
+          createdAt: new Date("2026-09-23T11:00:00Z"),
+        },
+        {
+          id: "sup_dj_tea_2",
+          submissionId: "sub_darjeeling_tea_specialty",
+          userId: DEMO_USER_SUPPORTER.id,
+          type: "CONFIRM",
+          createdAt: new Date("2026-09-24T12:00:00Z"),
+        },
+      ],
+      reports: [],
+      verifications: [
+        {
+          id: "verif_dj_tea",
+          submissionId: "sub_darjeeling_tea_specialty",
+          status: "COMMUNITY_VERIFIED",
+          method: "COMMUNITY_SIGNAL",
+          reviewer: "system:verification-engine",
+          reasoning: "Corroborated by local tea experts and confirmed by travelers.",
+          createdAt: new Date("2026-09-25T14:00:00Z"),
+          updatedAt: new Date("2026-09-25T14:00:00Z"),
+        },
+      ],
+      confidenceRecords: [
+        {
+          id: "conf_dj_tea",
+          submissionId: "sub_darjeeling_tea_specialty",
+          score: 0.88,
+          evidenceCount: 1,
+          supportCount: 2,
+          contradictionCount: 0,
+          externalCorroboration: true,
+          version: "confidence-v1",
+          calculatedAt: new Date("2026-09-25T14:00:00Z"),
+        },
+      ],
+    };
+
+    // Darjeeling Tibetan Crafts Seed
+    const darjeelingTibetanCrafts: InMemorySubmission = {
+      id: "sub_darjeeling_crafts_takehome",
+      userId: DEMO_USER_SUPPORTER.id,
+      placeId: null,
+      destinationId: "dest_darjeeling",
+      type: "TAKE_HOME",
+      title: "Authentic Tibetan Refugee Self-Help Centre Woodcarvings",
+      content:
+        "If you want genuine handmade carpets or wooden prayer wheels, visit the Refugee Centre off Gandhi Road. You can watch the artisans weaving directly.",
+      status: "APPROVED",
+      createdAt: new Date("2026-09-23T09:30:00Z"),
+      updatedAt: new Date("2026-09-23T09:30:00Z"),
+      evidence: [],
+      supports: [
+        {
+          id: "sup_dj_craft_1",
+          submissionId: "sub_darjeeling_crafts_takehome",
+          userId: DEMO_USER_LOCAL.id,
+          type: "USEFUL",
+          createdAt: new Date("2026-09-24T10:00:00Z"),
+        },
+        {
+          id: "sup_dj_craft_2",
+          submissionId: "sub_darjeeling_crafts_takehome",
+          userId: DEMO_USER_TRAVELER.id,
+          type: "CONFIRM",
+          createdAt: new Date("2026-09-25T11:00:00Z"),
+        },
+      ],
+      reports: [],
+      verifications: [
+        {
+          id: "verif_dj_craft",
+          submissionId: "sub_darjeeling_crafts_takehome",
+          status: "COMMUNITY_SUPPORTED",
+          method: "COMMUNITY_SIGNAL",
+          reviewer: "system:verification-engine",
+          reasoning: "Confirmed by 2 independent community travelers.",
+          createdAt: new Date("2026-09-26T12:00:00Z"),
+          updatedAt: new Date("2026-09-26T12:00:00Z"),
+        },
+      ],
+      confidenceRecords: [
+        {
+          id: "conf_dj_craft",
+          submissionId: "sub_darjeeling_crafts_takehome",
+          score: 0.82,
+          evidenceCount: 0,
+          supportCount: 2,
+          contradictionCount: 0,
+          externalCorroboration: true,
+          version: "confidence-v1",
+          calculatedAt: new Date("2026-09-26T12:00:00Z"),
+        },
+      ],
+    };
+
     this.inMemorySubmissions = [
       tigerHillBestTime,
       tigerHillPhotoSpot,
       tigerHillCrowdTip,
       batasiaLoopTip,
       victoriaMemorialTip,
+      darjeelingTeaSpecialty,
+      darjeelingTibetanCrafts,
     ];
 
     this.initialized = true;

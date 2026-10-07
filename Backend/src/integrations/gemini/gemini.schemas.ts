@@ -56,3 +56,24 @@ export const itineraryReasoningOutputSchema = z.object({
 });
 
 export type ItineraryReasoningOutput = z.infer<typeof itineraryReasoningOutputSchema>;
+
+/**
+ * Zod schema for structured output from Gemini take-home reasoning.
+ * Ensures strict typing, allowlisting, and grounded explanations.
+ */
+export const takeHomeReasoningOutputSchema = z.object({
+  selectedItemIds: z.array(z.string()).min(1, "At least one item ID must be selected"),
+  primaryItemId: z.string().optional(),
+  explanation: z.string().min(10, "Explanation must be meaningful"),
+  itemReasons: z
+    .array(
+      z.object({
+        itemId: z.string().min(1),
+        reason: z.string().min(5, "Reason must be meaningful"),
+      }),
+    )
+    .min(1, "At least one item reason is required"),
+  suggestedSourceIds: z.array(z.string()).default([]),
+});
+
+export type TakeHomeReasoningOutput = z.infer<typeof takeHomeReasoningOutputSchema>;

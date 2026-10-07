@@ -1,4 +1,9 @@
-import type { DiscoveryReasoningInputDto, DiscoveryReasoningCandidateDto } from "./gemini.types.js";
+import type {
+  DiscoveryReasoningInputDto,
+  DiscoveryReasoningCandidateDto,
+  TakeHomeReasoningInputDto,
+  TakeHomeItemDto,
+} from "./gemini.types.js";
 
 export const GEMINI_SYSTEM_INSTRUCTION = `You are OFFBEAT's reasoning layer.
 Your job is to interpret structured travel evidence for a specific traveler and explain why a candidate is the strongest fit.
@@ -249,5 +254,69 @@ You are OFFBEAT's master journey planner. Refine and optimize this itinerary to 
   ],
   "explanation": "...",
   "tradeoffs": ["..."]
+} `;
+}
+
+/**
+ * Builds the user prompt for Take Home local specialty reasoning.
+ */
+export function buildTakeHomeReasoningPrompt(input: TakeHomeReasoningInputDto): string {
+  const { destination, userContext, candidateItems } = input;
+
+  const itemDescriptions = candidateItems
+    .map((item: TakeHomeItemDto, idx: number) => {
+      const placesList = (item.placesToFind || [])
+        .map(
+          (p) =>
+            `    * [ID: ${p.externalId || p.placeId || "unknown"}] ${p.name} (${p.type || "Local Business"}${p.rating ? `, ${p.rating}★` : ""})`,
+        )
+        .join("\n");
+
+      return `Item #${idx + 1}:
+  ID: ${item.id}
+  Name: ${item.name}
+  Category: ${item.category}
+  Local Relevance: ${item.localRelevance}
+  Why Take Home (Deterministic): ${item.whyTakeHome}
+  Suitable For: ${(item.goodFor || []).join(", ")}
+  Budget Level: ${item.budget || "UNKNOWN"}
+  Confidence: ${item.confidence?.evidenceStrength || "MODERATE"} (status: ${item.confidence?.status || "COMMUNITY_BACKED"})
+  Community Support: ${item.community ? `${item.community.submissionCount} submissions, ${item.community.verifiedCount} verified` : "None recorded"}
+  Description: <untrusted_community_content>${truncateText(item.description, 200)}</untrusted_community_content>
+  Where to Find Candidates:
+${placesList || "    (No specific shop verified yet)"}`;
+    })
+    .join("\n\n");
+
+  return `Destination Context:
+- Destination: ${destination.name} (Region: ${destination.regionId})
+- Traveler Travel Tastes: ${(userContext.travelTaste || []).join(", ") || "General curiosity"}
+- Traveler Experience Tastes: ${(userContext.experienceTaste || []).join(", ") || "Authentic culture"}
+- Shopping For: ${userContext.giftFor || "Personal / Gifts"}
+- Budget Context: ${userContext.budget || "Flexible"}
+
+Approved Candidate Take-Home Items (Select ONLY from these IDs):
+${itemDescriptions}
+
+Task:
+You are OFFBEAT's cultural goods and artisanal specialty curator.
+1. Review the candidate items and recommend what is genuinely worth taking home from ${destination.name}.
+2. Prioritize items strongly associated with this destination (${destination.name}) and matching the traveler's context.
+3. You may select a primary item that represents the most iconic or meaningful take-home specialty.
+4. DO NOT invent items, shops, prices, or authenticity claims.
+5. Provide a succinct, grounded explanation of WHY these items represent this destination's heritage.
+6. Provide an individual reason for each recommended item.
+7. Return ONLY a valid JSON object matching this schema:
+{
+  "selectedItemIds": ["<approved_item_id>", ...],
+  "primaryItemId": "<approved_item_id>",
+  "explanation": "...",
+  "itemReasons": [
+    {
+      "itemId": "<approved_item_id>",
+      "reason": "..."
+    }
+  ],
+  "suggestedSourceIds": []
 }`;
 }

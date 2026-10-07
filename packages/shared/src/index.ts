@@ -959,3 +959,300 @@ export interface ItineraryReasoningResultDto {
   tradeoffs?: string[];
   source: ReasoningSource;
 }
+
+// ==========================================
+// Phase 14: Take Home Discovery Contracts
+// ==========================================
+
+export type TakeHomeCategory =
+  | "FOOD"
+  | "TEA_COFFEE"
+  | "SPICES"
+  | "SWEETS"
+  | "HANDICRAFT"
+  | "TEXTILE"
+  | "ART"
+  | "CULTURAL_GOOD"
+  | "BEAUTY_WELLNESS"
+  | "LOCAL_PRODUCT"
+  | "GIFT"
+  | "OTHER";
+
+export type TakeHomeLocalRelevance =
+  "SIGNATURE" | "STRONGLY_ASSOCIATED" | "LOCAL" | "REGIONAL" | "UNKNOWN";
+
+export type TakeHomeGoodFor = "PERSONAL" | "GIFT" | "FAMILY" | "FRIENDS" | "COLLECTOR";
+
+export type TakeHomeBudget = "LOW" | "MEDIUM" | "HIGH" | "UNKNOWN";
+
+export type TakeHomeSourceType =
+  "STORE" | "MARKET" | "TEA_ESTATE" | "CRAFT_WORKSHOP" | "LOCAL_BUSINESS" | "OTHER";
+
+export interface TakeHomeSourceDto {
+  placeId?: string;
+  externalId?: string;
+  name: string;
+  type: TakeHomeSourceType;
+  address?: string;
+  location?: GeoLocation;
+  rating?: number;
+  reviewCount?: number;
+  website?: string;
+  thumbnailUrl?: string;
+  source: "INTERNAL" | "SERPAPI" | "COMMUNITY" | "COMBINED";
+  confidence?: {
+    score?: number;
+    evidenceStrength?: EvidenceStrength;
+    status?: string;
+  };
+}
+
+export interface TakeHomeAlternativeDto {
+  id: string;
+  name: string;
+  category: TakeHomeCategory;
+  why: string;
+}
+
+export interface TakeHomeItemDto {
+  id: string;
+  name: string;
+  category: TakeHomeCategory;
+  categories?: TakeHomeCategory[];
+  destinationId?: string;
+  destinationName?: string;
+  regionId?: string;
+  description?: string;
+  whyTakeHome: string;
+  localRelevance: TakeHomeLocalRelevance;
+  goodFor: TakeHomeGoodFor[];
+  budget?: TakeHomeBudget;
+  source: "INTERNAL" | "COMMUNITY" | "SERPAPI" | "COMBINED";
+  confidence?: {
+    score?: number;
+    evidenceStrength?: EvidenceStrength;
+    status?: string;
+  };
+  community?: {
+    submissionCount?: number;
+    helpfulCount?: number;
+    verifiedCount?: number;
+    topTip?: string;
+    submissionId?: string;
+    authorName?: string;
+    status?: string;
+    supportCount?: number;
+    evidenceStrength?: EvidenceStrength;
+    quote?: string;
+  };
+  placesToFind: TakeHomeSourceDto[];
+  alternatives?: TakeHomeAlternativeDto[];
+  imageUrl?: string;
+  sourceUrl?: string;
+  score?: number;
+}
+
+export interface TakeHomeQueryDto {
+  destinationId?: string;
+  placeId?: string;
+  category?: TakeHomeCategory;
+  travelTaste?: string[];
+  experienceTaste?: string[];
+  giftFor?: TakeHomeGoodFor;
+  budget?: TakeHomeBudget;
+  verifiedOnly?: boolean;
+}
+
+export interface TakeHomeReasoningDto {
+  source: ReasoningSource;
+  explanation: string;
+  primaryItemId?: string;
+  selectedItemIds: string[];
+  itemReasons?: Array<{
+    itemId: string;
+    reason: string;
+  }>;
+  suggestedSourceIds?: string[];
+  fallback?: boolean;
+}
+
+export interface TakeHomeResponseDto {
+  destination: {
+    id: string;
+    name: string;
+    slug?: string;
+    regionId?: string;
+  };
+  place?: {
+    id: string;
+    name: string;
+  };
+  items: TakeHomeItemDto[];
+  categories?: TakeHomeCategory[];
+  totalItems?: number;
+  totalCount?: number;
+  reasoning?: TakeHomeReasoningDto;
+  source: ReasoningSource;
+  fallback: boolean;
+}
+
+export interface TakeHomeReasoningInputDto {
+  destination: {
+    id: string;
+    name: string;
+    regionId?: string;
+  };
+  userContext: {
+    travelTaste?: string[];
+    experienceTaste?: string[];
+    giftFor?: TakeHomeGoodFor;
+    budget?: TakeHomeBudget;
+    category?: TakeHomeCategory;
+  };
+  candidateItems: TakeHomeItemDto[];
+}
+
+export interface TakeHomeReasoningResultDto {
+  selectedItemIds: string[];
+  primaryItemId?: string;
+  explanation: string;
+  itemReasons: Array<{
+    itemId: string;
+    reason: string;
+  }>;
+  suggestedSourceIds?: string[];
+  source: ReasoningSource;
+  fallback?: boolean;
+}
+
+// ==========================================
+// PHASE 15 — MEMORY & PERSONALIZATION CONTRACTS
+// ==========================================
+
+export type MemoryType =
+  | "TASTE"
+  | "EXPERIENCE"
+  | "TIME_PREFERENCE"
+  | "PACE"
+  | "CATEGORY_AFFINITY"
+  | "DESTINATION_AFFINITY"
+  | "PLACE_AFFINITY"
+  | "ALTERNATIVE_PREFERENCE"
+  | "TAKE_HOME_PREFERENCE"
+  | "ITINERARY_PREFERENCE";
+
+export type MemorySource =
+  | "EXPLICIT"
+  | "INFERRED"
+  | "INTERACTION"
+  | "ITINERARY"
+  | "ALTERNATIVE"
+  | "TAKE_HOME"
+  | "SYSTEM";
+
+export type MemoryConfidence = "LOW" | "MODERATE" | "HIGH";
+
+export type MemoryEventType =
+  | "TASTE_SELECTED"
+  | "EXPERIENCE_SELECTED"
+  | "PLACE_VIEWED"
+  | "PLACE_EXPLORED"
+  | "ALTERNATIVE_SELECTED"
+  | "ITINERARY_CREATED"
+  | "ITINERARY_STOP_KEPT"
+  | "ITINERARY_STOP_SWAPPED"
+  | "TAKE_HOME_VIEWED"
+  | "TAKE_HOME_SELECTED"
+  | "CATEGORY_SELECTED";
+
+export interface TravelerMemoryDto {
+  id: string;
+  userId: string;
+  type: MemoryType;
+  key: string;
+  value: string;
+  source: MemorySource;
+  confidence: MemoryConfidence;
+  weight: number;
+  evidenceCount: number;
+  explanation?: string;
+  lastUsedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  expiresAt?: string | null;
+  userVisible: boolean;
+}
+
+export interface MemoryEventDto {
+  id: string;
+  userId: string;
+  eventType: MemoryEventType;
+  subjectType?: string | null;
+  subjectId?: string | null;
+  signalKey: string;
+  signalValue: string;
+  weightDelta: number;
+  createdAt: string;
+}
+
+export interface CreateMemoryEventDto {
+  eventType: MemoryEventType;
+  subjectType?: string;
+  subjectId?: string;
+  signalKey: string;
+  signalValue: string;
+  weightDelta?: number;
+}
+
+export interface CategoryAffinityDto {
+  category: string;
+  weight: number;
+  confidence: MemoryConfidence;
+}
+
+export interface DestinationAffinityDto {
+  destinationId: string;
+  weight: number;
+}
+
+export interface TravelerPersonalizationProfileDto {
+  userId: string;
+  memoryEnabled: boolean;
+  travelTaste: string[];
+  experienceTaste: string[];
+  pace?: string;
+  categoryAffinities: CategoryAffinityDto[];
+  destinationAffinities: DestinationAffinityDto[];
+  alternativePreference?: string;
+  takeHomePreference?: string[];
+  topExplicitSignals: string[];
+  topInferredSignals: string[];
+  totalMemoriesCount: number;
+  lastUpdated?: string;
+}
+
+export interface MemorySettingDto {
+  userId: string;
+  memoryEnabled: boolean;
+  updatedAt: string;
+}
+
+export interface UpdateMemorySettingDto {
+  memoryEnabled: boolean;
+}
+
+export interface UpdateMemoryItemDto {
+  weight?: number;
+  userVisible?: boolean;
+}
+
+export interface GeminiSanitizedMemoryContext {
+  explicitTravelTastes: string[];
+  explicitExperienceTastes: string[];
+  inferredInterests: string[];
+  preferredPace?: string;
+  alternativeBias?: string;
+  takeHomeCategoryBias?: string[];
+  confidenceLevel: MemoryConfidence;
+}
+

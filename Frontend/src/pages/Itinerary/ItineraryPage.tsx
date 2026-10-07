@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { Container } from "../../components/ui/Container";
 import { Section } from "../../components/ui/Section";
 import { Heading } from "../../components/ui/Heading";
@@ -26,6 +26,8 @@ import {
   ChevronUp,
   Map,
   SlidersHorizontal,
+  ShoppingBag,
+  ArrowRight,
 } from "lucide-react";
 
 export const ItineraryPage: React.FC = () => {
@@ -362,6 +364,39 @@ export const ItineraryPage: React.FC = () => {
                   </div>
                 </div>
               )}
+
+              {/* Phase 14: BEFORE YOU LEAVE — TAKE HOME Section */}
+              <div className="mt-12 p-6 md:p-8 rounded-3xl bg-gradient-to-r from-amber-500/10 via-offbeat-surface to-offbeat-surface border border-amber-500/30 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
+                <div className="space-y-1.5 max-w-xl">
+                  <div className="flex items-center gap-2">
+                    <ShoppingBag className="w-4 h-4 text-amber-400" />
+                    <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
+                      Before You Leave
+                    </span>
+                  </div>
+                  <Heading level={3} size="h3" className="text-xl md:text-2xl font-bold text-white">
+                    TAKE HOME FROM {itinerary.destination.toUpperCase()}
+                  </Heading>
+                  <Text variant="muted" className="text-xs text-offbeat-secondary leading-relaxed">
+                    Complete your journey with authentic regional specialties, tea flushes, and
+                    indigenous crafts directly from verified local cooperatives.
+                  </Text>
+                </div>
+
+                <Link
+                  to={`/take-home/${itinerary.destination?.toLowerCase().replace(/\s+/g, "_") || "dest_darjeeling"}`}
+                  className="shrink-0"
+                >
+                  <Button
+                    variant="primary"
+                    size="md"
+                    className="bg-amber-500 hover:bg-amber-400 text-black font-semibold shadow-lg shadow-amber-500/20"
+                    rightIcon={<ArrowRight className="h-4 w-4" />}
+                  >
+                    See Take Home Picks
+                  </Button>
+                </Link>
+              </div>
             </div>
           )}
 

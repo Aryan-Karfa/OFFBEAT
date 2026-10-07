@@ -9,6 +9,7 @@ import { communityRoutes } from "../modules/community/community.routes.js";
 import { intelligenceController } from "../modules/intelligence/intelligence.controller.js";
 import { alternativesRoutes } from "../modules/alternatives/alternatives.routes.js";
 import { itineraryRoutes } from "../modules/itinerary/itinerary.routes.js";
+import { takeHomeRoutes } from "../modules/take-home/take-home.routes.js";
 
 export const apiRouter: Router = Router();
 
@@ -47,10 +48,11 @@ apiRouter.use("/alternatives", alternativesRoutes);
 // Phase 13: Itinerary Engine Route
 apiRouter.use("/itineraries", itineraryRoutes);
 
-// Reserved Future Domain Endpoints (Phases 9-11):
+// Phase 14: Take Home Discovery Route
+apiRouter.use("/take-home", takeHomeRoutes);
+
+// Reserved Future Domain Endpoints:
 // apiRouter.use("/auth", authRoutes);
 // apiRouter.use("/profile", profileRoutes);
 // apiRouter.use("/recommendations", recommendationRoutes);
-// apiRouter.use("/itineraries", itineraryRoutes);
-// apiRouter.use("/take-home", takeHomeRoutes);
 // apiRouter.use("/saved-places", savedPlacesRoutes);

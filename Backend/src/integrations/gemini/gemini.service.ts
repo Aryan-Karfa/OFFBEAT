@@ -9,6 +9,8 @@ import type {
   AlternativeReasoningResultDto,
   ItineraryReasoningInputDto,
   ItineraryReasoningResultDto,
+  TakeHomeReasoningInputDto,
+  TakeHomeReasoningResultDto,
   ReasoningProvider,
 } from "./gemini.types.js";
 import { logger } from "../../lib/logger/logger.js";
@@ -42,6 +44,12 @@ export class GeminiService {
         },
         reasonAboutItinerary: async (input: ItineraryReasoningInputDto) => {
           return this.generateDeterministicItineraryFallback(
+            input,
+            "Gemini is not enabled or API key is missing",
+          );
+        },
+        reasonAboutTakeHome: async (input: TakeHomeReasoningInputDto) => {
+          return this.generateDeterministicTakeHomeFallback(
             input,
             "Gemini is not enabled or API key is missing",
           );
@@ -443,6 +451,109 @@ export class GeminiService {
       dayAssignments,
       explanation,
       tradeoffs,
+      source: "DETERMINISTIC",
+    };
+  }
+
+  /**
+   * Wraps reasoning layer execution for Take Home specialties with timeout, structured logging,
+   * error isolation, and graceful deterministic fallback.
+   */
+  public async reasonAboutTakeHome(
+    input: TakeHomeReasoningInputDto,
+  ): Promise<TakeHomeReasoningResultDto> {
+    const candidateCount = input.candidateItems?.length || 0;
+
+    if (!this.config.enabled || !this.config.apiKey) {
+      logger.info(
+        "Gemini reasoning disabled by configuration; using deterministic take-home reasoning",
+        undefined,
+        {
+          model: this.config.model,
+          destination: input.destination.name,
+          candidateCount,
+        },
+      );
+      return this.generateDeterministicTakeHomeFallback(input, "Gemini disabled by configuration");
+    }
+
+    const startTime = Date.now();
+    try {
+      const result = await this.provider.reasonAboutTakeHome(input);
+      const latencyMs = Date.now() - startTime;
+      logger.info("Gemini take-home reasoning completed successfully", undefined, {
+        model: this.config.model,
+        latencyMs,
+        destination: input.destination.name,
+        primaryId: result.primaryItemId,
+        source: result.source,
+      });
+      return result;
+    } catch (err: unknown) {
+      const latencyMs = Date.now() - startTime;
+      const errorName = (err as Error)?.name || "ReasoningError";
+      const errorMessage = (err as Error)?.message || String(err);
+
+      logger.warn(
+        "Gemini take-home reasoning failed or timed out; falling back to deterministic reasoning",
+        undefined,
+        {
+          errorName,
+          errorMessage,
+          latencyMs,
+          destination: input.destination.name,
+          candidatesProvided: candidateCount,
+        },
+        err as Error,
+      );
+
+      return this.generateDeterministicTakeHomeFallback(input, errorMessage);
+    }
+  }
+
+  /**
+   * Generates grounded, deterministic take-home reasoning based on OFFBEAT signals.
+   */
+  public generateDeterministicTakeHomeFallback(
+    input: TakeHomeReasoningInputDto,
+    fallbackReason?: string,
+  ): TakeHomeReasoningResultDto {
+    if (fallbackReason) {
+      logger.debug(`[GeminiService] Take-home fallback: ${fallbackReason}`);
+    }
+
+    const items = input.candidateItems || [];
+    const topItem = items[0];
+    const primaryItemId = topItem?.id;
+    const selectedItemIds = items.slice(0, 6).map((i) => i.id);
+
+    const itemReasons = items.slice(0, 6).map((i) => {
+      let relNote = "rooted in local culture";
+      if (i.localRelevance === "SIGNATURE")
+        relNote = `a signature specialty uniquely tied to ${input.destination.name}`;
+      else if (i.localRelevance === "STRONGLY_ASSOCIATED")
+        relNote = `strongly associated with ${input.destination.name}`;
+      else if (i.localRelevance === "REGIONAL") relNote = "a celebrated regional specialty";
+
+      return {
+        itemId: i.id,
+        reason: `${i.name} is ${relNote}, offering a meaningful and enduring take-home experience.`,
+      };
+    });
+
+    const tastesStr = input.userContext.travelTaste?.length
+      ? input.userContext.travelTaste.join(" and ")
+      : "cultural discovery";
+
+    const explanation = topItem
+      ? `Curated take-home specialties for ${input.destination.name} rooted in authentic craftsmanship and regional food heritage, aligning with your ${tastesStr} interests.`
+      : `Recommended take-home finds reflecting the regional culture of ${input.destination.name}.`;
+
+    return {
+      selectedItemIds,
+      primaryItemId,
+      explanation,
+      itemReasons,
       source: "DETERMINISTIC",
     };
   }

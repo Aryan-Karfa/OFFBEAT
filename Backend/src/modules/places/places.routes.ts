@@ -10,6 +10,8 @@ import {
 } from "../intelligence/crowd/crowd.schema.js";
 import { alternativesController } from "../alternatives/alternatives.controller.js";
 import { findAlternativesQuerySchema } from "../alternatives/alternatives.schema.js";
+import { takeHomeController } from "../take-home/take-home.controller.js";
+import { takeHomeQuerySchema } from "../take-home/take-home.schema.js";
 
 export const placeRoutes: Router = Router();
 
@@ -53,4 +55,11 @@ placeRoutes.get(
   "/:placeId/alternatives",
   validateRequest({ params: placeParamsSchema, query: findAlternativesQuerySchema }),
   alternativesController.getAlternatives,
+);
+
+// Phase 14: Contextual Take Home from Place Endpoint
+placeRoutes.get(
+  "/:placeId/take-home",
+  validateRequest({ params: placeParamsSchema, query: takeHomeQuerySchema }),
+  takeHomeController.getTakeHomeByPlace,
 );

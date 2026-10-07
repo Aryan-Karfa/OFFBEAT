@@ -15,6 +15,19 @@ import type {
   ItineraryResponseDto,
   ItineraryReasoningInputDto,
   ItineraryReasoningResultDto,
+  TakeHomeCategory,
+  TakeHomeLocalRelevance,
+  TakeHomeGoodFor,
+  TakeHomeBudget,
+  TakeHomeSourceType,
+  TakeHomeSourceDto,
+  TakeHomeAlternativeDto,
+  TakeHomeItemDto,
+  TakeHomeQueryDto,
+  TakeHomeReasoningDto,
+  TakeHomeResponseDto,
+  TakeHomeReasoningInputDto,
+  TakeHomeReasoningResultDto,
 } from "@offbeat/shared";
 
 export type {
@@ -34,6 +47,19 @@ export type {
   ItineraryResponseDto,
   ItineraryReasoningInputDto,
   ItineraryReasoningResultDto,
+  TakeHomeCategory,
+  TakeHomeLocalRelevance,
+  TakeHomeGoodFor,
+  TakeHomeBudget,
+  TakeHomeSourceType,
+  TakeHomeSourceDto,
+  TakeHomeAlternativeDto,
+  TakeHomeItemDto,
+  TakeHomeQueryDto,
+  TakeHomeReasoningDto,
+  TakeHomeResponseDto,
+  TakeHomeReasoningInputDto,
+  TakeHomeReasoningResultDto,
 };
 
 export type ReasoningMode =
@@ -42,7 +68,8 @@ export type ReasoningMode =
   | "COMMUNITY_INTERPRETATION"
   | "CONTEXTUAL_EXPLANATION"
   | "ALTERNATIVE_REASONING"
-  | "ITINERARY_REASONING";
+  | "ITINERARY_REASONING"
+  | "TAKE_HOME_REASONING";
 
 /**
  * Provider interface isolating AI reasoning from domain logic.
@@ -53,4 +80,5 @@ export interface ReasoningProvider {
     input: AlternativeReasoningInputDto,
   ): Promise<AlternativeReasoningResultDto>;
   reasonAboutItinerary(input: ItineraryReasoningInputDto): Promise<ItineraryReasoningResultDto>;
+  reasonAboutTakeHome(input: TakeHomeReasoningInputDto): Promise<TakeHomeReasoningResultDto>;
 }

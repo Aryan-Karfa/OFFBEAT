@@ -5,6 +5,8 @@ import type {
   AlternativeReasoningResultDto,
   ItineraryReasoningInputDto,
   ItineraryReasoningResultDto,
+  TakeHomeReasoningInputDto,
+  TakeHomeReasoningResultDto,
   ReasoningProvider,
 } from "./gemini.types.js";
 import { GeminiTimeoutError, GeminiProviderError } from "./gemini.errors.js";
@@ -17,6 +19,7 @@ export interface MockReasoningOptions {
   customOutput?: Partial<DiscoveryReasoningResultDto>;
   customAlternativeOutput?: Partial<AlternativeReasoningResultDto>;
   customItineraryOutput?: Partial<ItineraryReasoningResultDto>;
+  customTakeHomeOutput?: Partial<TakeHomeReasoningResultDto>;
 }
 
 export class MockReasoningProvider implements ReasoningProvider {
@@ -183,6 +186,41 @@ export class MockReasoningProvider implements ReasoningProvider {
       tradeoffs: ["Requires timely departures to experience optimal visiting windows."],
       source: "GEMINI",
       ...this.options.customItineraryOutput,
+    };
+  }
+
+  public async reasonAboutTakeHome(
+    input: TakeHomeReasoningInputDto,
+  ): Promise<TakeHomeReasoningResultDto> {
+    if (this.options.shouldTimeout) {
+      throw new GeminiTimeoutError("Mock Gemini request timed out");
+    }
+    if (this.options.shouldFail) {
+      throw this.options.failError || new GeminiProviderError("Mock Gemini provider error");
+    }
+
+    const items = input.candidateItems || [];
+    const topItem = items[0];
+    const primaryId = this.options.invalidCandidateId
+      ? "take_home_invalid_hallucinated_id"
+      : topItem?.id;
+
+    const selectedItemIds = this.options.invalidCandidateId
+      ? ["take_home_invalid_hallucinated_id"]
+      : items.slice(0, 5).map((i) => i.id);
+
+    const itemReasons = items.slice(0, 5).map((i) => ({
+      itemId: i.id,
+      reason: `${i.name} represents an iconic regional specialty of ${input.destination.name} rooted in local culture and craft.`,
+    }));
+
+    return {
+      selectedItemIds,
+      primaryItemId: primaryId,
+      explanation: `Handcrafted and culinary selections celebrating the heritage of ${input.destination.name}, matching your preferences.`,
+      itemReasons,
+      source: "GEMINI",
+      ...this.options.customTakeHomeOutput,
     };
   }
 }

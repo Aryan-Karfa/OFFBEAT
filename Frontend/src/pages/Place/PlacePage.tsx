@@ -22,6 +22,7 @@ import {
   Shuffle,
   Sparkles,
   Calendar,
+  ShoppingBag,
 } from "lucide-react";
 
 export const PlacePage: React.FC = () => {
@@ -143,6 +144,15 @@ export const PlacePage: React.FC = () => {
                         leftIcon={<Sparkles className="h-3.5 w-3.5 text-offbeat-accent" />}
                       >
                         Find Alternative
+                      </Button>
+                    </Link>
+                    <Link to={`/take-home/dest_darjeeling?fromPlace=${place.id}`}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        leftIcon={<ShoppingBag className="h-3.5 w-3.5 text-amber-400" />}
+                      >
+                        Take Home From Here
                       </Button>
                     </Link>
                     <Button
