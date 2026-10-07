@@ -208,6 +208,7 @@ export interface DiscoveryContextDto {
   preferredTime?: string | null;
   placeType?: string | null;
   intent: DiscoveryIntent;
+  personalization?: TravelerPersonalizationProfileDto;
 }
 
 export interface DiscoveryRequestDto {
@@ -1061,6 +1062,7 @@ export interface TakeHomeQueryDto {
   giftFor?: TakeHomeGoodFor;
   budget?: TakeHomeBudget;
   verifiedOnly?: boolean;
+  travelerPersonalization?: TravelerPersonalizationProfileDto;
 }
 
 export interface TakeHomeReasoningDto {
@@ -1142,13 +1144,7 @@ export type MemoryType =
   | "ITINERARY_PREFERENCE";
 
 export type MemorySource =
-  | "EXPLICIT"
-  | "INFERRED"
-  | "INTERACTION"
-  | "ITINERARY"
-  | "ALTERNATIVE"
-  | "TAKE_HOME"
-  | "SYSTEM";
+  "EXPLICIT" | "INFERRED" | "INTERACTION" | "ITINERARY" | "ALTERNATIVE" | "TAKE_HOME" | "SYSTEM";
 
 export type MemoryConfidence = "LOW" | "MODERATE" | "HIGH";
 
@@ -1186,6 +1182,7 @@ export interface TravelerMemoryDto {
 export interface MemoryEventDto {
   id: string;
   userId: string;
+  memoryId?: string | null;
   eventType: MemoryEventType;
   subjectType?: string | null;
   subjectId?: string | null;
@@ -1255,4 +1252,3 @@ export interface GeminiSanitizedMemoryContext {
   takeHomeCategoryBias?: string[];
   confidenceLevel: MemoryConfidence;
 }
-

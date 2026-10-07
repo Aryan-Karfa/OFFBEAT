@@ -22,6 +22,7 @@ import { communityService } from "../community/community.service.js";
 import { timeService } from "../intelligence/time/time.service.js";
 import { crowdService } from "../intelligence/crowd/crowd.service.js";
 import { geminiService } from "../../integrations/gemini/gemini.service.js";
+import { memoryService } from "../memory/memory.service.js";
 import type {
   SearchQueryContext,
   CommunitySignalSummaryDto,
@@ -67,7 +68,19 @@ export class DiscoveryService {
       countryName = country?.name || "India";
     }
 
-    // 2. Build Normalized DiscoveryContext
+    // 2. Build Normalized DiscoveryContext (with Phase 15 Personalization if enabled)
+    let personalization = undefined;
+    if (options?.userId) {
+      try {
+        const profile = await memoryService.getPersonalizationProfile(options.userId);
+        if (profile.memoryEnabled && profile.totalMemoriesCount > 0) {
+          personalization = profile;
+        }
+      } catch {
+        // Continue unpersonalized on error
+      }
+    }
+
     const context: DiscoveryContextDto = {
       country: countryName,
       regionId: region.id,
@@ -79,6 +92,7 @@ export class DiscoveryService {
       preferredTime: request.preferredTime || null,
       placeType: request.placeType || null,
       intent: request.intent,
+      personalization,
     };
 
     logger.info("Executing contextual place discovery", requestId, {

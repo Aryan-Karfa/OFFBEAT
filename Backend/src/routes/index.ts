@@ -10,6 +10,7 @@ import { intelligenceController } from "../modules/intelligence/intelligence.con
 import { alternativesRoutes } from "../modules/alternatives/alternatives.routes.js";
 import { itineraryRoutes } from "../modules/itinerary/itinerary.routes.js";
 import { takeHomeRoutes } from "../modules/take-home/take-home.routes.js";
+import { memoryRoutes } from "../modules/memory/memory.routes.js";
 
 export const apiRouter: Router = Router();
 
@@ -50,6 +51,9 @@ apiRouter.use("/itineraries", itineraryRoutes);
 
 // Phase 14: Take Home Discovery Route
 apiRouter.use("/take-home", takeHomeRoutes);
+
+// Phase 15: Memory & Personalization Route
+apiRouter.use("/me", memoryRoutes);
 
 // Reserved Future Domain Endpoints:
 // apiRouter.use("/auth", authRoutes);

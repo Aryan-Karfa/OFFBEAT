@@ -1,9 +1,11 @@
+import type { TravelerMemory as PrismaTravelerMemory } from "@prisma/client";
 import { prisma, isDatabaseConnected } from "../../lib/db/prisma.js";
 import { DEMO_USER_TRAVELER } from "../community/community.repository.js";
 import {
   type MemoryType,
   type MemorySource,
   type MemoryConfidence,
+  type MemoryEventType,
   type MemoryRecord,
   type MemoryEventRecord,
   type MemorySettingRecord,
@@ -248,7 +250,7 @@ export class MemoryRepository {
 
     const existingIndex = userList.findIndex((m) => m.type === data.type && m.key === data.key);
     if (existingIndex >= 0) {
-      const existing = userList[existingIndex];
+      const existing = userList[existingIndex]!;
       const updated: MemoryRecord = {
         ...existing,
         value: data.value,
@@ -307,13 +309,15 @@ export class MemoryRepository {
     const userList = this.inMemoryRecords.get(userId) || [];
     const index = userList.findIndex((m) => m.id === memoryId);
     if (index === -1) return null;
+    const existing = userList[index]!;
 
-    userList[index] = {
-      ...userList[index],
+    const updated: MemoryRecord = {
+      ...existing,
       ...updates,
       updatedAt: new Date(),
     };
-    return userList[index];
+    userList[index] = updated;
+    return updated;
   }
 
   public async deleteMemory(userId: string, memoryId: string): Promise<boolean> {
@@ -482,7 +486,7 @@ export class MemoryRepository {
     return updated;
   }
 
-  private mapPrismaToRecord(prismaRecord: any): MemoryRecord {
+  private mapPrismaToRecord(prismaRecord: PrismaTravelerMemory): MemoryRecord {
     return {
       id: prismaRecord.id,
       userId: prismaRecord.userId,

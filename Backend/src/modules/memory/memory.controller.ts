@@ -20,11 +20,7 @@ export class MemoryController {
     return DEMO_USER_TRAVELER.id;
   }
 
-  public getMemories = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  public getMemories = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = this.extractUserId(req);
       const memories = await this.service.getMemories(userId);
@@ -48,11 +44,7 @@ export class MemoryController {
     }
   };
 
-  public recordEvent = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  public recordEvent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = this.extractUserId(req);
       const input = CreateMemoryEventSchema.parse(req.body);
@@ -118,11 +110,7 @@ export class MemoryController {
     }
   };
 
-  public getSettings = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  public getSettings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const userId = this.extractUserId(req);
       const settings = await this.service.getSetting(userId);

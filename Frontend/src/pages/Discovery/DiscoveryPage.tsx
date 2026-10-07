@@ -25,6 +25,8 @@ import {
   SlidersHorizontal,
   Compass,
 } from "lucide-react";
+import { useMemoryStore } from "../../stores/memoryStore";
+import { PersonalizationIndicator } from "../../features/memory";
 import type { DiscoveryRequestDto } from "@offbeat/shared";
 
 export const DiscoveryPage: React.FC = () => {
@@ -52,6 +54,12 @@ export const DiscoveryPage: React.FC = () => {
     loadMore,
     retry,
   } = useDiscoveryResultsStore();
+
+  const { personalization, fetchPersonalization } = useMemoryStore();
+
+  useEffect(() => {
+    fetchPersonalization();
+  }, [fetchPersonalization]);
 
   const initialFetchAttempted = useRef<boolean>(false);
 
@@ -131,6 +139,7 @@ export const DiscoveryPage: React.FC = () => {
               <Badge variant="accent" size="sm">
                 Phase 7 Engine Active
               </Badge>
+              <PersonalizationIndicator personalization={personalization} />
             </div>
           </div>
 

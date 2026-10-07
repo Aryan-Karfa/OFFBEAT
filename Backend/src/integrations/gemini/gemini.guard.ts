@@ -326,3 +326,41 @@ export function checkTakeHomeBusinessGuards(
     errors,
   };
 }
+
+/**
+ * Checks that Gemini response does not breach memory boundaries:
+ * 1. Does not infer sensitive personal attributes (health, political, religious, financial, sexual).
+ * 2. Does not claim false certainty on inferred preferences.
+ * 3. Does not contain pseudo-commands to write or modify persistent memory.
+ */
+export function checkGeminiMemoryBoundaryGuards(text: string): GuardValidationResult {
+  const errors: string[] = [];
+
+  // Check for sensitive personal attribute patterns
+  if (
+    /\b(medical|illness|disease|political|election|religion|creed|sexuality|sexual orientation|income|salary|net worth)\b/i.test(
+      text,
+    )
+  ) {
+    errors.push("Gemini output contains sensitive personal attribute references");
+  }
+
+  // Check for unwarranted absolute certainty on inferred behavioral history
+  if (
+    /\b(we know with 100% certainty|we know everything about you|guaranteed you will love|you definitely love)\b/i.test(
+      text,
+    )
+  ) {
+    errors.push("Gemini output claims unwarranted certainty about traveler preference");
+  }
+
+  // Check for persistent memory write commands
+  if (/\b(WRITE_MEMORY|SET_MEMORY|DELETE_MEMORY|UPDATE_MEMORY_STORE)\b/i.test(text)) {
+    errors.push("Gemini output attempts to invoke unauthorized memory mutations");
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}

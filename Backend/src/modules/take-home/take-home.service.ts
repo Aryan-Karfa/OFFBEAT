@@ -6,6 +6,7 @@ import {
 } from "./take-home.candidate-collector.js";
 import { TakeHomeScorer } from "./take-home.scorer.js";
 import { geminiService, type GeminiService } from "../../integrations/gemini/gemini.service.js";
+import { memoryService } from "../memory/memory.service.js";
 import type {
   TakeHomeQueryDto,
   TakeHomeResponseDto,
@@ -27,7 +28,7 @@ export class TakeHomeService {
   public async getTakeHomeByDestination(
     destinationIdentifier: string,
     query: TakeHomeQueryDto,
-    options?: { requestId?: string },
+    options?: { requestId?: string; userId?: string },
   ): Promise<TakeHomeResponseDto> {
     const destination = await this.collector.resolveDestination(destinationIdentifier);
     return this.processTakeHome(destination, query, options);
@@ -39,7 +40,7 @@ export class TakeHomeService {
   public async getTakeHomeByPlace(
     placeId: string,
     query: TakeHomeQueryDto,
-    options?: { requestId?: string },
+    options?: { requestId?: string; userId?: string },
   ): Promise<TakeHomeResponseDto> {
     const destination = await this.collector.resolveDestination(undefined, placeId);
     return this.processTakeHome(destination, query, options);
@@ -51,9 +52,20 @@ export class TakeHomeService {
   private async processTakeHome(
     destination: ResolvedDestinationInfo,
     query: TakeHomeQueryDto,
-    options?: { requestId?: string },
+    options?: { requestId?: string; userId?: string },
   ): Promise<TakeHomeResponseDto> {
     const requestId = options?.requestId;
+
+    if (options?.userId && !query.travelerPersonalization) {
+      try {
+        const profile = await memoryService.getPersonalizationProfile(options.userId);
+        if (profile.memoryEnabled) {
+          query.travelerPersonalization = profile;
+        }
+      } catch {
+        // Continue unpersonalized
+      }
+    }
 
     logger.info("Processing Take Home request", requestId, {
       destinationId: destination.id,

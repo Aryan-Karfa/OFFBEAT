@@ -2,8 +2,6 @@ import { logger } from "../../lib/logger/logger.js";
 import { memoryRepository, type MemoryRepository } from "./memory.repository.js";
 import { MemoryRules } from "./memory.rules.js";
 import {
-  type MemoryType,
-  type MemorySource,
   type MemoryConfidence,
   type TravelerMemoryDto,
   type MemoryEventDto,
@@ -29,10 +27,14 @@ export class MemoryService {
     // 1. Check if traveler memory is enabled
     const setting = await this.repo.getSetting(userId);
     if (!setting.memoryEnabled) {
-      logger.info("[MemoryService] Memory is disabled for user; skipping persistent memory update", {
-        userId,
-        eventType: input.eventType,
-      });
+      logger.info(
+        "[MemoryService] Memory is disabled for user; skipping persistent memory update",
+        undefined,
+        {
+          userId,
+          eventType: input.eventType,
+        },
+      );
       const eventRec = await this.repo.recordEvent({
         userId,
         eventType: input.eventType,
@@ -60,10 +62,14 @@ export class MemoryService {
 
     // 2. Privacy & Data Minimization Guard
     if (MemoryRules.isSensitiveSignal(input.signalKey, input.signalValue)) {
-      logger.warn("[MemoryService] Rejected sensitive signal attempting to enter memory", {
-        userId,
-        signalKey: input.signalKey,
-      });
+      logger.warn(
+        "[MemoryService] Rejected sensitive signal attempting to enter memory",
+        undefined,
+        {
+          userId,
+          signalKey: input.signalKey,
+        },
+      );
       throw new Error("Sensitive signals cannot be stored in traveler memory");
     }
 
@@ -74,7 +80,23 @@ export class MemoryService {
     const targetSource = derived.source;
 
     // 4. Check for existing aggregate memory
-    const existing = await this.repo.findMemoryByKey(userId, targetType, input.signalKey);
+    let existing = await this.repo.findMemoryByKey(userId, targetType, input.signalKey);
+    let resolvedType = targetType;
+
+    // If an existing taste or experience already exists with this signal key, reinforce it
+    if (!existing) {
+      const explicitTaste = await this.repo.findMemoryByKey(userId, "TASTE", input.signalKey);
+      if (explicitTaste) {
+        existing = explicitTaste;
+        resolvedType = "TASTE";
+      } else {
+        const explicitExp = await this.repo.findMemoryByKey(userId, "EXPERIENCE", input.signalKey);
+        if (explicitExp) {
+          existing = explicitExp;
+          resolvedType = "EXPERIENCE";
+        }
+      }
+    }
 
     let updatedRecord: MemoryRecord;
 
@@ -95,9 +117,9 @@ export class MemoryService {
 
       updatedRecord = await this.repo.upsertMemory({
         userId,
-        type: targetType,
+        type: existing.type,
         key: input.signalKey,
-        value: input.signalValue,
+        value: input.signalValue || existing.value,
         source: targetSource === "EXPLICIT" ? "EXPLICIT" : existing.source,
         confidence: newConfidence,
         weight: newWeight,
@@ -109,7 +131,7 @@ export class MemoryService {
       const initialWeight = Math.max(0.1, Math.min(1.0, weightDelta > 0 ? weightDelta : 0.5));
       updatedRecord = await this.repo.upsertMemory({
         userId,
-        type: targetType,
+        type: resolvedType,
         key: input.signalKey,
         value: input.signalValue,
         source: targetSource,
@@ -132,7 +154,7 @@ export class MemoryService {
       weightDelta,
     });
 
-    logger.debug("[MemoryService] Memory successfully updated", {
+    logger.debug("[MemoryService] Memory successfully updated", undefined, {
       userId,
       type: updatedRecord.type,
       key: updatedRecord.key,
@@ -171,7 +193,12 @@ export class MemoryService {
     return records
       .filter((r) => r.userVisible)
       .map((r) => {
-        const decayedWeight = MemoryRules.calculateDecayedWeight(r.weight, r.source, r.updatedAt, now);
+        const decayedWeight = MemoryRules.calculateDecayedWeight(
+          r.weight,
+          r.source,
+          r.updatedAt,
+          now,
+        );
         return {
           id: r.id,
           userId: r.userId,
@@ -311,7 +338,7 @@ export class MemoryService {
   public async deleteMemoryItem(userId: string, memoryId: string): Promise<boolean> {
     const success = await this.repo.deleteMemory(userId, memoryId);
     if (success) {
-      logger.info("[MemoryService] Traveler deleted memory item", { userId, memoryId });
+      logger.info("[MemoryService] Traveler deleted memory item", undefined, { userId, memoryId });
     }
     return success;
   }
@@ -321,7 +348,10 @@ export class MemoryService {
    */
   public async clearAllMemories(userId: string): Promise<number> {
     const count = await this.repo.clearAllMemories(userId);
-    logger.info("[MemoryService] Traveler cleared all memory records", { userId, count });
+    logger.info("[MemoryService] Traveler cleared all memory records", undefined, {
+      userId,
+      count,
+    });
     return count;
   }
 
@@ -342,7 +372,7 @@ export class MemoryService {
    */
   public async updateSetting(userId: string, memoryEnabled: boolean): Promise<MemorySettingDto> {
     const record = await this.repo.updateSetting(userId, memoryEnabled);
-    logger.info("[MemoryService] Traveler updated memory settings", {
+    logger.info("[MemoryService] Traveler updated memory settings", undefined, {
       userId,
       memoryEnabled,
     });

@@ -143,6 +143,14 @@ export class TakeHomeScorer {
       }
     }
 
+    // Phase 15: Memory Personalization Integration
+    if (query.travelerPersonalization?.memoryEnabled) {
+      const preferredCategories = query.travelerPersonalization.takeHomePreference || [];
+      if (preferredCategories.includes(item.category)) {
+        tasteMatchScore = Math.min(1.0, tasteMatchScore + 0.15);
+      }
+    }
+
     // 6. Source completeness (weight: 0.10)
     let sourceCompletenessScore = 0.3;
     const sourceCount = item.placesToFind?.length || 0;

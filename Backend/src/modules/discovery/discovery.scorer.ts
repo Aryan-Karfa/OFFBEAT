@@ -74,6 +74,35 @@ export class DiscoveryScorer {
 
     const totalScore = Math.max(0, Math.min(100, Math.round(rawTotal * 100)));
 
+    // 8. Bounded Personalization Adjustment (Phase 15 Memory)
+    let personalizationBonus = 0;
+    const personalizedReasons: string[] = [];
+    if (context.personalization && context.personalization.memoryEnabled) {
+      const affinities = context.personalization.categoryAffinities || [];
+      for (const aff of affinities) {
+        const affKey = aff.category.toLowerCase();
+        if (candidateTokens.some((tok) => tok.includes(affKey) || affKey.includes(tok))) {
+          personalizationBonus += Math.min(Math.round(aff.weight * 5), 5);
+          personalizedReasons.push(`Matches your remembered preference for ${aff.category}`);
+          break;
+        }
+      }
+
+      // Check explicit remembered travel tastes if not conflicting with current session
+      const rememberedTastes = context.personalization.travelTaste || [];
+      for (const rt of rememberedTastes) {
+        if (!context.travelTaste.includes(rt) && candidateTokens.includes(rt.toLowerCase())) {
+          personalizationBonus += 3;
+          personalizedReasons.push(`Reflects your saved travel style (${rt})`);
+          break;
+        }
+      }
+
+      personalizationBonus = Math.min(8, personalizationBonus);
+    }
+
+    const finalTotalScore = Math.max(0, Math.min(100, totalScore + personalizationBonus));
+
     const breakdown: ScoreBreakdown = {
       travelTasteScore: Math.round(travelScore * 100),
       experienceTasteScore: Math.round(expScore * 100),
@@ -82,7 +111,8 @@ export class DiscoveryScorer {
       dayNightScore: Math.round(dayNightScore * 100),
       ratingScore: Math.round(ratingScore * 100),
       completenessScore: Math.round(completenessScore * 100),
-      totalScore,
+      personalizationScore: personalizationBonus,
+      totalScore: finalTotalScore,
     };
 
     // Generate explainable product-level reasons ("why this matches")
@@ -96,9 +126,13 @@ export class DiscoveryScorer {
       rating: candidate.rating,
     });
 
+    if (personalizedReasons.length > 0) {
+      why.push(...personalizedReasons);
+    }
+
     return {
       candidate,
-      score: totalScore,
+      score: finalTotalScore,
       why,
       breakdown,
     };

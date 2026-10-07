@@ -27,8 +27,11 @@ export class MemoryRules {
     lastUpdated: Date,
     now: Date = new Date(),
   ): number {
-    const elapsedDays = Math.max(0, (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60 * 24));
-    
+    const elapsedDays = Math.max(
+      0,
+      (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
     // Explicit preferences do not decay below 0.85
     if (source === "EXPLICIT") {
       const explicitDecay = Math.pow(0.5, elapsedDays / 90);
@@ -38,7 +41,7 @@ export class MemoryRules {
     // Inferred / interaction preferences decay with a 21-day half life
     const inferredDecay = Math.pow(0.5, elapsedDays / 21);
     const decayed = currentWeight * inferredDecay;
-    
+
     // Clamp between 0.05 and 1.0
     return Math.max(0.05, Math.min(1.0, Number(decayed.toFixed(3))));
   }
@@ -112,11 +115,13 @@ export class MemoryRules {
    * Infers memory type and attributes from an incoming event if not explicitly specified.
    */
   public static deriveEventAttributes(eventType: MemoryEventType) {
-    return MEMORY_WEIGHT_CONFIG[eventType] || {
-      weightDelta: 0.2,
-      source: "INTERACTION",
-      defaultType: "CATEGORY_AFFINITY",
-      initialConfidence: "MODERATE",
-    };
+    return (
+      MEMORY_WEIGHT_CONFIG[eventType] || {
+        weightDelta: 0.2,
+        source: "INTERACTION",
+        defaultType: "CATEGORY_AFFINITY",
+        initialConfidence: "MODERATE",
+      }
+    );
   }
 }

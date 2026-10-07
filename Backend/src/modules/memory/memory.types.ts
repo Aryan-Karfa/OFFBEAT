@@ -35,12 +35,15 @@ export type {
 /**
  * Standard deterministic weight deltas based on Phase 15 specification.
  */
-export const MEMORY_WEIGHT_CONFIG: Record<MemoryEventType, {
-  weightDelta: number;
-  source: MemorySource;
-  defaultType: MemoryType;
-  initialConfidence: MemoryConfidence;
-}> = {
+export const MEMORY_WEIGHT_CONFIG: Record<
+  MemoryEventType,
+  {
+    weightDelta: number;
+    source: MemorySource;
+    defaultType: MemoryType;
+    initialConfidence: MemoryConfidence;
+  }
+> = {
   TASTE_SELECTED: {
     weightDelta: 1.0,
     source: "EXPLICIT",

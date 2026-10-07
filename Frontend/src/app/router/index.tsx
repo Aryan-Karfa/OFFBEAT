@@ -15,6 +15,7 @@ import { ItineraryPage } from "../../pages/Itinerary/ItineraryPage";
 import { TakeHomePage } from "../../pages/TakeHome/TakeHomePage";
 import { CommunityPage } from "../../pages/Community/CommunityPage";
 import { ProfilePage } from "../../pages/Profile/ProfilePage";
+import { MemoryPage } from "../../pages/Memory/MemoryPage";
 
 export const router = createBrowserRouter([
   {
@@ -88,6 +89,14 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "memory",
+        element: <MemoryPage />,
+      },
+      {
+        path: "settings/personalization",
+        element: <MemoryPage />,
       },
       {
         path: "*",

@@ -70,6 +70,7 @@ export interface ScoreBreakdown {
   dayNightScore: number;
   ratingScore: number;
   completenessScore: number;
+  personalizationScore?: number;
   totalScore: number;
 }
 
@@ -102,4 +103,5 @@ export interface ScorerWeights {
 export interface DiscoveryExecutionOptions {
   requestId?: string;
   bypassCache?: boolean;
+  userId?: string;
 }
