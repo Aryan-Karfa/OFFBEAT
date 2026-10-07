@@ -37,3 +37,22 @@ export const alternativeReasoningOutputSchema = z.object({
 
 export type AlternativeReasoningOutput = z.infer<typeof alternativeReasoningOutputSchema>;
 
+/**
+ * Zod schema for structured output from Gemini itinerary reasoning.
+ * Ensures strict typing, sequencing, and candidate allowlisting.
+ */
+export const itineraryReasoningOutputSchema = z.object({
+  orderedPlaceIds: z.array(z.string()).min(1, "At least one place ID must be ordered"),
+  dayAssignments: z
+    .array(
+      z.object({
+        day: z.number().int().min(1),
+        placeIds: z.array(z.string()).min(1),
+      }),
+    )
+    .min(1, "At least one day assignment is required"),
+  explanation: z.string().min(10, "Explanation must be meaningful"),
+  tradeoffs: z.array(z.string()).default([]),
+});
+
+export type ItineraryReasoningOutput = z.infer<typeof itineraryReasoningOutputSchema>;

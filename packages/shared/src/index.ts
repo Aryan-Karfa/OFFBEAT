@@ -801,3 +801,161 @@ export interface FindAlternativesQueryDto {
   intent?: string;
 }
 
+// ============================================================================
+// Phase 13: Itinerary Engine Types & DTOs
+// ============================================================================
+
+export type ItineraryType = "DAY_TRIP" | "MULTI_DAY";
+export type ItineraryPace = "RELAXED" | "BALANCED" | "PACKED";
+export type ItineraryIntent = "EXPLORE" | "PHOTOGRAPHY" | "FOOD" | "NATURE" | "CULTURE" | "MIXED";
+
+export interface CreateItineraryRequestDto {
+  country?: string;
+  regionId: string;
+  destinationId?: string | null;
+
+  travelTaste?: string[];
+  experienceTaste?: string[];
+
+  dayNight?: "DAY" | "NIGHT" | "ANY";
+
+  preferredStartTime?: string | null;
+  preferredEndTime?: string | null;
+
+  durationDays?: number;
+
+  pace?: ItineraryPace;
+
+  mustVisitPlaceIds?: string[];
+  selectedAlternativePlaceIds?: string[];
+  avoidPlaceIds?: string[];
+
+  intent?: ItineraryIntent;
+}
+
+export interface ItineraryStopDto {
+  id: string;
+  placeId?: string;
+  externalId?: string;
+  name: string;
+  destination?: string;
+  category?: string;
+  categories?: string[];
+  imageUrl?: string | null;
+  location?: GeoLocation;
+  slug?: string;
+
+  arrivalTime: string;
+  departureTime: string;
+  durationMinutes: number;
+
+  travelFromPreviousMinutes?: number;
+  travelDistanceMeters?: number;
+
+  timeFit: "GOOD" | "PARTIAL" | "CONFLICT" | "UNKNOWN";
+  crowdFit: "GOOD" | "PARTIAL" | "UNKNOWN";
+
+  confidence?: {
+    score?: number;
+    evidenceStrength?: EvidenceStrength;
+    status?: string;
+  };
+  community?: {
+    submissionCount: number;
+    helpfulCount: number;
+    verifiedCount: number;
+    evidenceCount?: number;
+  };
+
+  why: string;
+  isFreeTime?: boolean;
+}
+
+export interface ItineraryDayDto {
+  day: number;
+  title: string;
+  date?: string;
+  stops: ItineraryStopDto[];
+  totalTravelMinutes?: number;
+  totalVisitMinutes?: number;
+  notes?: string[];
+}
+
+export interface ItineraryReasoningDto {
+  source: ReasoningSource;
+  explanation: string;
+  keyThemes?: string[];
+  tradeoffs?: string[];
+}
+
+export interface ItineraryResponseDto {
+  id: string;
+  title: string;
+  destination: string;
+  regionId: string;
+  durationDays: number;
+  pace: ItineraryPace;
+  days: ItineraryDayDto[];
+  summary: string;
+  reasoning?: ItineraryReasoningDto;
+  source: ReasoningSource;
+  fallback: boolean;
+  totalStops: number;
+  createdAt: string;
+}
+
+export interface ItineraryCandidatePlaceDto {
+  id: string;
+  name: string;
+  slug?: string;
+  category?: string;
+  categories?: string[];
+  destination?: string;
+  location?: GeoLocation;
+  timeFit?: "GOOD" | "PARTIAL" | "CONFLICT" | "UNKNOWN";
+  crowdFit?: "GOOD" | "PARTIAL" | "UNKNOWN";
+  crowdLevel?: CrowdLevel;
+  recommendedTime?: {
+    start?: string;
+    end?: string;
+    reason?: string;
+  };
+  confidence?: {
+    score?: number;
+    evidenceStrength?: EvidenceStrength;
+    status?: string;
+  };
+  community?: {
+    submissionCount: number;
+    helpfulCount: number;
+    verifiedCount: number;
+  };
+  isMustVisit?: boolean;
+  isAlternative?: boolean;
+}
+
+export interface ItineraryReasoningInputDto {
+  destination: string;
+  regionId: string;
+  pace: ItineraryPace;
+  durationDays: number;
+  travelTaste: string[];
+  experienceTaste: string[];
+  dayNight: "DAY" | "NIGHT" | "ANY";
+  candidatePlaces: ItineraryCandidatePlaceDto[];
+  draftSchedule: Array<{
+    day: number;
+    orderedPlaceIds: string[];
+  }>;
+}
+
+export interface ItineraryReasoningResultDto {
+  orderedPlaceIds: string[];
+  dayAssignments: Array<{
+    day: number;
+    placeIds: string[];
+  }>;
+  explanation: string;
+  tradeoffs?: string[];
+  source: ReasoningSource;
+}

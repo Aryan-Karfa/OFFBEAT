@@ -1,10 +1,11 @@
 # OFFBEAT — PHASE 12 IMPLEMENTATION REPORT
+
 ## FIND AN ALTERNATIVE + GEMINI CONFIGURATION FIX
 
 **Date:** October 7, 2026  
 **Status:** READY / VERIFIED  
 **Phase:** 12 — Find An Alternative  
-**Authoritative Gemini Model:** `gemini-3.8-flash`  
+**Authoritative Gemini Model:** `gemini-3.8-flash`
 
 ---
 
@@ -13,6 +14,7 @@
 Phase 12 delivers OFFBEAT's signature hackathon feature: **FIND AN ALTERNATIVE**.
 
 The feature fundamentally rejects the naive premise that an "alternative" simply means replacing a destination. Instead, OFFBEAT understands traveler intent across six multidimensional strategies:
+
 1. `REPLACEMENT` — true substitute matching vibe and terrain
 2. `ENHANCEMENT` — a pairing stop that elevates the primary journey (e.g. Keep Tiger Hill, add Batasia Loop)
 3. `COMPLEMENTARY` — a cultural/heritage counterpart for journey balance
@@ -40,9 +42,11 @@ Additionally, this phase successfully executed the **Mandatory Phase 11 Gemini C
 ## 3. Gemini Configuration Fix
 
 ### The Inconsistency
+
 In Phase 11, the primary environment was configured to `gemini-3.8-flash`, while validation scripts contained fallback cascades attempting `gemini-3.5-flash` and `gemini-3.7-flash`. This produced configuration divergence between documented, configured, and runtime models.
 
 ### Authoritative Reconciliation
+
 1. **Single Source of Truth**:
    ```env
    GEMINI_MODEL=gemini-3.8-flash
@@ -57,6 +61,7 @@ In Phase 11, the primary environment was configured to `gemini-3.8-flash`, while
    - `DOCS/PHASE_11_IMPLEMENTATION_REPORT.md`: Updated to document `gemini-3.8-flash`.
 
 ### Runtime & Fallback Behavior
+
 When `gemini-3.8-flash` encounters HTTP 503 high demand spikes or network timeouts, the system gracefully logs a transient warning, invokes bounded exponential backoff retries, and seamlessly activates the `DETERMINISTIC` fallback pipeline (`source: "DETERMINISTIC"`), ensuring zero user-facing errors.
 
 ---
@@ -109,20 +114,21 @@ Frontend UI Experience
 
 ## 5. Alternative Modes
 
-| Mode | Semantic Meaning | Must-Visit Behavior | Scorer Priority |
-|---|---|---|---|
-| `REPLACEMENT` | True substitute matching atmosphere | Discouraged for high-value places; seeks equivalent mountain/cultural alternatives | Category (35%), Taste (25%), Proximity (20%), Confidence (10%), Time (10%) |
-| `ENHANCEMENT` | Add a nearby stop elevating the journey | Recommended for must-visits (e.g. Keep Tiger Hill + Batasia Loop) | Proximity (35%), Taste (25%), Time (15%), Community (15%), Confidence (10%) |
-| `COMPLEMENTARY` | Distinct cultural or heritage counterpart | Encouraged for journey diversity in the same destination | Proximity (35%), Diversity bonus (25%), Taste (20%), Confidence (10%), Community (10%) |
-| `NEARBY_DISCOVERY` | Hidden gems in close spatial radius | Prioritizes proximity and local discovery | Proximity (40%), Community (25%), Taste (20%), Confidence (15%) |
-| `TIMING_ALTERNATIVE` | Optimal daylight/sunrise timing window | Focuses on when to visit rather than replacing | Time Fit (45%), Operating Hours (25%), Taste (15%), Confidence (15%) |
-| `LOWER_CROWD` | Low-density tranquil alternatives | Avoids peak surge periods; honors crowd curves | Crowd Fit (40%), Proximity (25%), Taste (15%), Confidence (10%), Time (10%) |
+| Mode                 | Semantic Meaning                          | Must-Visit Behavior                                                                | Scorer Priority                                                                        |
+| -------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `REPLACEMENT`        | True substitute matching atmosphere       | Discouraged for high-value places; seeks equivalent mountain/cultural alternatives | Category (35%), Taste (25%), Proximity (20%), Confidence (10%), Time (10%)             |
+| `ENHANCEMENT`        | Add a nearby stop elevating the journey   | Recommended for must-visits (e.g. Keep Tiger Hill + Batasia Loop)                  | Proximity (35%), Taste (25%), Time (15%), Community (15%), Confidence (10%)            |
+| `COMPLEMENTARY`      | Distinct cultural or heritage counterpart | Encouraged for journey diversity in the same destination                           | Proximity (35%), Diversity bonus (25%), Taste (20%), Confidence (10%), Community (10%) |
+| `NEARBY_DISCOVERY`   | Hidden gems in close spatial radius       | Prioritizes proximity and local discovery                                          | Proximity (40%), Community (25%), Taste (20%), Confidence (15%)                        |
+| `TIMING_ALTERNATIVE` | Optimal daylight/sunrise timing window    | Focuses on when to visit rather than replacing                                     | Time Fit (45%), Operating Hours (25%), Taste (15%), Confidence (15%)                   |
+| `LOWER_CROWD`        | Low-density tranquil alternatives         | Avoids peak surge periods; honors crowd curves                                     | Crowd Fit (40%), Proximity (25%), Taste (15%), Confidence (10%), Time (10%)            |
 
 ---
 
 ## 6. Candidate Generation
 
 Implemented in `Backend/src/modules/alternatives/alternatives.generator.ts`:
+
 1. **Internal Canonical Places**: Queries `PlacesRepository` within the destination and wider region matching categories.
 2. **External SerpApi**: Uses `SerpApiService.searchPlaces` with engine `google_maps`, querying localized radius terms. Wrapped in resilient try/catch so external provider unavailability never halts internal generation.
 3. **Strict Exclusion**: Rejects candidates if `id === originalId`, `slug === originalSlug`, or `normalizedName.includes(normalizedOriginalName)` (e.g. catching "Tiger Hill Sunrise Point").
@@ -133,6 +139,7 @@ Implemented in `Backend/src/modules/alternatives/alternatives.generator.ts`:
 ## 7. Similarity & Alternative Scoring
 
 Implemented in `Backend/src/modules/alternatives/alternatives.scorer.ts`:
+
 - Jaccard category similarity against original place.
 - Travel & experience taste overlap scoring.
 - Geographic proximity using Haversine spherical distance.
@@ -222,11 +229,13 @@ Implemented in `Backend/src/modules/alternatives/alternatives.scorer.ts`:
 ## 16. API Contract
 
 ### Request
+
 ```http
 GET /api/v1/places/:placeId/alternatives?mode=ENHANCEMENT&travelTaste=scenic&dayNight=DAY
 ```
 
 ### Response
+
 ```json
 {
   "success": true,
@@ -271,6 +280,7 @@ GET /api/v1/places/:placeId/alternatives?mode=ENHANCEMENT&travelTaste=scenic&day
 ## 17. Tests
 
 45 test files and 269 tests passing (100% success rate):
+
 - `Backend/tests/unit/alternatives.generator.test.ts` (3/3 tests)
 - `Backend/tests/unit/alternatives.scorer.test.ts` (6/6 tests covering all 6 modes)
 - `Backend/tests/unit/alternatives.service.test.ts` (4/4 tests covering pipeline and fallback)

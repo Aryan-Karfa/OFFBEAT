@@ -2,6 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { AlternativesCandidateGenerator } from "../../src/modules/alternatives/alternatives.generator.js";
 import type { PlaceWithDetails } from "../../src/modules/places/places.types.js";
 import type { CandidateGenerationQuery } from "../../src/modules/alternatives/alternatives.types.js";
+import type { PlaceRepository } from "../../src/modules/places/places.repository.js";
+import type { SerpApiService } from "../../src/integrations/serpapi/serpapi.service.js";
 import { DestinationStatus, PlaceStatus } from "@prisma/client";
 
 describe("Phase 12: AlternativesCandidateGenerator Unit Tests", () => {
@@ -105,9 +107,12 @@ describe("Phase 12: AlternativesCandidateGenerator Unit Tests", () => {
 
     const mockSerpApi = {
       searchPlaces: vi.fn().mockResolvedValue([]),
-    } as any;
+    } as unknown as SerpApiService;
 
-    const generator = new AlternativesCandidateGenerator(mockRepo as any, mockSerpApi);
+    const generator = new AlternativesCandidateGenerator(
+      mockRepo as unknown as PlaceRepository,
+      mockSerpApi,
+    );
     const candidates = await generator.generateCandidates(sampleOriginalPlace, sampleQuery);
 
     expect(candidates.length).toBe(1);
@@ -145,9 +150,12 @@ describe("Phase 12: AlternativesCandidateGenerator Unit Tests", () => {
           categories: ["Mountain Viewpoint"],
         },
       ]),
-    } as any;
+    } as unknown as SerpApiService;
 
-    const generator = new AlternativesCandidateGenerator(mockRepo as any, mockSerpApi);
+    const generator = new AlternativesCandidateGenerator(
+      mockRepo as unknown as PlaceRepository,
+      mockSerpApi,
+    );
     const candidates = await generator.generateCandidates(sampleOriginalPlace, sampleQuery);
 
     // Original place should be excluded (both internal and external variant)
@@ -171,9 +179,12 @@ describe("Phase 12: AlternativesCandidateGenerator Unit Tests", () => {
 
     const mockSerpApi = {
       searchPlaces: vi.fn().mockRejectedValue(new Error("SerpApi 503 Service Unavailable")),
-    } as any;
+    } as unknown as SerpApiService;
 
-    const generator = new AlternativesCandidateGenerator(mockRepo as any, mockSerpApi);
+    const generator = new AlternativesCandidateGenerator(
+      mockRepo as unknown as PlaceRepository,
+      mockSerpApi,
+    );
     const candidates = await generator.generateCandidates(sampleOriginalPlace, sampleQuery);
 
     expect(candidates.length).toBe(1);

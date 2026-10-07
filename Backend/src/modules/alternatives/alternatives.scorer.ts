@@ -4,12 +4,7 @@ import type {
   ScoredAlternativeCandidate,
   CandidateGenerationQuery,
 } from "./alternatives.types.js";
-import type {
-  TimeFit,
-  CrowdFit,
-  CrowdLevel,
-  EvidenceStrength,
-} from "@offbeat/shared";
+import type { TimeFit, CrowdFit, CrowdLevel, EvidenceStrength } from "@offbeat/shared";
 
 function calculateCategorySimilarity(categoriesA: string[], categoriesB: string[]): number {
   if (!categoriesA.length || !categoriesB.length) return 0.2;
@@ -31,7 +26,10 @@ function calculateTasteMatch(categories: string[], tastes: string[]): number {
   let matches = 0;
   for (const t of tastes) {
     const lower = t.toLowerCase();
-    if (catSet.has(lower) || Array.from(catSet).some((c) => c.includes(lower) || lower.includes(c))) {
+    if (
+      catSet.has(lower) ||
+      Array.from(catSet).some((c) => c.includes(lower) || lower.includes(c))
+    ) {
       matches++;
     }
   }
@@ -94,7 +92,7 @@ export class AlternativesScorer {
     const categorySim = calculateCategorySimilarity(originalCategories, candidateCategories);
     const travelTasteMatch = calculateTasteMatch(candidateCategories, query.travelTaste);
     const experienceTasteMatch = calculateTasteMatch(candidateCategories, query.experienceTaste);
-    const tasteMatch = (travelTasteMatch * 0.6 + experienceTasteMatch * 0.4);
+    const tasteMatch = travelTasteMatch * 0.6 + experienceTasteMatch * 0.4;
     const geoProximity = calculateGeographicProximity(candidate, originalPlace);
 
     // 2. Intelligence Signals
@@ -104,16 +102,23 @@ export class AlternativesScorer {
     else if (signals?.timeFit === "CONFLICT") timeFitScore = 0.1;
 
     let crowdFitScore = 0.5;
-    if (signals?.crowdLevel === "LOW" || signals?.crowdFit === "LOWER_CROWD_MATCH") crowdFitScore = 1.0;
-    else if (signals?.crowdLevel === "MODERATE" || signals?.crowdFit === "NEUTRAL") crowdFitScore = 0.7;
-    else if (signals?.crowdLevel === "HIGH" || signals?.crowdLevel === "VERY_HIGH" || signals?.crowdFit === "HIGHER_CROWD") crowdFitScore = 0.2;
-
+    if (signals?.crowdLevel === "LOW" || signals?.crowdFit === "LOWER_CROWD_MATCH")
+      crowdFitScore = 1.0;
+    else if (signals?.crowdLevel === "MODERATE" || signals?.crowdFit === "NEUTRAL")
+      crowdFitScore = 0.7;
+    else if (
+      signals?.crowdLevel === "HIGH" ||
+      signals?.crowdLevel === "VERY_HIGH" ||
+      signals?.crowdFit === "HIGHER_CROWD"
+    )
+      crowdFitScore = 0.2;
 
     const commSubmissions = signals?.community?.submissionCount || 0;
     const commVerified = signals?.community?.verifiedCount || 0;
-    const communityScore = Math.min(1.0, (commSubmissions * 0.1) + (commVerified * 0.25));
+    const communityScore = Math.min(1.0, commSubmissions * 0.1 + commVerified * 0.25);
 
-    const confidenceScore = signals?.confidence?.score !== undefined ? signals.confidence.score : 0.6;
+    const confidenceScore =
+      signals?.confidence?.score !== undefined ? signals.confidence.score : 0.6;
 
     // 3. Mode-specific Weighting (Deterministic)
     let score = 0;
@@ -123,9 +128,9 @@ export class AlternativesScorer {
         score =
           categorySim * 0.35 +
           tasteMatch * 0.25 +
-          geoProximity * 0.20 +
-          confidenceScore * 0.10 +
-          timeFitScore * 0.10;
+          geoProximity * 0.2 +
+          confidenceScore * 0.1 +
+          timeFitScore * 0.1;
         break;
 
       case "ENHANCEMENT":
@@ -135,60 +140,45 @@ export class AlternativesScorer {
           tasteMatch * 0.25 +
           timeFitScore * 0.15 +
           communityScore * 0.15 +
-          confidenceScore * 0.10;
+          confidenceScore * 0.1;
         break;
 
-      case "COMPLEMENTARY":
+      case "COMPLEMENTARY": {
         // Balance original with a distinct type of experience in same destination
-        const complementaryDiversity = 1 - (categorySim * 0.5); // Diversity bonus
+        const complementaryDiversity = 1 - categorySim * 0.5; // Diversity bonus
         score =
           geoProximity * 0.35 +
           complementaryDiversity * 0.25 +
-          tasteMatch * 0.20 +
-          confidenceScore * 0.10 +
-          communityScore * 0.10;
+          tasteMatch * 0.2 +
+          confidenceScore * 0.1 +
+          communityScore * 0.1;
         break;
+      }
 
       case "NEARBY_DISCOVERY":
         // Hidden gem in close proximity
         score =
-          geoProximity * 0.40 +
-          communityScore * 0.25 +
-          tasteMatch * 0.20 +
-          confidenceScore * 0.15;
+          geoProximity * 0.4 + communityScore * 0.25 + tasteMatch * 0.2 + confidenceScore * 0.15;
         break;
 
       case "TIMING_ALTERNATIVE":
         // Better scheduling/time fit
-        score =
-          timeFitScore * 0.45 +
-          geoProximity * 0.25 +
-          tasteMatch * 0.15 +
-          categorySim * 0.15;
+        score = timeFitScore * 0.45 + geoProximity * 0.25 + tasteMatch * 0.15 + categorySim * 0.15;
         break;
 
       case "LOWER_CROWD":
         // Lower crowd profile without fabricating
         score =
-          crowdFitScore * 0.45 +
-          geoProximity * 0.25 +
-          tasteMatch * 0.15 +
-          confidenceScore * 0.15;
+          crowdFitScore * 0.45 + geoProximity * 0.25 + tasteMatch * 0.15 + confidenceScore * 0.15;
         break;
     }
 
     // 4. Generate Truthful Why Explanation
-    const why = this.generateWhyExplanation(
-      candidate,
-      originalPlace,
-      query,
-      signals,
-      {
-        categorySim,
-        tasteMatch,
-        geoProximity,
-      },
-    );
+    const why = this.generateWhyExplanation(candidate, originalPlace, query, signals, {
+      categorySim,
+      tasteMatch,
+      geoProximity,
+    });
 
     // Tradeoff explanation
     let tradeoff: string | undefined;
@@ -237,9 +227,7 @@ export class AlternativesScorer {
       tradeoff,
       relationshipContext,
       bestTime: signals?.bestTime,
-      crowd: signals?.crowdLevel
-        ? { level: signals.crowdLevel }
-        : undefined,
+      crowd: signals?.crowdLevel ? { level: signals.crowdLevel } : undefined,
       scoringBreakdown: {
         categorySimilarity: categorySim,
         tasteMatch,

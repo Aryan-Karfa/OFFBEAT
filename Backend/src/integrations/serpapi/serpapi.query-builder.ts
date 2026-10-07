@@ -169,4 +169,26 @@ export class SerpApiQueryBuilder {
 
     return searchParams;
   }
+
+  /**
+   * Builds parameters for fetching Google Maps directions between two coordinates.
+   */
+  public static buildDirectionsQuery(params: {
+    startCoords: GeoLocation;
+    endCoords: GeoLocation;
+    travelMode?: "driving" | "walking" | "transit";
+  }): SerpApiSearchParameters {
+    // SerpApi google_maps_directions requires numeric travel_mode:
+    // 0: driving, 1: transit, 2: walking, 3: bicycling
+    const modeCode =
+      params.travelMode === "walking" ? "2" : params.travelMode === "transit" ? "1" : "0";
+
+    return {
+      engine: "google_maps_directions",
+      start_coords: `${params.startCoords.lat},${params.startCoords.lng}`,
+      end_coords: `${params.endCoords.lat},${params.endCoords.lng}`,
+      travel_mode: modeCode,
+      hl: "en",
+    };
+  }
 }

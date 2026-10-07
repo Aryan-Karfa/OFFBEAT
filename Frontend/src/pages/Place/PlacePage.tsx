@@ -11,7 +11,18 @@ import { placesService } from "../../services/placesService";
 import { CommunitySection, ContributeModal } from "../../features/community";
 import { TimeIntelligenceSection, CrowdIntelligenceSection } from "../../features/intelligence";
 import type { PlaceDetailDto } from "@offbeat/shared";
-import { ArrowLeft, MapPin, Share2, PlusCircle, Globe, Phone, Compass, Shuffle, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  MapPin,
+  Share2,
+  PlusCircle,
+  Globe,
+  Phone,
+  Compass,
+  Shuffle,
+  Sparkles,
+  Calendar,
+} from "lucide-react";
 
 export const PlacePage: React.FC = () => {
   const { placeId = "place_tiger_hill" } = useParams<{ placeId: string }>();
@@ -113,12 +124,23 @@ export const PlacePage: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <Link to={`/place/${place.slug || place.id}/alternatives`}>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Link
+                      to={`/itinerary?mustVisit=${place.id}&destination=${place.destination || "Darjeeling"}`}
+                    >
                       <Button
                         variant="primary"
                         size="sm"
-                        leftIcon={<Sparkles className="h-3.5 w-3.5 text-offbeat-dark" />}
+                        leftIcon={<Calendar className="h-3.5 w-3.5 text-offbeat-dark" />}
+                      >
+                        Build My Day
+                      </Button>
+                    </Link>
+                    <Link to={`/place/${place.slug || place.id}/alternatives`}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        leftIcon={<Sparkles className="h-3.5 w-3.5 text-offbeat-accent" />}
                       >
                         Find Alternative
                       </Button>
@@ -216,14 +238,19 @@ export const PlacePage: React.FC = () => {
                         Phase 12
                       </Badge>
                     </div>
-                    <Heading level={2} size="h2" className="text-xl sm:text-2xl mb-2 flex items-center gap-2">
+                    <Heading
+                      level={2}
+                      size="h2"
+                      className="text-xl sm:text-2xl mb-2 flex items-center gap-2"
+                    >
                       <Shuffle className="h-5 w-5 text-offbeat-accent" />
                       Find An Alternative
                     </Heading>
                     <Text variant="body" className="text-sm text-offbeat-secondary leading-relaxed">
-                      Looking for something quieter, a complementary hidden gem, an elevating pairing, or a better daylight window?
-                      OFFBEAT evaluates real geography, community signals, crowd curves, and Gemini reasoning to discover
-                      curated alternatives tailored to your journey.
+                      Looking for something quieter, a complementary hidden gem, an elevating
+                      pairing, or a better daylight window? OFFBEAT evaluates real geography,
+                      community signals, crowd curves, and Gemini reasoning to discover curated
+                      alternatives tailored to your journey.
                     </Text>
                   </div>
 

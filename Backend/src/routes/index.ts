@@ -8,7 +8,7 @@ import { discoveryRoutes } from "../modules/discovery/discovery.routes.js";
 import { communityRoutes } from "../modules/community/community.routes.js";
 import { intelligenceController } from "../modules/intelligence/intelligence.controller.js";
 import { alternativesRoutes } from "../modules/alternatives/alternatives.routes.js";
-
+import { itineraryRoutes } from "../modules/itinerary/itinerary.routes.js";
 
 export const apiRouter: Router = Router();
 
@@ -44,6 +44,8 @@ apiRouter.get("/destinations/:destinationId/crowd", intelligenceController.getDe
 // Phase 12: Find An Alternative Route
 apiRouter.use("/alternatives", alternativesRoutes);
 
+// Phase 13: Itinerary Engine Route
+apiRouter.use("/itineraries", itineraryRoutes);
 
 // Reserved Future Domain Endpoints (Phases 9-11):
 // apiRouter.use("/auth", authRoutes);

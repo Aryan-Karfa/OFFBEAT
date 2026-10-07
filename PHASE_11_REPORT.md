@@ -7,6 +7,7 @@ PHASE 11 STATUS: ✅ COMPLETE & FULLY VERIFIED
 ```
 
 ### Core Milestones Achieved:
+
 1. **Google GenAI SDK Integration**:
    - Official `@google/genai` installed and configured.
    - Server-side only: zero exposure of `GEMINI_API_KEY` to client.

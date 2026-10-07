@@ -3,15 +3,21 @@ import { AlternativesService } from "../../src/modules/alternatives/alternatives
 import { MockReasoningProvider } from "../../src/integrations/gemini/gemini.mock.js";
 import { GeminiService } from "../../src/integrations/gemini/gemini.service.js";
 import type { PlaceWithDetails } from "../../src/modules/places/places.types.js";
+import type { PlaceRepository } from "../../src/modules/places/places.repository.js";
+import type { AlternativesCandidateGenerator } from "../../src/modules/alternatives/alternatives.generator.js";
+import type { AlternativesScorer } from "../../src/modules/alternatives/alternatives.scorer.js";
+import type { CommunityService } from "../../src/modules/community/community.service.js";
+import type { TimeService } from "../../src/modules/intelligence/time/time.service.js";
+import type { CrowdService } from "../../src/modules/intelligence/crowd/crowd.service.js";
 import { DestinationStatus, PlaceStatus } from "@prisma/client";
 
 describe("Phase 12: AlternativesService Unit Tests", () => {
-  let mockPlacesRepo: any;
-  let mockGenerator: any;
-  let mockScorer: any;
-  let mockCommunity: any;
-  let mockTime: any;
-  let mockCrowd: any;
+  let mockPlacesRepo: PlaceRepository;
+  let mockGenerator: AlternativesCandidateGenerator;
+  let mockScorer: AlternativesScorer;
+  let mockCommunity: CommunityService;
+  let mockTime: TimeService;
+  let mockCrowd: CrowdService;
   let geminiService: GeminiService;
   let service: AlternativesService;
 
@@ -57,10 +63,10 @@ describe("Phase 12: AlternativesService Unit Tests", () => {
   beforeEach(() => {
     mockPlacesRepo = {
       findPlaceByIdOrSlug: vi.fn().mockResolvedValue(sampleOriginalPlace),
-    };
+    } as unknown as PlaceRepository;
     mockGenerator = {
       generateCandidates: vi.fn().mockResolvedValue([sampleCandidate]),
-    };
+    } as unknown as AlternativesCandidateGenerator;
     mockScorer = {
       scoreCandidate: vi.fn().mockReturnValue({
         placeId: "place_batasia_loop",
@@ -74,7 +80,7 @@ describe("Phase 12: AlternativesService Unit Tests", () => {
         score: 85,
         rawScore: 0.85,
       }),
-    };
+    } as unknown as AlternativesScorer;
     mockCommunity = {
       getCommunitySignalsForPlace: vi.fn().mockResolvedValue({
         submissionCount: 2,
@@ -83,19 +89,19 @@ describe("Phase 12: AlternativesService Unit Tests", () => {
         verifiedCount: 1,
         highlights: [],
       }),
-    };
+    } as unknown as CommunityService;
     mockTime = {
       getTimeIntelligenceForPlace: vi.fn().mockResolvedValue({
         timeFit: "GOOD",
         recommendedTimes: [{ start: "05:00", end: "06:00", reason: "Dawn" }],
       }),
-    };
+    } as unknown as TimeService;
     mockCrowd = {
       getCrowdIntelligenceForPlace: vi.fn().mockResolvedValue({
         overall: "LOW",
         crowdFit: "LOWER_CROWD_MATCH",
       }),
-    };
+    } as unknown as CrowdService;
 
     const mockReasoningProvider = new MockReasoningProvider();
     geminiService = new GeminiService(mockReasoningProvider, {
@@ -170,7 +176,7 @@ describe("Phase 12: AlternativesService Unit Tests", () => {
   });
 
   it("returns clean empty state when candidate generator finds no places", async () => {
-    mockGenerator.generateCandidates.mockResolvedValue([]);
+    vi.mocked(mockGenerator.generateCandidates).mockResolvedValue([]);
 
     const result = await service.findAlternatives("place_tiger_hill", {
       mode: "NEARBY_DISCOVERY",
@@ -186,7 +192,7 @@ describe("Phase 12: AlternativesService Unit Tests", () => {
   });
 
   it("throws NotFoundError when place is not found in database", async () => {
-    mockPlacesRepo.findPlaceByIdOrSlug.mockResolvedValue(null);
+    vi.mocked(mockPlacesRepo.findPlaceByIdOrSlug).mockResolvedValue(null);
 
     await expect(
       service.findAlternatives("non_existent_place", {

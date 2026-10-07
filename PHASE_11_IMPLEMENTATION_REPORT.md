@@ -1,4 +1,5 @@
 # OFFBEAT — PHASE 11 IMPLEMENTATION REPORT
+
 ## Gemini Intelligence Layer — Hackathon Fast-Track
 
 ---
@@ -145,6 +146,7 @@ pnpm add @google/genai --filter @offbeat/backend
 ```
 
 SDK usage pattern:
+
 ```typescript
 import { GoogleGenAI } from "@google/genai";
 
@@ -217,6 +219,7 @@ export const discoveryReasoningOutputSchema = z.object({
 ## 10. Validation & Hallucination Protection
 
 Every response from Gemini passes through a 4-stage pipeline:
+
 1. **Normalization**: Strips markdown code blocks (` ```json `), parses JSON, and trims all strings.
 2. **Schema Validation**: Verified via `discoveryReasoningOutputSchema.safeParse`.
 3. **Candidate Allowlisting**: Verifies `primaryRecommendationId` and all `selectedPlaceIds` belong to the input candidate allowlist.
@@ -235,6 +238,7 @@ Gemini only receives a bounded candidate list (top 5 candidates ranked by determ
 ## 12. Discovery Reasoning Integration
 
 In `Backend/src/modules/discovery/discovery.service.ts`:
+
 - After candidates are scored and enriched with Time and Crowd signals, top candidates are assembled into `DiscoveryReasoningInputDto`.
 - `geminiService.reasonAboutDiscovery(input)` is invoked.
 - `recommendationReasoning` is attached to:
@@ -247,23 +251,25 @@ In `Backend/src/modules/discovery/discovery.service.ts`:
 ## 13. Intent & Taste Reasoning
 
 Gemini interprets combinations of:
+
 - **Travel Taste**: e.g., `Mountains`, `Photography`
 - **Experience Taste**: e.g., `Sunrise`, `Peaceful`, `Less Crowded`
 - **Temporal Context**: `DAY` vs `NIGHT`, preferred visiting time
 
-It synthesizes these signals into cohesive, human explanations (e.g. *"Tiger Hill strongly matches your mountain photography focus; early dawn arrival aligns with both sunrise view and lower crowd density"*).
+It synthesizes these signals into cohesive, human explanations (e.g. _"Tiger Hill strongly matches your mountain photography focus; early dawn arrival aligns with both sunrise view and lower crowd density"_).
 
 ---
 
 ## 14. Community Interpretation
 
-Traveler community observations (such as *"Arrive 30 minutes before first light"* or *"Weekends see heavy jeep congestion"*) are ingested as structured evidence with their verification status (`COMMUNITY_VERIFIED` / `COMMUNITY_SUPPORTED`) and evidence strength (`HIGH` / `MODERATE`). Gemini cites community corroboration without treating subjective opinions as absolute certainty.
+Traveler community observations (such as _"Arrive 30 minutes before first light"_ or _"Weekends see heavy jeep congestion"_) are ingested as structured evidence with their verification status (`COMMUNITY_VERIFIED` / `COMMUNITY_SUPPORTED`) and evidence strength (`HIGH` / `MODERATE`). Gemini cites community corroboration without treating subjective opinions as absolute certainty.
 
 ---
 
 ## 15. Time & Crowd Reasoning
 
 Consumes deterministic Phase 10 properties:
+
 - `bestTime.start` / `bestTime.end` / `bestTime.reason`
 - `crowd.level` / `crowd.context` / `crowd.observation`
 - `timeFit` (`GOOD`, `PARTIAL`, `CONFLICT`)
@@ -309,7 +315,7 @@ The user experience remains 100% functional, responsive, and grounded.
 1. **`DiscoveryCard.tsx`**:
    - Renders a dedicated reasoning callout with badge (`Gemini Reasoning` vs `OFFBEAT Reasoned`).
    - Displays concise recommendation summary, grounded bulleted reasons, and tradeoff notice.
-   - Falls back cleanly to deterministic *"Why Offbeat Discovered This"* if reasoning is absent.
+   - Falls back cleanly to deterministic _"Why Offbeat Discovered This"_ if reasoning is absent.
 2. **`DiscoveryPage.tsx`**:
    - Renders an **OFFBEAT Contextual Intelligence** hero banner summarizing why the journey recommendations were selected.
    - Transparently displays attribution badge (`Powered by Gemini 3.8` vs `Deterministic Engine`).
@@ -327,6 +333,7 @@ Test Files  40 passed (40)
 ```
 
 ### New Phase 11 Test Suites:
+
 - `Backend/tests/unit/gemini.guard.test.ts` (7 tests):
   - Approved candidate allowlisting validation
   - Rejection of hallucinated/unknown primary IDs
@@ -397,15 +404,15 @@ Executed via `pnpm validate:gemini`:
 
 ## 21. Quality-Gate Results
 
-| Gate | Command | Status |
-| :--- | :--- | :--- |
-| **Verification** | `pnpm validate:gemini` | ✅ Passed (Exit 0) |
-| **Unit & Integration Tests** | `pnpm test` | ✅ 40 files, 245 tests passed |
-| **Typecheck** | `pnpm typecheck` | ✅ Passed (Exit 0) |
-| **Build** | `pnpm build` | ✅ Backend + Frontend bundle built |
-| **Linting** | `pnpm lint` | ✅ Clean (0 errors, 0 warnings) |
-| **Formatting** | `pnpm format:check` | ✅ Clean (Prettier verified) |
-| **Master Monorepo Check** | `pnpm check` | ✅ Passed (All Phase 0-11 checks passed) |
+| Gate                         | Command                | Status                                   |
+| :--------------------------- | :--------------------- | :--------------------------------------- |
+| **Verification**             | `pnpm validate:gemini` | ✅ Passed (Exit 0)                       |
+| **Unit & Integration Tests** | `pnpm test`            | ✅ 40 files, 245 tests passed            |
+| **Typecheck**                | `pnpm typecheck`       | ✅ Passed (Exit 0)                       |
+| **Build**                    | `pnpm build`           | ✅ Backend + Frontend bundle built       |
+| **Linting**                  | `pnpm lint`            | ✅ Clean (0 errors, 0 warnings)          |
+| **Formatting**               | `pnpm format:check`    | ✅ Clean (Prettier verified)             |
+| **Master Monorepo Check**    | `pnpm check`           | ✅ Passed (All Phase 0-11 checks passed) |
 
 ---
 

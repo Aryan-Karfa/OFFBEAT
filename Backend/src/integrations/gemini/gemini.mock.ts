@@ -3,6 +3,8 @@ import type {
   DiscoveryReasoningResultDto,
   AlternativeReasoningInputDto,
   AlternativeReasoningResultDto,
+  ItineraryReasoningInputDto,
+  ItineraryReasoningResultDto,
   ReasoningProvider,
 } from "./gemini.types.js";
 import { GeminiTimeoutError, GeminiProviderError } from "./gemini.errors.js";
@@ -14,6 +16,7 @@ export interface MockReasoningOptions {
   invalidCandidateId?: boolean;
   customOutput?: Partial<DiscoveryReasoningResultDto>;
   customAlternativeOutput?: Partial<AlternativeReasoningResultDto>;
+  customItineraryOutput?: Partial<ItineraryReasoningResultDto>;
 }
 
 export class MockReasoningProvider implements ReasoningProvider {
@@ -152,5 +155,34 @@ export class MockReasoningProvider implements ReasoningProvider {
 
     return result;
   }
-}
 
+  public async reasonAboutItinerary(
+    input: ItineraryReasoningInputDto,
+  ): Promise<ItineraryReasoningResultDto> {
+    if (this.options.shouldTimeout) {
+      throw new GeminiTimeoutError("Mock Gemini request timed out");
+    }
+    if (this.options.shouldFail) {
+      throw this.options.failError || new GeminiProviderError("Mock Gemini provider error");
+    }
+
+    const orderedPlaceIds =
+      input.draftSchedule.flatMap((d) => d.orderedPlaceIds).length > 0
+        ? input.draftSchedule.flatMap((d) => d.orderedPlaceIds)
+        : input.candidatePlaces.slice(0, 4).map((c) => c.id);
+
+    const dayAssignments = input.draftSchedule.map((d) => ({
+      day: d.day,
+      placeIds: d.orderedPlaceIds,
+    }));
+
+    return {
+      orderedPlaceIds,
+      dayAssignments,
+      explanation: `Curated ${input.durationDays}-day journey in ${input.destination} tailored to your ${input.travelTaste.join(", ") || "travel"} preferences, arranged to minimize transit backtracking.`,
+      tradeoffs: ["Requires timely departures to experience optimal visiting windows."],
+      source: "GEMINI",
+      ...this.options.customItineraryOutput,
+    };
+  }
+}

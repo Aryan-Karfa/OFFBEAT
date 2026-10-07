@@ -221,7 +221,9 @@ async function main() {
       console.log(`      ${response.text?.trim()}`);
     } catch (err: unknown) {
       const msg = (err as Error)?.message || String(err);
-      console.log(`   ⚠️ Configured model '${geminiConfig.model}' returned: ${msg.slice(0, 120)}...`);
+      console.log(
+        `   ⚠️ Configured model '${geminiConfig.model}' returned: ${msg.slice(0, 120)}...`,
+      );
       console.log(
         `   ℹ️ Configured model '${geminiConfig.model}' experienced transient high-demand or API unavailability; deterministic fallback path is 100% operational.`,
       );

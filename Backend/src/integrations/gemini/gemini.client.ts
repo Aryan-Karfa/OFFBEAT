@@ -14,11 +14,13 @@ import {
   GEMINI_SYSTEM_INSTRUCTION,
   buildDiscoveryReasoningPrompt,
   buildAlternativeReasoningPrompt,
+  buildItineraryReasoningPrompt,
 } from "./gemini.prompts.js";
 import { normalizeGeminiJson } from "./gemini.normalizer.js";
 import {
   discoveryReasoningOutputSchema,
   alternativeReasoningOutputSchema,
+  itineraryReasoningOutputSchema,
   type DiscoveryReasoningOutput,
 } from "./gemini.schemas.js";
 import {
@@ -26,12 +28,16 @@ import {
   checkBusinessAndHallucinationGuards,
   validateAlternativeCandidateAllowlist,
   checkAlternativeBusinessGuards,
+  validateItineraryCandidateAllowlist,
+  checkItineraryBusinessGuards,
 } from "./gemini.guard.js";
 import {
   type DiscoveryReasoningInputDto,
   type DiscoveryReasoningResultDto,
   type AlternativeReasoningInputDto,
   type AlternativeReasoningResultDto,
+  type ItineraryReasoningInputDto,
+  type ItineraryReasoningResultDto,
   type ReasoningProvider,
 } from "./gemini.types.js";
 import { logger } from "../../lib/logger/logger.js";
@@ -177,6 +183,58 @@ export class GeminiClient implements ReasoningProvider {
     };
   }
 
+  /**
+   * Generates structured reasoning and sequence optimization for an Itinerary.
+   * Enforces JSON validation, candidate allowlisting, and hard business constraint checks.
+   */
+  public async reasonAboutItinerary(
+    input: ItineraryReasoningInputDto,
+  ): Promise<ItineraryReasoningResultDto> {
+    const allowedCandidateIds = input.candidatePlaces.map((c) => c.id);
+
+    const userPrompt = buildItineraryReasoningPrompt(input);
+    const rawResponseText = await this.executeWithRetryAndTimeout(userPrompt);
+
+    // 1. Normalize and parse JSON
+    const parsedJson = normalizeGeminiJson<unknown>(rawResponseText);
+
+    // 2. Schema validation via Zod
+    const schemaResult = itineraryReasoningOutputSchema.safeParse(parsedJson);
+    if (!schemaResult.success) {
+      const issueDetails = schemaResult.error.issues
+        .map((i) => `${i.path.join(".")}: ${i.message}`)
+        .join("; ");
+      throw new GeminiOutputValidationError(
+        `Gemini itinerary output failed schema validation: ${issueDetails}`,
+      );
+    }
+
+    const output = schemaResult.data;
+
+    // 3. Candidate allowlist validation
+    const allowlistResult = validateItineraryCandidateAllowlist(output, allowedCandidateIds);
+    if (!allowlistResult.valid) {
+      throw new GeminiOutputValidationError(
+        `Gemini returned unapproved itinerary place IDs: ${allowlistResult.errors.join("; ")}`,
+      );
+    }
+
+    // 4. Business & hallucination guards
+    const guardResult = checkItineraryBusinessGuards(output, input);
+    if (!guardResult.valid) {
+      throw new GeminiOutputValidationError(
+        `Gemini itinerary output violated business constraints: ${guardResult.errors.join("; ")}`,
+      );
+    }
+
+    return {
+      orderedPlaceIds: output.orderedPlaceIds,
+      dayAssignments: output.dayAssignments,
+      explanation: output.explanation,
+      tradeoffs: output.tradeoffs,
+      source: "GEMINI",
+    };
+  }
 
   private async executeWithRetryAndTimeout(userPrompt: string): Promise<string> {
     let lastError: unknown = null;

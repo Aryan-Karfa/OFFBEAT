@@ -24,14 +24,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { geminiConfig } from "../Backend/src/integrations/gemini/gemini.config.js";
 import { alternativesCandidateGenerator } from "../Backend/src/modules/alternatives/alternatives.generator.js";
-import { alternativesScorer } from "../Backend/src/modules/alternatives/alternatives.scorer.js";
 import { alternativesService } from "../Backend/src/modules/alternatives/alternatives.service.js";
 import {
   validateAlternativeCandidateAllowlist,
   checkAlternativeBusinessGuards,
 } from "../Backend/src/integrations/gemini/gemini.guard.js";
 import { buildAlternativeReasoningPrompt } from "../Backend/src/integrations/gemini/gemini.prompts.js";
-import type { AlternativeMode, PlaceReference, AlternativeCandidate } from "@offbeat/shared";
+import type { AlternativeMode, AlternativeCandidate } from "@offbeat/shared";
+import type { PlaceWithDetails } from "../Backend/src/modules/places/places.types.js";
 
 const ALL_SIX_MODES: AlternativeMode[] = [
   "REPLACEMENT",
@@ -88,9 +88,7 @@ async function main() {
   console.log("2. Verifying Gemini Model Authoritative Configuration...");
   const envModel = process.env.GEMINI_MODEL || "gemini-3.8-flash";
   if (geminiConfig.model !== envModel) {
-    throw new Error(
-      `Model mismatch: configured ${geminiConfig.model} !== env ${envModel}`,
-    );
+    throw new Error(`Model mismatch: configured ${geminiConfig.model} !== env ${envModel}`);
   }
   console.log(`   • Authoritative Model: ${geminiConfig.model}`);
   console.log(`   • Configured Timeout: ${geminiConfig.timeoutMs}ms`);
@@ -103,11 +101,18 @@ async function main() {
   if (!routesIndex.includes("alternativesRoutes")) {
     throw new Error("alternativesRoutes is not mounted in Backend/src/routes/index.ts");
   }
-  const placesRoutes = fs.readFileSync(path.join(cwd, "Backend/src/modules/places/places.routes.ts"), "utf-8");
+  const placesRoutes = fs.readFileSync(
+    path.join(cwd, "Backend/src/modules/places/places.routes.ts"),
+    "utf-8",
+  );
   if (!placesRoutes.includes("alternativesController.getAlternatives")) {
-    throw new Error("places.routes.ts does not route :placeId/alternatives to alternativesController");
+    throw new Error(
+      "places.routes.ts does not route :placeId/alternatives to alternativesController",
+    );
   }
-  console.log("   ✅ API routes mounted at /api/v1/places/:placeId/alternatives and /api/v1/alternatives/:placeId.\n");
+  console.log(
+    "   ✅ API routes mounted at /api/v1/places/:placeId/alternatives and /api/v1/alternatives/:placeId.\n",
+  );
 
   // 4. All 6 Modes Verification
   console.log("4. Verifying All Six Alternative Modes...");
@@ -131,19 +136,16 @@ async function main() {
     regionId: "region_wb",
     latitude: 27.012,
     longitude: 88.261,
-  } as any;
+  } as unknown as PlaceWithDetails;
 
-  const candidates = await alternativesCandidateGenerator.generateCandidates(
-    tigerHillMock,
-    {
-      mode: "REPLACEMENT",
-      region: "West Bengal",
-      destination: "Darjeeling",
-      travelTaste: ["Scenic Landscapes"],
-      experienceTaste: ["Mountain Sunrise View"],
-      dayNight: "DAY",
-    },
-  );
+  const candidates = await alternativesCandidateGenerator.generateCandidates(tigerHillMock, {
+    mode: "REPLACEMENT",
+    region: "West Bengal",
+    destination: "Darjeeling",
+    travelTaste: ["Scenic Landscapes"],
+    experienceTaste: ["Mountain Sunrise View"],
+    dayNight: "DAY",
+  });
   if (!candidates || candidates.length === 0) {
     throw new Error("Deterministic candidate generation produced 0 candidates for Tiger Hill");
   }
@@ -170,7 +172,9 @@ async function main() {
   if (names.length !== uniqueNames.size) {
     throw new Error("Duplicate candidates detected in candidate pool!");
   }
-  console.log(`   ✅ Deduplication verified: ${uniqueNames.size} unique places out of ${names.length}.\n`);
+  console.log(
+    `   ✅ Deduplication verified: ${uniqueNames.size} unique places out of ${names.length}.\n`,
+  );
 
   // 8. Gemini Allowlist & Hallucination Guard
   console.log("8. Verifying Bounded Allowlist & Hallucination Guard...");
@@ -277,7 +281,10 @@ async function main() {
     userContext: { travelTaste: [], experienceTaste: [], dayNight: "DAY" },
     candidates: boundedAllowlist,
   });
-  if (!prompt.includes("<untrusted_community_content>") || !prompt.includes("</untrusted_community_content>")) {
+  if (
+    !prompt.includes("<untrusted_community_content>") ||
+    !prompt.includes("</untrusted_community_content>")
+  ) {
     throw new Error("Prompt is missing <untrusted_community_content> boundary tag!");
   }
   console.log("   ✅ Untrusted community content injection boundary verified.\n");
@@ -293,11 +300,10 @@ async function main() {
         checkDirForSecrets(full);
       } else if (entry.isFile() && (entry.name.endsWith(".ts") || entry.name.endsWith(".tsx"))) {
         const content = fs.readFileSync(full, "utf-8");
-        if (
-          content.includes("GEMINI_API_KEY") ||
-          content.includes("SERPAPI_API_KEY")
-        ) {
-          throw new Error(`Secret reference detected in frontend file: ${path.relative(cwd, full)}`);
+        if (content.includes("GEMINI_API_KEY") || content.includes("SERPAPI_API_KEY")) {
+          throw new Error(
+            `Secret reference detected in frontend file: ${path.relative(cwd, full)}`,
+          );
         }
       }
     }

@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
-import { useSearchParams, useParams, Link, useNavigate } from "react-router-dom";
+import { useSearchParams, useParams, Link } from "react-router-dom";
 import { Container } from "../../components/ui/Container";
 import { Section } from "../../components/ui/Section";
-import { Heading } from "../../components/ui/Heading";
-import { Text } from "../../components/ui/Text";
 import { Card } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
@@ -14,8 +12,7 @@ import {
   RotateCcw,
   Compass,
   Cpu,
-  Layers,
-  MapPin,
+  Calendar,
 } from "lucide-react";
 import { useAlternativesStore } from "../../stores/alternativesStore";
 import {
@@ -29,7 +26,6 @@ import type { AlternativeMode } from "@offbeat/shared";
 export const AlternativesPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { placeId: routePlaceId } = useParams<{ placeId?: string }>();
-  const navigate = useNavigate();
 
   const placeId = routePlaceId || searchParams.get("placeId") || "place_tiger_hill";
   const urlMode = (searchParams.get("mode") as AlternativeMode) || "REPLACEMENT";
@@ -180,9 +176,7 @@ export const AlternativesPage: React.FC = () => {
               <h3 className="text-lg font-bold text-offbeat-primary mb-2">
                 Unable to load alternatives
               </h3>
-              <p className="text-sm text-offbeat-secondary max-w-md mx-auto mb-5">
-                {error}
-              </p>
+              <p className="text-sm text-offbeat-secondary max-w-md mx-auto mb-5">{error}</p>
               <Button
                 variant="outline"
                 size="sm"
@@ -206,7 +200,8 @@ export const AlternativesPage: React.FC = () => {
                 No immediate alternatives found
               </h3>
               <p className="text-sm text-offbeat-secondary max-w-md mx-auto mb-5">
-                OFFBEAT couldn&apos;t find a strong alternative matching this specific mode yet. Try a different strategy or broaden your travel taste.
+                OFFBEAT couldn&apos;t find a strong alternative matching this specific mode yet. Try
+                a different strategy or broaden your travel taste.
               </p>
               <div className="flex justify-center gap-3">
                 <Button
@@ -233,12 +228,14 @@ export const AlternativesPage: React.FC = () => {
                 originalPlace={originalPlace}
                 alternatives={results}
                 mode={selectedMode}
-                selectedCandidateId={selectedAlternative?.placeId || selectedAlternative?.externalId}
+                selectedCandidateId={
+                  selectedAlternative?.placeId || selectedAlternative?.externalId
+                }
                 onSelectCandidate={selectAlternative}
               />
 
               {/* Candidates Grid */}
-              <div className="mb-6 flex items-center justify-between">
+              <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-base font-bold text-offbeat-primary">
                     Curated Alternatives ({results.length})
@@ -247,6 +244,18 @@ export const AlternativesPage: React.FC = () => {
                     Filtered and scored deterministically, synthesized by OFFBEAT intelligence
                   </p>
                 </div>
+
+                <Link
+                  to={`/itinerary?mustVisit=${originalPlace.id}&destination=${originalPlace.destination || "Darjeeling"}`}
+                >
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    leftIcon={<Calendar className="h-3.5 w-3.5 text-offbeat-dark" />}
+                  >
+                    Build My Day
+                  </Button>
+                </Link>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

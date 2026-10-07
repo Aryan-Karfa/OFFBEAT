@@ -1,7 +1,7 @@
 import React from "react";
 import type { PlaceReference, AlternativeCandidate, AlternativeMode } from "@offbeat/shared";
 import { Card } from "../../components/ui/Card";
-import { MapPin, Navigation, Compass, Layers, PlusCircle, Sparkles } from "lucide-react";
+import { Compass } from "lucide-react";
 import { cn } from "../../utils/cn";
 
 interface AlternativesMapProps {

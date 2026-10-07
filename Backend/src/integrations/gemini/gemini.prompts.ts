@@ -92,7 +92,9 @@ Return ONLY a valid JSON object matching this schema:
 /**
  * Builds user prompt for Phase 12 Find An Alternative reasoning.
  */
-export function buildAlternativeReasoningPrompt(input: import("./gemini.types.js").AlternativeReasoningInputDto): string {
+export function buildAlternativeReasoningPrompt(
+  input: import("./gemini.types.js").AlternativeReasoningInputDto,
+): string {
   const { originalPlace, mode, userContext, candidates } = input;
 
   const candidateDescriptions = candidates
@@ -168,3 +170,84 @@ Reason over the original place, requested mode '${mode}', and approved candidate
 }`;
 }
 
+/**
+ * Builds the user prompt for Itinerary reasoning and refinement.
+ * Enforces candidate allowlisting, geographic sensible sequencing, and untrusted boundaries.
+ */
+export function buildItineraryReasoningPrompt(
+  input: import("./gemini.types.js").ItineraryReasoningInputDto,
+): string {
+  const {
+    destination,
+    regionId,
+    pace,
+    durationDays,
+    travelTaste,
+    experienceTaste,
+    dayNight,
+    candidatePlaces,
+    draftSchedule,
+  } = input;
+
+  const candidateDescriptions = candidatePlaces
+    .map((c) => {
+      const details = [
+        `ID: ${c.id}`,
+        `Name: ${c.name}`,
+        `Category: ${c.category || (c.categories && c.categories[0]) || "General"}`,
+        `Location: ${c.location ? `(${c.location.lat.toFixed(3)}, ${c.location.lng.toFixed(3)})` : "Estimated destination coordinates"}`,
+        `Time Fit: ${c.timeFit || "UNKNOWN"}`,
+        `Crowd Fit: ${c.crowdFit || "UNKNOWN"}`,
+        c.recommendedTime
+          ? `Recommended Time: ${c.recommendedTime.start}-${c.recommendedTime.end}`
+          : "",
+        c.isMustVisit ? "[MUST VISIT]" : "",
+        c.isAlternative ? "[SELECTED ALTERNATIVE]" : "",
+      ]
+        .filter(Boolean)
+        .join(" | ");
+
+      return `- ${details}`;
+    })
+    .join("\n");
+
+  const draftScheduleDescriptions = draftSchedule
+    .map((d) => `Day ${d.day}: ${d.orderedPlaceIds.join(" -> ")}`)
+    .join("\n");
+
+  return `Destination Context:
+- Destination: ${destination}
+- Region: ${regionId}
+- Duration Days: ${durationDays}
+- Pace: ${pace}
+- Day/Night Focus: ${dayNight}
+- Travel Tastes: ${travelTaste.length ? travelTaste.join(", ") : "General exploration"}
+- Experience Tastes: ${experienceTaste.length ? experienceTaste.join(", ") : "Open"}
+
+Approved Candidate Places (Select ONLY from these IDs):
+${candidateDescriptions}
+
+Deterministic Draft Schedule:
+${draftScheduleDescriptions}
+
+Task:
+You are OFFBEAT's master journey planner. Refine and optimize this itinerary to give the traveler a seamless, beautiful experience.
+1. Review the draft schedule and approved candidate places.
+2. You may refine the stop order to minimize backtracking or improve narrative flow (e.g. sunrise/mountain views early, scenic/cultural midday, golden-hour/sunset late).
+3. Do NOT add any place ID that is not in the approved candidate list above.
+4. Ensure the number of day assignments matches ${durationDays} days.
+5. Provide a compelling explanation of WHY this itinerary was designed in this sequence, highlighting taste alignment and geographical logic.
+6. Mention any real-world tradeoffs (e.g., early wake-up required, transit between stops).
+7. Return ONLY a valid JSON object matching this schema:
+{
+  "orderedPlaceIds": ["<approved_place_id>", ...],
+  "dayAssignments": [
+    {
+      "day": 1,
+      "placeIds": ["<approved_place_id>", ...]
+    }
+  ],
+  "explanation": "...",
+  "tradeoffs": ["..."]
+}`;
+}

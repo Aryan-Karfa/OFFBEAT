@@ -1,14 +1,7 @@
 import React from "react";
 import type { AlternativeMode } from "@offbeat/shared";
 import { cn } from "../../utils/cn";
-import {
-  Shuffle,
-  PlusCircle,
-  Compass,
-  Users,
-  Clock,
-  Layers,
-} from "lucide-react";
+import { Shuffle, PlusCircle, Compass, Users, Clock, Layers } from "lucide-react";
 
 export interface ModeOption {
   mode: AlternativeMode;
@@ -119,7 +112,9 @@ export const AlternativeModeSelector: React.FC<AlternativeModeSelectorProps> = (
               <span
                 className={cn(
                   "text-xs font-bold leading-tight mb-1",
-                  isSelected ? "text-offbeat-primary" : "text-offbeat-secondary group-hover:text-offbeat-primary",
+                  isSelected
+                    ? "text-offbeat-primary"
+                    : "text-offbeat-secondary group-hover:text-offbeat-primary",
                 )}
               >
                 {option.label}

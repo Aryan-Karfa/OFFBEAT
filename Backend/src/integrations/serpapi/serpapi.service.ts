@@ -284,6 +284,86 @@ export class SerpApiService {
   }
 
   /**
+   * Retrieves directions between two coordinates.
+   * Uses cached SerpApi Google Maps directions where available,
+   * with robust Haversine distance and duration calculation as deterministic fallback.
+   */
+  public async getDirections(
+    start: GeoLocation,
+    end: GeoLocation,
+    options?: { requestId?: string; travelMode?: "driving" | "walking" | "transit" },
+  ): Promise<{ durationMinutes: number; distanceMeters: number; source: "SERPAPI" | "HAVERSINE" }> {
+    const requestId = options?.requestId;
+
+    // Calculate Haversine distance in meters
+    const R = 6371e3; // Earth radius in meters
+    const phi1 = (start.lat * Math.PI) / 180;
+    const phi2 = (end.lat * Math.PI) / 180;
+    const deltaPhi = ((end.lat - start.lat) * Math.PI) / 180;
+    const deltaLambda = ((end.lng - start.lng) * Math.PI) / 180;
+
+    const a =
+      Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+      Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distanceMeters = Math.round(R * c);
+
+    // Baseline fallback duration: ~30km/h realistic mountain/urban transit
+    const distanceKm = distanceMeters / 1000;
+    const fallbackDurationMinutes = Math.max(5, Math.round((distanceKm / 30) * 60));
+
+    const searchParams = SerpApiQueryBuilder.buildDirectionsQuery({
+      startCoords: start,
+      endCoords: end,
+      travelMode: options?.travelMode || "driving",
+    });
+    const cacheKey = SerpApiCache.generateCacheKey("SERPAPI", searchParams);
+
+    try {
+      const cached = await SerpApiCache.get<{ durationMinutes: number; distanceMeters: number }>(
+        cacheKey,
+      );
+      if (cached) {
+        return { ...cached, source: "SERPAPI" };
+      }
+
+      const raw = await this.client.execute<Record<string, unknown>>(searchParams, { requestId });
+      const rawObj = raw as {
+        directions?: Array<{
+          duration?: number;
+          distance?: number;
+          legs?: Array<{ duration?: { value?: number }; distance?: { value?: number } }>;
+        }>;
+        routes?: Array<{
+          duration?: number;
+          distance?: number;
+          legs?: Array<{ duration?: { value?: number }; distance?: { value?: number } }>;
+        }>;
+      };
+      const route = rawObj?.directions?.[0] || rawObj?.routes?.[0];
+      const durationSeconds = route?.duration || route?.legs?.[0]?.duration?.value;
+      const distMeters = route?.distance || route?.legs?.[0]?.distance?.value;
+
+      const durationMinutes = durationSeconds
+        ? Math.round(durationSeconds / 60)
+        : fallbackDurationMinutes;
+      const finalDistanceMeters = distMeters || distanceMeters;
+
+      const result = { durationMinutes, distanceMeters: finalDistanceMeters };
+      await SerpApiCache.set("SERPAPI", cacheKey, searchParams, result, 7 * 86400);
+
+      return { ...result, source: "SERPAPI" };
+    } catch {
+      // Graceful fallback to Haversine calculation without throwing
+      return {
+        durationMinutes: fallbackDurationMinutes,
+        distanceMeters,
+        source: "HAVERSINE",
+      };
+    }
+  }
+
+  /**
    * Resets in-memory references (useful for unit tests).
    */
   public static clearMemoryReferences(): void {

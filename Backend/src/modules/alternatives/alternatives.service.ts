@@ -16,7 +16,6 @@ import type {
   AlternativeCandidate,
   AlternativeReasoning,
   PlaceReference,
-  AlternativeMode,
 } from "@offbeat/shared";
 import type { CandidateGenerationQuery } from "./alternatives.types.js";
 
@@ -99,11 +98,9 @@ export class AlternativesService {
     });
 
     // 4. Deterministic Candidate Generation (Internal + External SerpApi)
-    const rawCandidates = await this.generator.generateCandidates(
-      originalPlace,
-      generationQuery,
-      { requestId },
-    );
+    const rawCandidates = await this.generator.generateCandidates(originalPlace, generationQuery, {
+      requestId,
+    });
 
     const totalEvaluated = rawCandidates.length;
 
@@ -132,8 +129,8 @@ export class AlternativesService {
         let crowdFit: import("@offbeat/shared").CrowdFit | undefined;
         let crowdLevel: import("@offbeat/shared").CrowdLevel | undefined;
         let bestTime: { start?: string; end?: string; reason?: string } | undefined;
-        let confidence: { score?: number; evidenceStrength?: import("@offbeat/shared").EvidenceStrength; status?: string } | undefined;
-        let communitySignals: { submissionCount: number; helpfulCount: number; verifiedCount: number } | undefined;
+        let communitySignals:
+          { submissionCount: number; helpfulCount: number; verifiedCount: number } | undefined;
 
         if (cand.id) {
           // Internal place signals
@@ -188,7 +185,7 @@ export class AlternativesService {
           crowdFit,
           crowdLevel,
           bestTime,
-          confidence,
+          confidence: undefined,
           community: communitySignals,
         });
       }),
@@ -205,7 +202,7 @@ export class AlternativesService {
 
     // 8. Gemini Reasoning Layer (Over Approved Candidates)
     let alternativeReasoning: AlternativeReasoning | undefined;
-    let isFallback = true;
+    let isFallback: boolean;
 
     try {
       const reasoningResult = await this.gemini.reasonAboutAlternative({
@@ -238,8 +235,8 @@ export class AlternativesService {
       if (
         reasoningResult.primaryCandidateId &&
         boundedCandidates[0] &&
-        (boundedCandidates[0].placeId !== reasoningResult.primaryCandidateId &&
-          boundedCandidates[0].externalId !== reasoningResult.primaryCandidateId)
+        boundedCandidates[0].placeId !== reasoningResult.primaryCandidateId &&
+        boundedCandidates[0].externalId !== reasoningResult.primaryCandidateId
       ) {
         const primaryIdx = boundedCandidates.findIndex(
           (c) =>

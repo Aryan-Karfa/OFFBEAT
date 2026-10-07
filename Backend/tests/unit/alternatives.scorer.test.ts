@@ -1,7 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { AlternativesScorer } from "../../src/modules/alternatives/alternatives.scorer.js";
 import type { PlaceWithDetails } from "../../src/modules/places/places.types.js";
-import type { RawCandidatePlace, CandidateGenerationQuery } from "../../src/modules/alternatives/alternatives.types.js";
+import type {
+  RawCandidatePlace,
+  CandidateGenerationQuery,
+} from "../../src/modules/alternatives/alternatives.types.js";
 import { DestinationStatus, PlaceStatus } from "@prisma/client";
 
 describe("Phase 12: AlternativesScorer Unit Tests Across All 6 Modes", () => {

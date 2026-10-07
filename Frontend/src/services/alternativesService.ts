@@ -1,8 +1,5 @@
 import { fetchApi } from "./apiClient";
-import type {
-  AlternativeRecommendationResponse,
-  FindAlternativesQueryDto,
-} from "@offbeat/shared";
+import type { AlternativeRecommendationResponse, FindAlternativesQueryDto } from "@offbeat/shared";
 
 export const alternativesService = {
   /**

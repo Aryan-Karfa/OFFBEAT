@@ -144,3 +144,87 @@ export function checkAlternativeBusinessGuards(
   };
 }
 
+/**
+ * Validates that all place IDs returned in Gemini's itinerary exist in the approved candidate allowlist.
+ * Guarantees zero AI hallucinated places.
+ */
+export function validateItineraryCandidateAllowlist(
+  output: import("./gemini.schemas.js").ItineraryReasoningOutput,
+  allowedCandidateIds: string[],
+): GuardValidationResult {
+  const errors: string[] = [];
+  const allowedSet = new Set(allowedCandidateIds);
+
+  // Check ordered places
+  for (const id of output.orderedPlaceIds) {
+    if (!allowedSet.has(id)) {
+      errors.push(
+        `Ordered place ID '${id}' is not in approved candidate set [${allowedCandidateIds.join(", ")}]`,
+      );
+    }
+  }
+
+  // Check duplicate places
+  const seen = new Set<string>();
+  for (const id of output.orderedPlaceIds) {
+    if (seen.has(id)) {
+      errors.push(`Duplicate place ID '${id}' detected in itinerary schedule`);
+    }
+    seen.add(id);
+  }
+
+  // Check day assignments
+  for (const day of output.dayAssignments) {
+    for (const id of day.placeIds) {
+      if (!allowedSet.has(id)) {
+        errors.push(`Place ID '${id}' in Day ${day.day} is not in approved candidate set`);
+      }
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
+ * Validates business rules and consistency for Gemini itinerary output.
+ */
+export function checkItineraryBusinessGuards(
+  output: import("./gemini.schemas.js").ItineraryReasoningOutput,
+  input: import("./gemini.types.js").ItineraryReasoningInputDto,
+): GuardValidationResult {
+  const errors: string[] = [];
+
+  if (!output.explanation || output.explanation.trim().length < 10) {
+    errors.push("Itinerary explanation must be meaningful and grounded (at least 10 characters)");
+  }
+
+  if (output.dayAssignments.length !== input.durationDays) {
+    errors.push(
+      `Itinerary day count (${output.dayAssignments.length}) does not match requested duration (${input.durationDays} days)`,
+    );
+  }
+
+  for (const day of output.dayAssignments) {
+    if (!day.placeIds || day.placeIds.length === 0) {
+      errors.push(`Day ${day.day} must have at least one assigned place`);
+    }
+  }
+
+  // Verify that any explicit must-visit places are preserved
+  const scheduledPlaceSet = new Set(output.orderedPlaceIds);
+  for (const candidate of input.candidatePlaces) {
+    if (candidate.isMustVisit && !scheduledPlaceSet.has(candidate.id)) {
+      errors.push(
+        `Must-visit place '${candidate.name}' (${candidate.id}) was omitted from itinerary`,
+      );
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}

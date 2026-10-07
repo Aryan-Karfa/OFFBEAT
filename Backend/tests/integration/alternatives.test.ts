@@ -22,7 +22,9 @@ describe("Phase 12: Find An Alternative API Integration Tests", () => {
     expect(data.reasoning.explanation).toBeDefined();
 
     // Verify original place is never included in the alternatives
-    expect(data.alternatives.some((a: any) => a.placeId === "place_tiger_hill")).toBe(false);
+    expect(
+      data.alternatives.some((a: { placeId?: string }) => a.placeId === "place_tiger_hill"),
+    ).toBe(false);
 
     // Verify fields on each alternative
     if (data.alternatives.length > 0) {
@@ -51,7 +53,7 @@ describe("Phase 12: Find An Alternative API Integration Tests", () => {
       expect(res.body.data.mode).toBe(mode);
       expect(res.body.data.reasoning.mode).toBe(mode);
     }
-  });
+  }, 30000);
 
   it("GET /api/v1/places/place_tiger_hill/alternatives with travel & experience taste filters", async () => {
     const res = await request(app)

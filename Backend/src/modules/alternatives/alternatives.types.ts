@@ -5,14 +5,7 @@ import type {
   AlternativeReasoning,
   AlternativeRecommendationResponse,
   GeoLocation,
-  TimeFit,
-  CrowdFit,
-  CrowdLevel,
-  DayType,
-  Season,
 } from "@offbeat/shared";
-import type { PlaceWithDetails } from "../places/places.types.js";
-import type { NormalizedExternalPlace } from "../discovery/discovery.types.js";
 
 export type {
   AlternativeMode,

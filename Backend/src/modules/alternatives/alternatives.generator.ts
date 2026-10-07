@@ -56,7 +56,9 @@ export class AlternativesCandidateGenerator {
       const regionId = originalPlace.destination?.regionId;
 
       const [destPlaces, regionPlaces] = await Promise.all([
-        destinationId ? this.placesRepo.findPlacesByDestination(destinationId) : Promise.resolve([]),
+        destinationId
+          ? this.placesRepo.findPlacesByDestination(destinationId)
+          : Promise.resolve([]),
         regionId ? this.placesRepo.findPlacesByRegion(regionId) : Promise.resolve([]),
       ]);
 
@@ -128,6 +130,7 @@ export class AlternativesCandidateGenerator {
         travelTaste: query.travelTaste.length ? query.travelTaste : [primaryCategory],
         experienceTaste: query.experienceTaste,
         dayNight: query.dayNight,
+        query: externalSearchQuery,
       };
 
       const externalResults = await this.serpApi.searchPlaces(searchContext, { requestId });
@@ -145,7 +148,8 @@ export class AlternativesCandidateGenerator {
           name: ext.name,
           destination: destinationName || ext.address?.split(",")[0] || "Regional Discovery",
           categories: ext.categories?.length ? ext.categories : [primaryCategory],
-          description: ext.description || `${ext.categories?.[0] || "Attraction"} in ${destinationName}`,
+          description:
+            ext.description || `${ext.categories?.[0] || "Attraction"} in ${destinationName}`,
           location: {
             lat: ext.latitude ?? 0,
             lng: ext.longitude ?? 0,

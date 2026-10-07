@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import type { AlternativeCandidate, AlternativeMode } from "@offbeat/shared";
 import { Card } from "../../components/ui/Card";
@@ -11,17 +11,15 @@ import {
   Clock,
   Users,
   ShieldCheck,
-  Compass,
   AlertCircle,
   CheckCircle2,
-  ExternalLink,
   MessageSquare,
 } from "lucide-react";
 import { cn } from "../../utils/cn";
 
 interface AlternativeCardProps {
   candidate: AlternativeCandidate;
-  mode: AlternativeMode;
+  mode?: AlternativeMode;
   isPrimary?: boolean;
   isAiReasoned?: boolean;
   onSelect?: () => void;
@@ -30,14 +28,11 @@ interface AlternativeCardProps {
 
 export const AlternativeCard: React.FC<AlternativeCardProps> = ({
   candidate,
-  mode,
   isPrimary = false,
   isAiReasoned = false,
   onSelect,
   isSelected = false,
 }) => {
-  const [imgError, setImgError] = useState(false);
-
   // Time fit visual mapping
   const getTimeFitBadge = () => {
     switch (candidate.timeFit) {
@@ -256,7 +251,8 @@ export const AlternativeCard: React.FC<AlternativeCardProps> = ({
               {getCrowdFitBadge()}
               {candidate.community && candidate.community.verifiedCount > 0 && (
                 <Badge variant="verified" size="sm">
-                  <MessageSquare className="h-3 w-3 mr-1 inline" /> {candidate.community.verifiedCount} Community Signals
+                  <MessageSquare className="h-3 w-3 mr-1 inline" />{" "}
+                  {candidate.community.verifiedCount} Community Signals
                 </Badge>
               )}
             </div>

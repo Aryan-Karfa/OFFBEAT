@@ -9,6 +9,12 @@ import type {
   AlternativeReasoning,
   AlternativeReasoningInputDto,
   AlternativeReasoningResultDto,
+  ItineraryPace,
+  ItineraryStopDto,
+  ItineraryDayDto,
+  ItineraryResponseDto,
+  ItineraryReasoningInputDto,
+  ItineraryReasoningResultDto,
 } from "@offbeat/shared";
 
 export type {
@@ -22,6 +28,12 @@ export type {
   AlternativeReasoning,
   AlternativeReasoningInputDto,
   AlternativeReasoningResultDto,
+  ItineraryPace,
+  ItineraryStopDto,
+  ItineraryDayDto,
+  ItineraryResponseDto,
+  ItineraryReasoningInputDto,
+  ItineraryReasoningResultDto,
 };
 
 export type ReasoningMode =
@@ -29,13 +41,16 @@ export type ReasoningMode =
   | "INTENT_INTERPRETATION"
   | "COMMUNITY_INTERPRETATION"
   | "CONTEXTUAL_EXPLANATION"
-  | "ALTERNATIVE_REASONING";
+  | "ALTERNATIVE_REASONING"
+  | "ITINERARY_REASONING";
 
 /**
  * Provider interface isolating AI reasoning from domain logic.
  */
 export interface ReasoningProvider {
   reason(input: DiscoveryReasoningInputDto): Promise<DiscoveryReasoningResultDto>;
-  reasonAboutAlternative(input: AlternativeReasoningInputDto): Promise<AlternativeReasoningResultDto>;
+  reasonAboutAlternative(
+    input: AlternativeReasoningInputDto,
+  ): Promise<AlternativeReasoningResultDto>;
+  reasonAboutItinerary(input: ItineraryReasoningInputDto): Promise<ItineraryReasoningResultDto>;
 }
-

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import type { PlaceReference, AlternativeMode } from "@offbeat/shared";
 import { Badge } from "../../components/ui/Badge";
 import { Card } from "../../components/ui/Card";
-import { MapPin, ArrowLeft, Lightbulb, Compass, PlusCircle, Layers, Sparkles } from "lucide-react";
+import { MapPin, ArrowLeft, Compass, Sparkles, PlusCircle, Layers } from "lucide-react";
 
 interface OriginalPlaceBannerProps {
   originalPlace: PlaceReference;

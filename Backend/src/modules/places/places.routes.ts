@@ -11,7 +11,6 @@ import {
 import { alternativesController } from "../alternatives/alternatives.controller.js";
 import { findAlternativesQuerySchema } from "../alternatives/alternatives.schema.js";
 
-
 export const placeRoutes: Router = Router();
 
 // Category discovery helper
@@ -55,4 +54,3 @@ placeRoutes.get(
   validateRequest({ params: placeParamsSchema, query: findAlternativesQuerySchema }),
   alternativesController.getAlternatives,
 );
-

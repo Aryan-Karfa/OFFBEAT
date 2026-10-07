@@ -24,7 +24,10 @@ interface AlternativesState {
   setMode: (mode: AlternativeMode) => void;
   setContext: (context: Partial<FindAlternativesQueryDto>) => void;
   selectAlternative: (candidate: AlternativeCandidate | null) => void;
-  fetchAlternatives: (placeId: string, customQuery?: Partial<FindAlternativesQueryDto>) => Promise<void>;
+  fetchAlternatives: (
+    placeId: string,
+    customQuery?: Partial<FindAlternativesQueryDto>,
+  ) => Promise<void>;
   reset: () => void;
 }
 

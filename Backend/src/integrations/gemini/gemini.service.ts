@@ -7,6 +7,8 @@ import type {
   DiscoveryReasoningResultDto,
   AlternativeReasoningInputDto,
   AlternativeReasoningResultDto,
+  ItineraryReasoningInputDto,
+  ItineraryReasoningResultDto,
   ReasoningProvider,
 } from "./gemini.types.js";
 import { logger } from "../../lib/logger/logger.js";
@@ -34,6 +36,12 @@ export class GeminiService {
         },
         reasonAboutAlternative: async (input: AlternativeReasoningInputDto) => {
           return this.generateDeterministicAlternativeFallback(
+            input,
+            "Gemini is not enabled or API key is missing",
+          );
+        },
+        reasonAboutItinerary: async (input: ItineraryReasoningInputDto) => {
+          return this.generateDeterministicItineraryFallback(
             input,
             "Gemini is not enabled or API key is missing",
           );
@@ -229,7 +237,10 @@ export class GeminiService {
       logger.info(
         "Gemini alternative reasoning disabled by configuration; using deterministic reasoning",
       );
-      return this.generateDeterministicAlternativeFallback(input, "Gemini disabled by configuration");
+      return this.generateDeterministicAlternativeFallback(
+        input,
+        "Gemini disabled by configuration",
+      );
     }
 
     const startTime = Date.now();
@@ -273,6 +284,9 @@ export class GeminiService {
     input: AlternativeReasoningInputDto,
     fallbackReason?: string,
   ): AlternativeReasoningResultDto {
+    if (fallbackReason) {
+      logger.debug(`[GeminiService] Alternative fallback: ${fallbackReason}`);
+    }
     const candidates = input.candidates || [];
     const topCandidate = candidates[0];
 
@@ -289,7 +303,7 @@ export class GeminiService {
 
     const candidateId = topCandidate.placeId || topCandidate.externalId || "candidate_1";
 
-    let explanation = "";
+    let explanation: string;
     let relationship: string | undefined;
 
     switch (input.mode) {
@@ -326,9 +340,7 @@ export class GeminiService {
     }
 
     return {
-      selectedCandidateIds: candidates
-        .map((c) => c.placeId || c.externalId || "")
-        .filter(Boolean),
+      selectedCandidateIds: candidates.map((c) => c.placeId || c.externalId || "").filter(Boolean),
       primaryCandidateId: candidateId,
       explanation,
       mode: input.mode,
@@ -337,7 +349,103 @@ export class GeminiService {
       source: "DETERMINISTIC",
     };
   }
+
+  /**
+   * Generates AI reasoning for itinerary sequence with automatic deterministic fallback.
+   */
+  public async reasonAboutItinerary(
+    input: ItineraryReasoningInputDto,
+  ): Promise<ItineraryReasoningResultDto> {
+    const startTime = Date.now();
+    const candidateCount = input.candidatePlaces.length;
+
+    if (!this.config.enabled) {
+      logger.info(
+        "Gemini reasoning disabled by configuration; using deterministic itinerary reasoning",
+      );
+      return this.generateDeterministicItineraryFallback(
+        input,
+        "Gemini is disabled in configuration",
+      );
+    }
+
+    try {
+      const result = await this.provider.reasonAboutItinerary(input);
+      const latencyMs = Date.now() - startTime;
+
+      logger.info("Gemini itinerary reasoning completed successfully", undefined, {
+        destination: input.destination,
+        pace: input.pace,
+        totalStops: result.orderedPlaceIds.length,
+        latencyMs,
+        source: result.source,
+      });
+
+      return result;
+    } catch (err: unknown) {
+      const latencyMs = Date.now() - startTime;
+      const errorName = (err as Error)?.name || "UnknownError";
+      const errorMessage = (err as Error)?.message || String(err);
+
+      logger.warn(
+        "Gemini itinerary reasoning failed or timed out; falling back to deterministic reasoning",
+        undefined,
+        {
+          errorName,
+          errorMessage,
+          latencyMs,
+          destination: input.destination,
+          candidatesProvided: candidateCount,
+        },
+        err as Error,
+      );
+
+      return this.generateDeterministicItineraryFallback(input, errorMessage);
+    }
+  }
+
+  /**
+   * Generates grounded, deterministic itinerary reasoning based on OFFBEAT signals.
+   */
+  public generateDeterministicItineraryFallback(
+    input: ItineraryReasoningInputDto,
+    fallbackReason?: string,
+  ): ItineraryReasoningResultDto {
+    if (fallbackReason) {
+      logger.debug(`[GeminiService] Itinerary fallback: ${fallbackReason}`);
+    }
+    const orderedPlaceIds =
+      input.draftSchedule.flatMap((d) => d.orderedPlaceIds).length > 0
+        ? input.draftSchedule.flatMap((d) => d.orderedPlaceIds)
+        : input.candidatePlaces.slice(0, 4).map((c) => c.id);
+
+    const dayAssignments = input.draftSchedule.map((d) => ({
+      day: d.day,
+      placeIds: d.orderedPlaceIds,
+    }));
+
+    const tastesStr = input.travelTaste.length
+      ? input.travelTaste.join(" and ")
+      : "panoramic discovery";
+
+    const explanation = `A coherent ${input.durationDays}-day journey in ${input.destination} scheduled at a ${input.pace.toLowerCase()} pace, sequenced to optimize daylight transitions and minimize travel backtracking for your ${tastesStr} preferences.`;
+
+    const tradeoffs = [
+      input.pace === "PACKED"
+        ? "Tight schedule requiring prompt transitions between stops."
+        : input.pace === "RELAXED"
+          ? "Unrushed tempo with dedicated free time buffers; fewer total stops."
+          : "Balanced journey allowing standard visit durations with modest transit windows.",
+    ];
+
+    return {
+      orderedPlaceIds,
+      dayAssignments,
+      explanation,
+      tradeoffs,
+      source: "DETERMINISTIC",
+    };
+  }
 }
 
 export const geminiService = new GeminiService();
-
