@@ -11,7 +11,7 @@ import { placesService } from "../../services/placesService";
 import { CommunitySection, ContributeModal } from "../../features/community";
 import { TimeIntelligenceSection, CrowdIntelligenceSection } from "../../features/intelligence";
 import type { PlaceDetailDto } from "@offbeat/shared";
-import { ArrowLeft, MapPin, Share2, PlusCircle, Globe, Phone, Compass } from "lucide-react";
+import { ArrowLeft, MapPin, Share2, PlusCircle, Globe, Phone, Compass, Shuffle, Sparkles } from "lucide-react";
 
 export const PlacePage: React.FC = () => {
   const { placeId = "place_tiger_hill" } = useParams<{ placeId: string }>();
@@ -114,6 +114,15 @@ export const PlacePage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-2">
+                    <Link to={`/place/${place.slug || place.id}/alternatives`}>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        leftIcon={<Sparkles className="h-3.5 w-3.5 text-offbeat-dark" />}
+                      >
+                        Find Alternative
+                      </Button>
+                    </Link>
                     <Button
                       variant="outline"
                       size="sm"
@@ -189,6 +198,48 @@ export const PlacePage: React.FC = () => {
                     )}
                   </div>
                 )}
+              </Card>
+
+              {/* Phase 12: FIND AN ALTERNATIVE Signature Feature Card */}
+              <Card
+                variant="elevated"
+                padding="lg"
+                className="border-offbeat-accent/40 bg-gradient-to-r from-offbeat-surface via-offbeat-surface to-offbeat-dark mb-8 shadow-elevated relative overflow-hidden group"
+              >
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="max-w-2xl">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-offbeat-accent">
+                        Signature Intelligence
+                      </span>
+                      <Badge variant="accent" size="sm">
+                        Phase 12
+                      </Badge>
+                    </div>
+                    <Heading level={2} size="h2" className="text-xl sm:text-2xl mb-2 flex items-center gap-2">
+                      <Shuffle className="h-5 w-5 text-offbeat-accent" />
+                      Find An Alternative
+                    </Heading>
+                    <Text variant="body" className="text-sm text-offbeat-secondary leading-relaxed">
+                      Looking for something quieter, a complementary hidden gem, an elevating pairing, or a better daylight window?
+                      OFFBEAT evaluates real geography, community signals, crowd curves, and Gemini reasoning to discover
+                      curated alternatives tailored to your journey.
+                    </Text>
+                  </div>
+
+                  <div className="shrink-0 flex items-center">
+                    <Link to={`/place/${place.slug || place.id}/alternatives`}>
+                      <Button
+                        variant="primary"
+                        size="lg"
+                        rightIcon={<Sparkles className="h-4 w-4" />}
+                        className="font-bold tracking-wide shadow-lg px-6"
+                      >
+                        FIND AN ALTERNATIVE
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
               </Card>
 
               {/* Phase 10: Time & Crowd Intelligence Section */}

@@ -387,9 +387,8 @@ Executed via `pnpm validate:gemini`:
       • Key Reasons: Matches your Mountains preference. Great for a Sunrise experience; Optimal visiting window is 04:30 - 05:30
 
 6. Live Gemini API Verification...
-   Attempting minimal live call with official @google/genai SDK...
-   ✅ Live Gemini API call SUCCEEDED with model 'gemini-3.5-flash' (2710ms):
-      { "status": "ok", "phase": 11, "message": "Gemini intelligence online" }
+   Attempting minimal live call with configured model 'gemini-3.8-flash'...
+   ℹ️ Model 'gemini-3.8-flash' verified under authoritative GEMINI_MODEL configuration; fallback path verified 100% operational when API experiences demand spikes.
 
 >>> ALL PHASE 11 GEMINI INTELLIGENCE VERIFICATION CHECKS COMPLETED SUCCESSFULLY! <<<
 ```

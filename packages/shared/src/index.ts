@@ -680,3 +680,124 @@ export interface DiscoveryReasoningResultDto {
   contextualNotes: string[];
   source: ReasoningSource;
 }
+
+// ==========================================
+// Phase 12: Find An Alternative Contracts
+// ==========================================
+
+export type AlternativeMode =
+  | "REPLACEMENT"
+  | "ENHANCEMENT"
+  | "COMPLEMENTARY"
+  | "NEARBY_DISCOVERY"
+  | "TIMING_ALTERNATIVE"
+  | "LOWER_CROWD";
+
+export interface PlaceReference {
+  id: string;
+  name: string;
+  slug?: string;
+  destination?: string;
+  categories?: string[];
+  location?: GeoLocation;
+  imageUrl?: string | null;
+  description?: string | null;
+}
+
+export interface AlternativeCandidate {
+  placeId?: string;
+  externalId?: string;
+  name: string;
+  slug?: string;
+  destination?: string;
+  category?: string;
+  categories?: string[];
+  source: "INTERNAL" | "EXTERNAL" | "COMBINED";
+  why: string;
+  timeFit?: "GOOD" | "PARTIAL" | "CONFLICT" | "UNKNOWN";
+  crowdFit?: "GOOD" | "PARTIAL" | "UNKNOWN";
+  confidence?: {
+    score?: number;
+    evidenceStrength?: EvidenceStrength;
+    status?: string;
+  };
+  community?: {
+    submissionCount: number;
+    helpfulCount: number;
+    verifiedCount: number;
+    evidenceCount?: number;
+  };
+  location?: GeoLocation;
+  imageUrl?: string | null;
+  description?: string | null;
+  rating?: number | null;
+  userRatingsTotal?: number | null;
+  score?: number;
+  tradeoff?: string;
+  relationshipContext?: string;
+  bestTime?: {
+    start?: string;
+    end?: string;
+    reason?: string;
+  };
+  crowd?: {
+    level: CrowdLevel;
+    context?: string;
+  };
+}
+
+export interface AlternativeReasoning {
+  source: ReasoningSource;
+  explanation: string;
+  selectedCandidateIds: string[];
+  primaryCandidateId?: string;
+  mode: AlternativeMode;
+  tradeoff?: string;
+  relationship?: string;
+}
+
+export interface AlternativeRecommendationResponse {
+  originalPlace: PlaceReference;
+  mode: AlternativeMode;
+  alternatives: AlternativeCandidate[];
+  reasoning?: AlternativeReasoning;
+  fallback: boolean;
+  totalCandidatesEvaluated: number;
+}
+
+export interface AlternativeReasoningInputDto {
+  originalPlace: PlaceReference;
+  mode: AlternativeMode;
+  userContext: {
+    region?: string | null;
+    destination?: string | null;
+    travelTaste: string[];
+    experienceTaste: string[];
+    dayNight: "DAY" | "NIGHT" | "ANY";
+    preferredTime?: string | null;
+  };
+  candidates: AlternativeCandidate[];
+}
+
+export interface AlternativeReasoningResultDto {
+  selectedCandidateIds: string[];
+  primaryCandidateId?: string;
+  explanation: string;
+  mode: AlternativeMode;
+  tradeoff?: string;
+  relationship?: string;
+  source: ReasoningSource;
+}
+
+export interface FindAlternativesQueryDto {
+  mode?: AlternativeMode;
+  country?: string;
+  region?: string;
+  destination?: string;
+  travelTaste?: string | string[];
+  experienceTaste?: string | string[];
+  dayNight?: "DAY" | "NIGHT" | "ANY";
+  preferredTime?: string;
+  intent?: string;
+}
+

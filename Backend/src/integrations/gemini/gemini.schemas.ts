@@ -14,3 +14,26 @@ export const discoveryReasoningOutputSchema = z.object({
 });
 
 export type DiscoveryReasoningOutput = z.infer<typeof discoveryReasoningOutputSchema>;
+
+/**
+ * Zod schema for structured output from Gemini alternative reasoning.
+ * Ensures strict typing, mode preservation, and candidate allowlisting.
+ */
+export const alternativeReasoningOutputSchema = z.object({
+  selectedCandidateIds: z.array(z.string()).min(1, "At least one candidate ID must be selected"),
+  primaryCandidateId: z.string().optional(),
+  explanation: z.string().min(5, "Explanation must be meaningful"),
+  mode: z.enum([
+    "REPLACEMENT",
+    "ENHANCEMENT",
+    "COMPLEMENTARY",
+    "NEARBY_DISCOVERY",
+    "TIMING_ALTERNATIVE",
+    "LOWER_CROWD",
+  ]),
+  tradeoff: z.string().optional(),
+  relationship: z.string().optional(),
+});
+
+export type AlternativeReasoningOutput = z.infer<typeof alternativeReasoningOutputSchema>;
+

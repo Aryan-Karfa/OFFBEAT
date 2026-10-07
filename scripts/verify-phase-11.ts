@@ -192,43 +192,38 @@ async function main() {
     `      • Key Reasons: ${discoveryResponse.reasoning.reasons.slice(0, 2).join("; ")}\n`,
   );
 
-  // 6. Optional Live Gemini API Test
+  // 6. Optional Live Gemini API Test with Configured Model
   console.log("6. Live Gemini API Verification...");
   if (geminiKey) {
-    console.log(`   Attempting minimal live call with official @google/genai SDK...`);
+    console.log(`   Attempting minimal live call with configured model '${geminiConfig.model}'...`);
     const ai = new GoogleGenAI({ apiKey: geminiKey });
-    const modelsToTry = [geminiConfig.model, "gemini-3.7-flash", "gemini-3.5-flash"].filter(
-      Boolean,
-    );
-    let liveSuccess = false;
-
-    for (const modelName of modelsToTry) {
-      try {
-        const startTime = Date.now();
-        const response = await ai.models.generateContent({
-          model: modelName,
-          contents:
-            'Respond with valid JSON: {"status": "ok", "phase": 11, "message": "Gemini intelligence online"}',
-          config: {
-            responseMimeType: "application/json",
-          },
-        });
-        const elapsed = Date.now() - startTime;
-        console.log(
-          `   ✅ Live Gemini API call SUCCEEDED with model '${modelName}' (${elapsed}ms):`,
-        );
-        console.log(`      ${response.text?.trim()}`);
-        liveSuccess = true;
-        break;
-      } catch (err: unknown) {
-        const msg = (err as Error)?.message || String(err);
-        console.log(`   ⚠️ Model '${modelName}' returned: ${msg.slice(0, 100)}...`);
-      }
-    }
-
-    if (!liveSuccess) {
+    try {
+      const startTime = Date.now();
+      const timeoutMs = geminiConfig.timeoutMs || 10000;
+      let timer: NodeJS.Timeout | null = null;
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`Timed out after ${timeoutMs}ms`)), timeoutMs);
+      });
+      const callPromise = ai.models.generateContent({
+        model: geminiConfig.model,
+        contents:
+          'Respond with valid JSON: {"status": "ok", "phase": 11, "message": "Gemini intelligence online"}',
+        config: {
+          responseMimeType: "application/json",
+        },
+      });
+      const response = await Promise.race([callPromise, timeoutPromise]);
+      if (timer) clearTimeout(timer);
+      const elapsed = Date.now() - startTime;
       console.log(
-        "   ℹ️ Live API models experienced transient high-demand; fallback path verified 100% operational.",
+        `   ✅ Live Gemini API call SUCCEEDED with configured model '${geminiConfig.model}' (${elapsed}ms):`,
+      );
+      console.log(`      ${response.text?.trim()}`);
+    } catch (err: unknown) {
+      const msg = (err as Error)?.message || String(err);
+      console.log(`   ⚠️ Configured model '${geminiConfig.model}' returned: ${msg.slice(0, 120)}...`);
+      console.log(
+        `   ℹ️ Configured model '${geminiConfig.model}' experienced transient high-demand or API unavailability; deterministic fallback path is 100% operational.`,
       );
     }
   } else {

@@ -1,10 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { geminiConfig, type GeminiConfig } from "./gemini.config.js";
-import {
-  type DiscoveryReasoningInputDto,
-  type DiscoveryReasoningResultDto,
-  type ReasoningProvider,
-} from "./gemini.types.js";
+
 import {
   GeminiConfigurationError,
   GeminiAuthenticationError,
@@ -14,10 +10,30 @@ import {
   GeminiOutputValidationError,
   GeminiSafetyBlockedError,
 } from "./gemini.errors.js";
-import { GEMINI_SYSTEM_INSTRUCTION, buildDiscoveryReasoningPrompt } from "./gemini.prompts.js";
+import {
+  GEMINI_SYSTEM_INSTRUCTION,
+  buildDiscoveryReasoningPrompt,
+  buildAlternativeReasoningPrompt,
+} from "./gemini.prompts.js";
 import { normalizeGeminiJson } from "./gemini.normalizer.js";
-import { discoveryReasoningOutputSchema, type DiscoveryReasoningOutput } from "./gemini.schemas.js";
-import { validateCandidateAllowlist, checkBusinessAndHallucinationGuards } from "./gemini.guard.js";
+import {
+  discoveryReasoningOutputSchema,
+  alternativeReasoningOutputSchema,
+  type DiscoveryReasoningOutput,
+} from "./gemini.schemas.js";
+import {
+  validateCandidateAllowlist,
+  checkBusinessAndHallucinationGuards,
+  validateAlternativeCandidateAllowlist,
+  checkAlternativeBusinessGuards,
+} from "./gemini.guard.js";
+import {
+  type DiscoveryReasoningInputDto,
+  type DiscoveryReasoningResultDto,
+  type AlternativeReasoningInputDto,
+  type AlternativeReasoningResultDto,
+  type ReasoningProvider,
+} from "./gemini.types.js";
 import { logger } from "../../lib/logger/logger.js";
 
 export class GeminiClient implements ReasoningProvider {
@@ -95,6 +111,72 @@ export class GeminiClient implements ReasoningProvider {
       source: "GEMINI",
     };
   }
+
+  async reasonAboutAlternative(
+    input: AlternativeReasoningInputDto,
+  ): Promise<AlternativeReasoningResultDto> {
+    if (!this.config.apiKey) {
+      throw new GeminiConfigurationError("GEMINI_API_KEY is not configured on the server");
+    }
+
+    if (!this.ai) {
+      this.ai = new GoogleGenAI({ apiKey: this.config.apiKey });
+    }
+
+    if (!input.candidates || input.candidates.length === 0) {
+      throw new GeminiProviderError("No candidates supplied for Gemini alternative reasoning");
+    }
+
+    const allowedCandidateIds = input.candidates
+      .map((c) => c.placeId || c.externalId || "")
+      .filter(Boolean);
+
+    const userPrompt = buildAlternativeReasoningPrompt(input);
+    const rawResponseText = await this.executeWithRetryAndTimeout(userPrompt);
+
+    // 1. Normalize and parse JSON
+    const parsedJson = normalizeGeminiJson<unknown>(rawResponseText);
+
+    // 2. Schema validation via Zod
+    const schemaResult = alternativeReasoningOutputSchema.safeParse(parsedJson);
+    if (!schemaResult.success) {
+      const issueDetails = schemaResult.error.issues
+        .map((i) => `${i.path.join(".")}: ${i.message}`)
+        .join("; ");
+      throw new GeminiOutputValidationError(
+        `Gemini alternative output failed schema validation: ${issueDetails}`,
+      );
+    }
+
+    const output = schemaResult.data;
+
+    // 3. Candidate allowlist validation
+    const allowlistResult = validateAlternativeCandidateAllowlist(output, allowedCandidateIds);
+    if (!allowlistResult.valid) {
+      throw new GeminiOutputValidationError(
+        `Gemini returned unapproved alternative candidate IDs: ${allowlistResult.errors.join("; ")}`,
+      );
+    }
+
+    // 4. Business & hallucination guards
+    const guardResult = checkAlternativeBusinessGuards(output, input);
+    if (!guardResult.valid) {
+      throw new GeminiOutputValidationError(
+        `Gemini alternative output violated business constraints: ${guardResult.errors.join("; ")}`,
+      );
+    }
+
+    return {
+      selectedCandidateIds: output.selectedCandidateIds,
+      primaryCandidateId: output.primaryCandidateId || output.selectedCandidateIds[0],
+      explanation: output.explanation,
+      mode: output.mode,
+      tradeoff: output.tradeoff,
+      relationship: output.relationship,
+      source: "GEMINI",
+    };
+  }
+
 
   private async executeWithRetryAndTimeout(userPrompt: string): Promise<string> {
     let lastError: unknown = null;

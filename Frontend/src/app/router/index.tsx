@@ -62,6 +62,10 @@ export const router = createBrowserRouter([
         element: <PlacePage />,
       },
       {
+        path: "place/:placeId/alternatives",
+        element: <AlternativesPage />,
+      },
+      {
         path: "alternatives",
         element: <AlternativesPage />,
       },

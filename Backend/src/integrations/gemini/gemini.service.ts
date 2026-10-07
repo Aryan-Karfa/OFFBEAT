@@ -5,6 +5,8 @@ import type {
   DiscoveryReasoningCandidateDto,
   DiscoveryReasoningInputDto,
   DiscoveryReasoningResultDto,
+  AlternativeReasoningInputDto,
+  AlternativeReasoningResultDto,
   ReasoningProvider,
 } from "./gemini.types.js";
 import { logger } from "../../lib/logger/logger.js";
@@ -26,6 +28,12 @@ export class GeminiService {
       this.provider = {
         reason: async (input: DiscoveryReasoningInputDto) => {
           return this.generateDeterministicFallback(
+            input,
+            "Gemini is not enabled or API key is missing",
+          );
+        },
+        reasonAboutAlternative: async (input: AlternativeReasoningInputDto) => {
+          return this.generateDeterministicAlternativeFallback(
             input,
             "Gemini is not enabled or API key is missing",
           );
@@ -197,6 +205,139 @@ export class GeminiService {
       source: "DETERMINISTIC",
     };
   }
+
+  /**
+   * Main entrypoint for alternative reasoning.
+   * Employs AI reasoning when available over bounded candidates,
+   * falling back automatically to deterministic alternative reasoning on any failure or timeout.
+   */
+  async reasonAboutAlternative(
+    input: AlternativeReasoningInputDto,
+  ): Promise<AlternativeReasoningResultDto> {
+    const candidateCount = input.candidates?.length ?? 0;
+    if (candidateCount === 0) {
+      return {
+        selectedCandidateIds: [],
+        primaryCandidateId: undefined,
+        explanation: "No alternative candidates were available for evaluation.",
+        mode: input.mode,
+        source: "DETERMINISTIC",
+      };
+    }
+
+    if (!this.config.enabled) {
+      logger.info(
+        "Gemini alternative reasoning disabled by configuration; using deterministic reasoning",
+      );
+      return this.generateDeterministicAlternativeFallback(input, "Gemini disabled by configuration");
+    }
+
+    const startTime = Date.now();
+    try {
+      const result = await this.provider.reasonAboutAlternative(input);
+      const latencyMs = Date.now() - startTime;
+      logger.info("Gemini alternative reasoning completed successfully", undefined, {
+        model: this.config.model,
+        latencyMs,
+        mode: input.mode,
+        primaryId: result.primaryCandidateId,
+        source: result.source,
+      });
+      return result;
+    } catch (err: unknown) {
+      const latencyMs = Date.now() - startTime;
+      const errorName = (err as Error)?.name || "ReasoningError";
+      const errorMessage = (err as Error)?.message || String(err);
+
+      logger.warn(
+        "Gemini alternative reasoning failed or timed out; falling back to deterministic reasoning",
+        undefined,
+        {
+          errorName,
+          errorMessage,
+          latencyMs,
+          mode: input.mode,
+          candidatesProvided: candidateCount,
+        },
+        err as Error,
+      );
+
+      return this.generateDeterministicAlternativeFallback(input, errorMessage);
+    }
+  }
+
+  /**
+   * Generates grounded, deterministic alternative reasoning based on OFFBEAT signals.
+   */
+  public generateDeterministicAlternativeFallback(
+    input: AlternativeReasoningInputDto,
+    fallbackReason?: string,
+  ): AlternativeReasoningResultDto {
+    const candidates = input.candidates || [];
+    const topCandidate = candidates[0];
+
+    if (!topCandidate) {
+      return {
+        selectedCandidateIds: [],
+        primaryCandidateId: undefined,
+        explanation:
+          "OFFBEAT couldn't find a strong alternative yet. Try a different type of experience.",
+        mode: input.mode,
+        source: "DETERMINISTIC",
+      };
+    }
+
+    const candidateId = topCandidate.placeId || topCandidate.externalId || "candidate_1";
+
+    let explanation = "";
+    let relationship: string | undefined;
+
+    switch (input.mode) {
+      case "ENHANCEMENT":
+        explanation = `Keep ${input.originalPlace.name}. Add ${topCandidate.name} to enrich the journey with ${topCandidate.why || "complementary panoramic and cultural depth"}.`;
+        relationship = `Pairs with ${input.originalPlace.name}`;
+        break;
+      case "COMPLEMENTARY":
+        explanation = `${topCandidate.name} complements ${input.originalPlace.name} in ${topCandidate.destination || "the journey"}, providing a different but harmonious perspective.`;
+        relationship = `Complements ${input.originalPlace.name}`;
+        break;
+      case "NEARBY_DISCOVERY":
+        explanation = `A high-discovery hidden gem located close to ${input.originalPlace.name}, aligned with your preference for ${input.userContext.travelTaste.join(", ") || "exploration"}.`;
+        relationship = `Near ${input.originalPlace.name}`;
+        break;
+      case "LOWER_CROWD":
+        if (topCandidate.crowd?.level === "LOW" || topCandidate.crowdFit === "GOOD") {
+          explanation = `${topCandidate.name} has a lower crowd profile than ${input.originalPlace.name}, offering a more serene visit.`;
+        } else {
+          explanation = `${topCandidate.name} was evaluated for lower crowd. Note: crowd level is ${topCandidate.crowd?.level || "UNKNOWN"} based on current evidence.`;
+        }
+        break;
+      case "TIMING_ALTERNATIVE":
+        if (topCandidate.bestTime?.start && topCandidate.bestTime?.end) {
+          explanation = `${topCandidate.name} features an optimal visiting window (${topCandidate.bestTime.start} - ${topCandidate.bestTime.end}) that better matches your schedule.`;
+        } else {
+          explanation = `${topCandidate.name} offers a more accommodating visiting schedule than ${input.originalPlace.name}.`;
+        }
+        break;
+      case "REPLACEMENT":
+      default:
+        explanation = `A compelling substitute for ${input.originalPlace.name} with similar ${topCandidate.categories?.join(", ") || "landscape"} appeal and verified scenic attributes.`;
+        break;
+    }
+
+    return {
+      selectedCandidateIds: candidates
+        .map((c) => c.placeId || c.externalId || "")
+        .filter(Boolean),
+      primaryCandidateId: candidateId,
+      explanation,
+      mode: input.mode,
+      tradeoff: topCandidate.tradeoff || "Check local transit schedules before departing.",
+      relationship,
+      source: "DETERMINISTIC",
+    };
+  }
 }
 
 export const geminiService = new GeminiService();
+

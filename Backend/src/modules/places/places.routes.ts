@@ -8,6 +8,9 @@ import {
   crowdQuerySchema,
   createCrowdObservationSchema,
 } from "../intelligence/crowd/crowd.schema.js";
+import { alternativesController } from "../alternatives/alternatives.controller.js";
+import { findAlternativesQuerySchema } from "../alternatives/alternatives.schema.js";
+
 
 export const placeRoutes: Router = Router();
 
@@ -45,3 +48,11 @@ placeRoutes.post(
   validateRequest({ params: placeParamsSchema, body: createCrowdObservationSchema }),
   intelligenceController.createPlaceCrowdObservation,
 );
+
+// Phase 12: Find An Alternative Endpoint
+placeRoutes.get(
+  "/:placeId/alternatives",
+  validateRequest({ params: placeParamsSchema, query: findAlternativesQuerySchema }),
+  alternativesController.getAlternatives,
+);
+

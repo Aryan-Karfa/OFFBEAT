@@ -76,3 +76,71 @@ export function checkBusinessAndHallucinationGuards(
     errors,
   };
 }
+
+/**
+ * Validates that all candidate IDs returned by Gemini in alternative reasoning
+ * are present in the supplied candidate allowlist.
+ */
+export function validateAlternativeCandidateAllowlist(
+  output: import("./gemini.schemas.js").AlternativeReasoningOutput,
+  allowedCandidateIds: string[],
+): GuardValidationResult {
+  const errors: string[] = [];
+  const allowedSet = new Set(allowedCandidateIds);
+
+  if (output.primaryCandidateId && !allowedSet.has(output.primaryCandidateId)) {
+    errors.push(
+      `Primary candidate ID '${output.primaryCandidateId}' is not in allowed candidate set [${allowedCandidateIds.join(", ")}]`,
+    );
+  }
+
+  for (const id of output.selectedCandidateIds) {
+    if (!allowedSet.has(id)) {
+      errors.push(`Selected candidate ID '${id}' is not in allowed candidate set`);
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
+ * Checks business rules and hallucination guardrails for Alternative reasoning:
+ * 1. Checks that primary candidate exists in candidate list if specified.
+ * 2. Checks that explanation is non-empty.
+ * 3. Checks that candidate isn't identical to original place ID.
+ */
+export function checkAlternativeBusinessGuards(
+  output: import("./gemini.schemas.js").AlternativeReasoningOutput,
+  input: import("./gemini.types.js").AlternativeReasoningInputDto,
+): GuardValidationResult {
+  const errors: string[] = [];
+  const candidateIds = new Set(input.candidates.map((c) => c.placeId || c.externalId || ""));
+
+  if (output.primaryCandidateId && !candidateIds.has(output.primaryCandidateId)) {
+    errors.push(`Primary candidate '${output.primaryCandidateId}' not found in candidate list`);
+  }
+
+  // Hallucination check: primary candidate must not be the original place
+  if (output.primaryCandidateId === input.originalPlace.id) {
+    errors.push("Primary alternative candidate cannot be the original place itself");
+  }
+
+  for (const id of output.selectedCandidateIds) {
+    if (id === input.originalPlace.id) {
+      errors.push("Selected alternative candidate cannot be the original place itself");
+    }
+  }
+
+  if (!output.explanation || output.explanation.trim().length < 5) {
+    errors.push("Alternative explanation must be meaningful and grounded");
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
