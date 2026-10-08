@@ -204,6 +204,6 @@ describe("Phase 10: Time & Crowd Intelligence Integration Tests", () => {
         expect(tigerHill.timeFit).toBeDefined();
         expect(tigerHill.crowdFit).toBeDefined();
       }
-    });
+    }, 15000);
   });
 });

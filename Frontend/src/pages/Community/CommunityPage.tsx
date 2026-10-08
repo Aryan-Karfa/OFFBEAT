@@ -74,7 +74,7 @@ export const CommunityPage: React.FC = () => {
                   The Living Network
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-950/40 text-emerald-400 border border-emerald-500/25">
-                  Phase 8 Live
+                  Community Verified
                 </span>
               </div>
               <Heading level={1} size="h1" className="mb-2">
@@ -184,8 +184,8 @@ export const CommunityPage: React.FC = () => {
           <div className="p-4 rounded-xl bg-offbeat-surface border border-offbeat-border text-xs text-offbeat-muted flex items-center gap-3">
             <Sparkles className="h-4 w-4 text-emerald-400 shrink-0" />
             <span>
-              Phase 8 Community Intelligence is active. All discoveries, supports, and reports
-              persist and feed the living travel knowledge layer.
+              Community Intelligence & Verification is active. All discoveries, supports, and
+              reports persist and feed the living travel knowledge layer.
             </span>
           </div>
 

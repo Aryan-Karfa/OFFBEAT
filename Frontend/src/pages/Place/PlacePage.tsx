@@ -87,7 +87,7 @@ export const PlacePage: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-offbeat-dark border border-offbeat-border text-emerald-400">
-                Phase 8 Community Intelligence
+                Community Intelligence & Verification
               </span>
             </div>
           </div>
@@ -245,7 +245,7 @@ export const PlacePage: React.FC = () => {
                         Signature Intelligence
                       </span>
                       <Badge variant="accent" size="sm">
-                        Phase 12
+                        Smart Alternatives
                       </Badge>
                     </div>
                     <Heading

@@ -31,6 +31,14 @@ export const router = createBrowserRouter([
         element: <CountryPage />,
       },
       {
+        path: "india",
+        element: <CountryPage />,
+      },
+      {
+        path: "country/india",
+        element: <CountryPage />,
+      },
+      {
         path: "country/:countryCode/map",
         element: <InteractiveMapPage />,
       },
@@ -59,6 +67,10 @@ export const router = createBrowserRouter([
         element: <DiscoveryPage />,
       },
       {
+        path: "discover",
+        element: <DiscoveryPage />,
+      },
+      {
         path: "place/:placeId",
         element: <PlacePage />,
       },
@@ -72,6 +84,10 @@ export const router = createBrowserRouter([
       },
       {
         path: "itinerary",
+        element: <ItineraryPage />,
+      },
+      {
+        path: "itinerary/:itineraryId",
         element: <ItineraryPage />,
       },
       {

@@ -4,6 +4,8 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { MobileNav } from "./MobileNav";
 
+import { ErrorBoundary } from "../components/ui/ErrorBoundary";
+
 export const AppLayout: React.FC = () => {
   return (
     <div className="flex min-h-screen flex-col bg-offbeat-dark text-offbeat-primary">
@@ -18,9 +20,11 @@ export const AppLayout: React.FC = () => {
       {/* Primary Header Navigation */}
       <Header />
 
-      {/* Main Content Area */}
+      {/* Main Content Area Protected by ErrorBoundary */}
       <main id="main-content" className="flex-1 w-full" tabIndex={-1}>
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
 
       {/* Footer */}

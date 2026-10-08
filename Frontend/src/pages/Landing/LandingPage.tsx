@@ -92,9 +92,9 @@ export const LandingPage: React.FC = () => {
             </div>
             <div>
               <div className="font-display text-2xl sm:text-3xl font-bold text-offbeat-primary">
-                100%
+                Zero
               </div>
-              <div className="text-xs text-offbeat-muted mt-0.5">Zero Paid Placements</div>
+              <div className="text-xs text-offbeat-muted mt-0.5">Paid Placements</div>
             </div>
             <div>
               <div className="font-display text-2xl sm:text-3xl font-bold text-offbeat-primary">

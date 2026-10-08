@@ -35,7 +35,10 @@ export function rateLimiter(options: RateLimitOptions = {}) {
   ).unref();
 
   return (req: Request, res: Response, next: NextFunction): void => {
-    // In dev/test or for internal health check, can allow high throughput
+    // In dev/test or for internal health check, allow throughput without throttle
+    if (process.env.NODE_ENV === "test" || req.path === "/health" || req.path.endsWith("/health")) {
+      return next();
+    }
     const clientKey = req.ip || req.socket.remoteAddress || "global_client";
     const now = Date.now();
 

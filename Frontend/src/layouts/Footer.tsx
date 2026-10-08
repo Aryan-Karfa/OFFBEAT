@@ -86,8 +86,8 @@ export const Footer: React.FC = () => {
         <div className="pt-8 border-t border-offbeat-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-offbeat-muted">
           <p>© {new Date().getFullYear()} OFFBEAT. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <span className="hover:text-offbeat-secondary transition-colors">
-              Phase 1 Foundation
+            <span className="hover:text-offbeat-secondary transition-colors font-mono">
+              OFFBEAT v0.1.0
             </span>
             <span>·</span>
             <span className="hover:text-offbeat-secondary transition-colors">

@@ -137,7 +137,7 @@ export const DiscoveryPage: React.FC = () => {
                 <ArrowLeft className="h-3.5 w-3.5" /> Back to Context
               </Link>
               <Badge variant="accent" size="sm">
-                Phase 7 Engine Active
+                Discovery Engine Active
               </Badge>
               <PersonalizationIndicator personalization={personalization} />
             </div>

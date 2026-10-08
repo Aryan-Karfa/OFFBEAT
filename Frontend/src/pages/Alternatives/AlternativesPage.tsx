@@ -72,7 +72,7 @@ export const AlternativesPage: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <Badge variant="accent" size="sm">
-                Phase 12 Intelligent Alternatives
+                Intelligent Alternatives
               </Badge>
               {reasoning && !fallback && (
                 <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 flex items-center gap-1">

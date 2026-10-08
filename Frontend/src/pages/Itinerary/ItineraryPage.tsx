@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, useParams, Link } from "react-router-dom";
 import { Container } from "../../components/ui/Container";
 import { Section } from "../../components/ui/Section";
 import { Heading } from "../../components/ui/Heading";
@@ -32,7 +32,8 @@ import {
 
 export const ItineraryPage: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const mustVisitParam = searchParams.get("mustVisit");
+  const { itineraryId } = useParams<{ itineraryId?: string }>();
+  const mustVisitParam = searchParams.get("mustVisit") || itineraryId;
   const destinationParam = searchParams.get("destination") || "Darjeeling";
 
   const {

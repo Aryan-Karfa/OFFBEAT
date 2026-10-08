@@ -80,7 +80,7 @@ export const InteractiveMapPage: React.FC = () => {
 
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-offbeat-surface border border-offbeat-border text-xs text-offbeat-accent font-semibold tracking-wider self-start sm:self-auto">
               <Compass className="h-3.5 w-3.5" />
-              <span>PHASE 2 — SIGNATURE GEOGRAPHIC DISCOVERY</span>
+              <span>SIGNATURE GEOGRAPHIC DISCOVERY</span>
             </div>
           </div>
 

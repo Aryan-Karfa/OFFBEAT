@@ -1,9 +1,10 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Compass, Sparkles } from "lucide-react";
+import { Compass, Sparkles, RotateCcw } from "lucide-react";
 import { Container } from "../components/ui/Container";
 import { Button } from "../components/ui/Button";
 import { cn } from "../utils/cn";
+import { resetDemoSession } from "../utils/demoReset";
 
 export const Header: React.FC = () => {
   const location = useLocation();
@@ -11,8 +12,9 @@ export const Header: React.FC = () => {
   const navLinks = [
     { label: "DISCOVER", href: "/country" },
     { label: "ITINERARY", href: "/itinerary" },
+    { label: "TAKE HOME", href: "/take-home" },
+    { label: "MEMORY", href: "/memory" },
     { label: "COMMUNITY", href: "/community" },
-    { label: "PROFILE", href: "/profile" },
   ];
 
   const isActive = (href: string) => {
@@ -20,10 +22,14 @@ export const Header: React.FC = () => {
       return (
         location.pathname.startsWith("/country") ||
         location.pathname.startsWith("/map") ||
-        location.pathname.startsWith("/region")
+        location.pathname.startsWith("/region") ||
+        location.pathname.startsWith("/travel-taste") ||
+        location.pathname.startsWith("/experience-taste") ||
+        location.pathname.startsWith("/discovery") ||
+        location.pathname.startsWith("/place")
       );
     }
-    return location.pathname === href;
+    return location.pathname.startsWith(href);
   };
 
   return (
@@ -48,7 +54,7 @@ export const Header: React.FC = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation - Subordinate to discovery content */}
+          {/* Desktop Navigation */}
           <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-1 lg:gap-2">
             {navLinks.map((item) => {
               const active = isActive(item.href);
@@ -69,8 +75,17 @@ export const Header: React.FC = () => {
             })}
           </nav>
 
-          {/* Quick CTA */}
-          <div className="flex items-center gap-3">
+          {/* Quick Actions & Demo Reset */}
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => resetDemoSession()}
+              title="Reset demo session to pristine state"
+              className="text-[11px] font-mono uppercase tracking-wider text-offbeat-muted hover:text-amber-400 px-2.5 py-1.5 rounded-lg border border-offbeat-border/60 hover:border-amber-400/40 hover:bg-amber-400/5 transition-all flex items-center gap-1.5"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span className="hidden sm:inline">Reset Demo</span>
+            </button>
+
             <Link to="/country">
               <Button
                 variant="primary"

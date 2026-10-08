@@ -28,7 +28,7 @@ export const ProfilePage: React.FC = () => {
             </div>
 
             <Badge variant="accent" size="sm">
-              Phase 8 Route Foundation
+              Verified Traveler
             </Badge>
           </div>
 
@@ -69,12 +69,20 @@ export const ProfilePage: React.FC = () => {
             </Card>
           </div>
 
-          <div className="p-4 rounded-xl bg-offbeat-surface border border-offbeat-border text-xs text-offbeat-muted flex items-center gap-3">
-            <Sparkles className="h-4 w-4 text-offbeat-accent shrink-0" />
-            <span>
-              Personalized travel taste memory, saved itineraries, and trust badges will be
-              activated in <strong>Phase 8</strong>.
-            </span>
+          <div className="p-4 rounded-xl bg-offbeat-surface border border-offbeat-border/80 text-xs text-offbeat-muted flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Sparkles className="h-4 w-4 text-offbeat-accent shrink-0" />
+              <span>
+                Traveler Memory & Personalization is active. OFFBEAT continuously remembers your
+                travel tastes.
+              </span>
+            </div>
+            <a
+              href="/memory"
+              className="px-3 py-1.5 rounded-lg bg-offbeat-accent/10 border border-offbeat-accent/30 text-offbeat-accent font-semibold text-xs hover:bg-offbeat-accent/20 transition-all shrink-0"
+            >
+              View Memory
+            </a>
           </div>
         </Container>
       </Section>
