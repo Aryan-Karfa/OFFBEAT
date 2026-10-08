@@ -11,6 +11,7 @@ interface MapRegionProps {
   interactionState: MapInteractionState;
   onSelect: (region: Region) => void;
   onHover: (region: Region | null) => void;
+  onResetFocus?: () => void;
   isReducedMotion: boolean;
 }
 
@@ -23,6 +24,7 @@ export const MapRegion: React.FC<MapRegionProps> = ({
   interactionState,
   onSelect,
   onHover,
+  onResetFocus,
   isReducedMotion,
 }) => {
   const { x, y } = projectedCoord;
@@ -70,7 +72,35 @@ export const MapRegion: React.FC<MapRegionProps> = ({
     Central: "group-hover:fill-[#202225]",
   };
 
-  const isSmall = Boolean(region.isSmallTerritory);
+  const handleClick = (e: React.MouseEvent) => {
+    if (isOtherSelected) {
+      // User clicked another region while a region is already focused
+      // Per Fix 1A: treat click as OUTSIDE CURRENT FOCUS -> RESET TO NORMAL MAP
+      e.stopPropagation();
+      onResetFocus?.();
+      return;
+    }
+    if (isSelected) {
+      // Click was inside the focused region's geometry -> keep focus
+      e.stopPropagation();
+      return;
+    }
+    onSelect(region);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (isOtherSelected) {
+        onResetFocus?.();
+        return;
+      }
+      if (isSelected) {
+        return;
+      }
+      onSelect(region);
+    }
+  };
 
   return (
     <g
@@ -82,21 +112,16 @@ export const MapRegion: React.FC<MapRegionProps> = ({
       aria-expanded={
         isSelected && (interactionState === "active" || interactionState === "exploring")
       }
-      onClick={() => onSelect(region)}
+      onClick={handleClick}
       onMouseEnter={() => onHover(region)}
       onMouseLeave={() => onHover(null)}
       onFocus={() => onHover(region)}
       onBlur={() => onHover(null)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onSelect(region);
-        }
-      }}
+      onKeyDown={handleKeyDown}
       className={cn(
         "cursor-pointer group select-none outline-none transition-all duration-300",
         isOtherSelected &&
-          "opacity-30 blur-[0.2px] pointer-events-none transition-opacity duration-500",
+          "opacity-30 blur-[0.2px] pointer-events-auto cursor-pointer transition-opacity duration-500",
         isSelected && "z-40 pointer-events-auto",
       )}
     >
@@ -129,33 +154,6 @@ export const MapRegion: React.FC<MapRegionProps> = ({
           )}
           style={{ transform: transformStyle }}
         />
-      )}
-
-      {/* Small Territory Indicator Ring (Prevents tiny territories like Delhi, Chandigarh, Puducherry from disappearing) */}
-      {isSmall && (
-        <g
-          style={{ transform: transformStyle }}
-          className="transition-transform duration-300 pointer-events-none"
-        >
-          {/* Subtle pulsating halo for small territory discoverability */}
-          <circle
-            cx={x}
-            cy={y}
-            r={isSelected ? "14" : isHovered ? "12" : "9"}
-            fill="#E5A93C"
-            fillOpacity={isSelected ? 0.35 : isHovered ? 0.25 : 0.12}
-            stroke="#E5A93C"
-            strokeWidth={isSelected ? "1.5" : "1"}
-            strokeDasharray={isSelected ? "none" : "2 2"}
-            className={!isReducedMotion && isSelected ? "animate-pulse" : ""}
-          />
-          <circle
-            cx={x}
-            cy={y}
-            r={isSelected ? "5" : isHovered ? "4" : "3"}
-            fill={isSelected ? "#E5A93C" : isHovered ? "#F5F2EA" : "#E5A93C"}
-          />
-        </g>
       )}
 
       {/* Interactive Hover / Selected Pinpoint & Editorial Badge */}

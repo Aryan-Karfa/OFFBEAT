@@ -53,6 +53,13 @@ export const InteractiveMapPage: React.FC = () => {
       interactionState === "active" ||
       interactionState === "exploring");
 
+  const statesList = [...INDIA_REGIONS.filter((r) => r.type === "STATE")].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+  const utList = [...INDIA_REGIONS.filter((r) => r.type === "UNION_TERRITORY")].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+
   return (
     <div className="w-full">
       <Section spacing="sm" className="pt-6 pb-12">
@@ -163,28 +170,80 @@ export const InteractiveMapPage: React.FC = () => {
                   onBackToCountry={handleBackToCountry}
                 />
 
-                {/* Quick accessible region chips below the map */}
-                <div className="p-4 rounded-xl bg-offbeat-surface/60 border border-offbeat-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-2 text-offbeat-secondary font-medium">
-                    <Filter className="h-3.5 w-3.5 text-offbeat-accent" />
-                    <span>Quick Select Region:</span>
+                {/* Accessible Regional Hierarchy: Distinct States and Union Territories */}
+                <div className="p-4 sm:p-5 rounded-xl bg-offbeat-surface/60 border border-offbeat-border/70 space-y-4 text-xs">
+                  <div className="flex items-center justify-between border-b border-offbeat-border/50 pb-2.5">
+                    <div className="flex items-center gap-2 text-offbeat-primary font-bold uppercase tracking-wider text-xs">
+                      <Filter className="h-3.5 w-3.5 text-offbeat-accent" />
+                      <span>Select Administrative Region</span>
+                    </div>
+                    <span className="text-[11px] font-mono text-offbeat-muted">
+                      36 Units · 28 States · 8 Union Territories
+                    </span>
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {INDIA_REGIONS.map((reg) => (
-                      <button
-                        key={reg.id}
-                        type="button"
-                        onClick={() => handleSelectRegion(reg)}
-                        className={cn(
-                          "px-2.5 py-1 rounded-md text-xs font-medium transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offbeat-accent",
-                          selectedRegion?.id === reg.id
-                            ? "bg-offbeat-accent text-offbeat-dark font-bold shadow-sm"
-                            : "bg-offbeat-elevated text-offbeat-secondary hover:text-offbeat-primary hover:bg-offbeat-surface",
-                        )}
-                      >
-                        {reg.name}
-                      </button>
-                    ))}
+
+                  {/* 28 States Section */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-offbeat-accent">
+                      <span>States (28)</span>
+                      <span className="text-[10px] font-mono text-offbeat-muted/80">
+                        Click to focus
+                      </span>
+                    </div>
+                    <div
+                      className="flex flex-wrap gap-1.5"
+                      role="group"
+                      aria-label="States of India"
+                    >
+                      {statesList.map((reg) => (
+                        <button
+                          key={reg.id}
+                          type="button"
+                          onClick={() => handleSelectRegion(reg)}
+                          aria-pressed={selectedRegion?.id === reg.id}
+                          className={cn(
+                            "px-2.5 py-1 rounded-md text-xs font-medium transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offbeat-accent",
+                            selectedRegion?.id === reg.id
+                              ? "bg-offbeat-accent text-offbeat-dark font-bold shadow-sm"
+                              : "bg-offbeat-elevated text-offbeat-secondary hover:text-offbeat-primary hover:bg-offbeat-surface",
+                          )}
+                        >
+                          {reg.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 8 Union Territories Section */}
+                  <div className="space-y-2 pt-3 border-t border-offbeat-border/50">
+                    <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-offbeat-accent">
+                      <span>Union Territories (8)</span>
+                      <span className="text-[10px] font-mono text-offbeat-muted/80">
+                        Click to focus
+                      </span>
+                    </div>
+                    <div
+                      className="flex flex-wrap gap-1.5"
+                      role="group"
+                      aria-label="Union Territories of India"
+                    >
+                      {utList.map((reg) => (
+                        <button
+                          key={reg.id}
+                          type="button"
+                          onClick={() => handleSelectRegion(reg)}
+                          aria-pressed={selectedRegion?.id === reg.id}
+                          className={cn(
+                            "px-2.5 py-1 rounded-md text-xs font-medium transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offbeat-accent",
+                            selectedRegion?.id === reg.id
+                              ? "bg-offbeat-accent text-offbeat-dark font-bold shadow-sm"
+                              : "bg-offbeat-elevated text-offbeat-secondary hover:text-offbeat-primary hover:bg-offbeat-surface",
+                          )}
+                        >
+                          {reg.name}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

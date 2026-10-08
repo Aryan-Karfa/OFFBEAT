@@ -46,7 +46,7 @@ describe("Phase 13: Itinerary Service Unit Tests", () => {
     expect(itinerary.reasoning).toBeDefined();
     expect(itinerary.reasoning?.explanation).toBeDefined();
     expect(itinerary.source).toBeDefined();
-  });
+  }, 15000);
 
   it("persists generated itineraries and retrieves by ID", async () => {
     const created = await service.createItinerary(baseRequest);

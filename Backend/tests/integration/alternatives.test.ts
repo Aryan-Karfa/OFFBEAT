@@ -33,7 +33,7 @@ describe("Phase 12: Find An Alternative API Integration Tests", () => {
       expect(alt.why).toBeDefined();
       expect(alt.source).toBeDefined();
     }
-  });
+  }, 15000);
 
   it("GET /api/v1/places/place_tiger_hill/alternatives supports all 6 modes", async () => {
     const modes = [

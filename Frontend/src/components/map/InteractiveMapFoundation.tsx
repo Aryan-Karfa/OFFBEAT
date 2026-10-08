@@ -79,6 +79,30 @@ export const InteractiveMapFoundation: React.FC<InteractiveMapFoundationProps> =
     }
   };
 
+  // Click outside focused state handler to reliably reset map to full-India normal state
+  const handleMapSurfaceClick = (e: React.MouseEvent<SVGSVGElement | HTMLDivElement>) => {
+    if (!isCameraFocused || !selectedRegion) {
+      return;
+    }
+
+    const target = e.target as HTMLElement | SVGElement;
+
+    // Do not interfere with clicks on tactical controls
+    if (target.closest("[data-map-control]") || target.closest("button")) {
+      return;
+    }
+
+    // Check if the click target is within the currently focused region's SVG element
+    const insideFocusedRegion = target.closest(`#region-${selectedRegion.id}`);
+    if (insideFocusedRegion) {
+      // Inside focused region geometry -> keep focus
+      return;
+    }
+
+    // Outside focused region geometry -> reset map completely
+    handleResetZoom();
+  };
+
   const handleZoomIn = () => {
     setManualZoom((prev) => Math.min(prev + 0.3, 2.5));
   };
@@ -101,6 +125,7 @@ export const InteractiveMapFoundation: React.FC<InteractiveMapFoundationProps> =
       ref={containerRef}
       role="region"
       aria-label="Interactive Map of India with 28 States and 8 Union Territories"
+      onClick={handleMapSurfaceClick}
       className="relative w-full aspect-[800/920] max-h-[820px] rounded-2xl bg-offbeat-dark border border-offbeat-border/80 overflow-hidden shadow-elevated flex items-center justify-center p-2 sm:p-4 select-none"
     >
       {/* Subtle cartographic grid background pattern */}
@@ -136,6 +161,7 @@ export const InteractiveMapFoundation: React.FC<InteractiveMapFoundationProps> =
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox={MAP_VIEWBOX.viewBox}
+          onClick={handleMapSurfaceClick}
           className="w-full h-full max-h-[920px] object-contain overflow-visible"
           role="img"
           aria-label="Accurate Vector Cartography of India"
@@ -147,6 +173,23 @@ export const InteractiveMapFoundation: React.FC<InteractiveMapFoundationProps> =
               <stop offset="100%" stopColor="#0B0D0E" stopOpacity="0" />
             </radialGradient>
           </defs>
+
+          {/* Full SVG canvas background layer to reliably capture clicks outside focused region geometry */}
+          <rect
+            id="map-canvas-background"
+            x="-1000"
+            y="-1000"
+            width="3000"
+            height="3000"
+            fill="transparent"
+            style={{ pointerEvents: "all" }}
+            onClick={(e) => {
+              if (isCameraFocused) {
+                e.stopPropagation();
+                handleResetZoom();
+              }
+            }}
+          />
 
           {/* Camera Pan & Zoom Transform Layer */}
           <g
@@ -252,6 +295,7 @@ export const InteractiveMapFoundation: React.FC<InteractiveMapFoundationProps> =
                   interactionState={interactionState}
                   onSelect={onSelectRegion}
                   onHover={onHoverRegion}
+                  onResetFocus={handleResetZoom}
                   isReducedMotion={isReducedMotion}
                 />
               );

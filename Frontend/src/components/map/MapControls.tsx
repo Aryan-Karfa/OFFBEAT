@@ -51,7 +51,10 @@ export const MapControls: React.FC<MapControlsProps> = ({
   return (
     <>
       {/* Top Left: Geographic State Machine Status Pill */}
-      <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2">
+      <div
+        data-map-control="true"
+        className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2"
+      >
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-offbeat-dark/90 backdrop-blur-md border border-offbeat-border text-xs shadow-md">
           <span
             className={`h-2 w-2 rounded-full ${
@@ -72,7 +75,11 @@ export const MapControls: React.FC<MapControlsProps> = ({
         {selectedRegion && (
           <button
             type="button"
-            onClick={onBackToCountry}
+            data-map-control="true"
+            onClick={(e) => {
+              e.stopPropagation();
+              onBackToCountry();
+            }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-offbeat-surface/95 border border-offbeat-accent/50 text-xs text-offbeat-accent hover:bg-offbeat-elevated hover:border-offbeat-accent transition-all font-semibold shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offbeat-accent"
             aria-label="Return to full country map"
           >
@@ -83,7 +90,10 @@ export const MapControls: React.FC<MapControlsProps> = ({
       </div>
 
       {/* Top Right: Cartographic Compass Rose */}
-      <div className="absolute top-4 right-4 z-20 hidden sm:flex flex-col items-center gap-1 p-2.5 rounded-xl bg-offbeat-dark/85 backdrop-blur-md border border-offbeat-border/80 pointer-events-none shadow-md">
+      <div
+        data-map-control="true"
+        className="absolute top-4 right-4 z-20 hidden sm:flex flex-col items-center gap-1 p-2.5 rounded-xl bg-offbeat-dark/85 backdrop-blur-md border border-offbeat-border/80 pointer-events-none shadow-md"
+      >
         <Compass
           className={`h-5 w-5 text-offbeat-accent ${
             isFocusedOrActive ? "rotate-45" : "animate-[spin_70s_linear_infinite]"
@@ -97,27 +107,42 @@ export const MapControls: React.FC<MapControlsProps> = ({
       </div>
 
       {/* Bottom Right: Zoom and View Adjustment Controls */}
-      <div className="absolute bottom-4 right-4 z-20 flex flex-col gap-1.5 p-1 rounded-xl bg-offbeat-dark/90 backdrop-blur-md border border-offbeat-border/80 shadow-md">
+      <div
+        data-map-control="true"
+        className="absolute bottom-4 right-4 z-20 flex flex-col gap-1.5 p-1 rounded-xl bg-offbeat-dark/90 backdrop-blur-md border border-offbeat-border/80 shadow-md"
+      >
         <button
           type="button"
+          data-map-control="true"
           aria-label="Zoom in on map"
-          onClick={onZoomIn}
+          onClick={(e) => {
+            e.stopPropagation();
+            onZoomIn();
+          }}
           className="p-2 rounded-lg text-offbeat-secondary hover:text-offbeat-primary hover:bg-offbeat-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offbeat-accent"
         >
           <ZoomIn className="h-4 w-4" />
         </button>
         <button
           type="button"
+          data-map-control="true"
           aria-label="Zoom out on map"
-          onClick={onZoomOut}
+          onClick={(e) => {
+            e.stopPropagation();
+            onZoomOut();
+          }}
           className="p-2 rounded-lg text-offbeat-secondary hover:text-offbeat-primary hover:bg-offbeat-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offbeat-accent"
         >
           <ZoomOut className="h-4 w-4" />
         </button>
         <button
           type="button"
+          data-map-control="true"
           aria-label="Reset map view"
-          onClick={onReset}
+          onClick={(e) => {
+            e.stopPropagation();
+            onReset();
+          }}
           className="p-2 rounded-lg text-offbeat-secondary hover:text-offbeat-primary hover:bg-offbeat-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offbeat-accent"
         >
           <RotateCcw className="h-4 w-4" />
