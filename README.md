@@ -234,5 +234,4 @@ For judges and evaluators, a comprehensive 3–5 minute walkthrough script is pr
 ## 12. Team & Attribution
 
 - **Project:** OFFBEAT Discovery Platform
-- **Version:** v0.1.0 (Hackathon Release)
-- **Built for:** Google Antigravity & GenAI Hackathon
+- **Built for:** SerpAPI GenAI Hackathon
